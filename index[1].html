@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f3f6f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1318" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="Dose Guide">
+<meta name="description" content="Reconstitution calculator and dosing reference for common peptides. Works offline.">
+<title>Peptide Dose Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: phone-first list -> detail stack; two panes from 880px. Prose in a humanist sans, every number in mono. */
+:root{
+  --bg:#f3f6f8; --surface:#ffffff; --surface-2:#e9eef2; --ink:#17222c; --muted:#5b6a77; --line:#d5dde4;
+  --accent:#0b6a86; --accent-ink:#ffffff; --accent-soft:#dbecf3;
+  --good:#1a7f4b; --info:#2b5bd3; --warn:#a85d0c; --bad:#b4231f; --neutral:#5e6e7d;
+  --font-ui:'Public Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --radius:10px; --shadow:0 1px 2px rgba(23,34,44,.05),0 6px 18px rgba(23,34,44,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1318; --surface:#151d25; --surface-2:#1e2932; --ink:#e3eaf0; --muted:#95a5b3; --line:#2a3641;
+    --accent:#5cc1de; --accent-ink:#062029; --accent-soft:#12333f;
+    --good:#4fcf8a; --info:#8fb0ff; --warn:#f0b35c; --bad:#ff8f88; --neutral:#9bacba;
+    --shadow:0 1px 2px rgba(0,0,0,.45),0 6px 18px rgba(0,0,0,.35); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1318; --surface:#151d25; --surface-2:#1e2932; --ink:#e3eaf0; --muted:#95a5b3; --line:#2a3641;
+  --accent:#5cc1de; --accent-ink:#062029; --accent-soft:#12333f;
+  --good:#4fcf8a; --info:#8fb0ff; --warn:#f0b35c; --bad:#ff8f88; --neutral:#9bacba;
+  --shadow:0 1px 2px rgba(0,0,0,.45),0 6px 18px rgba(0,0,0,.35); color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%}
+.app{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:0 40px}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.2}
+h1{font-size:1.25rem;font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.5rem;font-weight:700;letter-spacing:-.015em}
+h3{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+p{margin:0}
+a{color:var(--accent)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 10px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rev{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.02em}
+.search{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);color:var(--ink);font:inherit}
+.search::placeholder{color:var(--muted)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:.82rem;font-weight:500;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip.mono{font-size:.78rem}
+
+/* notice */
+.notice{margin-top:12px;padding:10px 12px;border-left:3px solid var(--warn);background:var(--surface);border-radius:6px;font-size:.84rem;color:var(--muted)}
+.notice strong{color:var(--ink)}
+
+/* panes */
+.panes{margin-top:14px;display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+.list{display:flex;flex-direction:column;gap:8px;min-width:0}
+.card{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;box-shadow:none}
+.card:hover{border-color:var(--accent)}
+.card[aria-current="true"]{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.card .row1{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card .name{font-weight:600;font-size:1rem}
+.card .for{color:var(--muted);font-size:.84rem;margin-top:2px}
+.card .dose{margin-top:6px;font-size:.82rem;color:var(--ink)}
+.cat-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin:8px 0 2px}
+.empty{color:var(--muted);padding:20px 4px}
+
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 9px;font-size:.72rem;font-weight:600;white-space:nowrap;letter-spacing:.01em}
+.badge::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.tone-good{color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}
+.tone-info{color:var(--info);background:color-mix(in srgb,var(--info) 14%,transparent)}
+.tone-warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 16%,transparent)}
+.tone-bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.tone-neutral{color:var(--neutral);background:color-mix(in srgb,var(--neutral) 16%,transparent)}
+
+/* detail */
+.detail{min-width:0;display:flex;flex-direction:column;gap:18px}
+.back{align-self:flex-start;border:0;background:transparent;color:var(--accent);font-weight:600;padding:4px 0}
+.dhead{display:flex;flex-direction:column;gap:6px}
+.dhead .titlerow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.aliases{color:var(--muted);font-size:.84rem}
+.for-long{font-size:1rem}
+.glance{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.glance>div{background:var(--surface);padding:10px 12px;min-width:0}
+.glance .k{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.glance .v{display:block;margin-top:2px;font-size:.92rem}
+section.block{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:12px}
+section.block.calc{box-shadow:var(--shadow)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.78rem;font-weight:600;color:var(--muted)}
+.field .inrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.num{width:110px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-family:var(--font-mono);font-size:1rem}
+.unit-toggle{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 10px;font-family:var(--font-mono);font-size:.82rem}
+.hint{font-size:.78rem;color:var(--muted)}
+.result{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:12px;border-radius:8px;background:var(--accent-soft)}
+.result .big{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.result .units{font-family:var(--font-mono);font-size:2.2rem;font-weight:600;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.result .lbl{font-size:.84rem;color:var(--muted)}
+.facts{display:flex;gap:14px;flex-wrap:wrap;font-size:.84rem}
+.facts span b{font-family:var(--font-mono);font-weight:600;font-variant-numeric:tabular-nums}
+.syringe{position:relative;height:16px;border:1px solid var(--line);border-radius:4px;background:var(--surface);overflow:hidden;
+  background-image:repeating-linear-gradient(to right,transparent 0,transparent calc(10% - 1px),var(--line) calc(10% - 1px),var(--line) 10%)}
+.syringe .fill{height:100%;background:var(--accent);transition:width .2s ease}
+.syringe .cap{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0 6px,color-mix(in srgb,var(--bad) 35%,transparent) 6px 12px)}
+.flag{font-size:.84rem;padding:8px 10px;border-radius:6px;background:color-mix(in srgb,var(--warn) 12%,transparent);color:var(--ink);border-left:3px solid var(--warn)}
+.formula{font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+td.mono,th.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.notes ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.kv{display:flex;flex-direction:column;gap:8px;font-size:.9rem}
+.kv .k{font-weight:600}
+details.sources{font-size:.84rem}
+details.sources summary{cursor:pointer;color:var(--muted);font-weight:600}
+details.sources ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:4px;word-break:break-all}
+.sticky-foot{margin-top:28px;border-top:1px solid var(--line);padding-top:14px;font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:8px}
+details.howto{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;font-size:.88rem}
+details.howto summary{cursor:pointer;font-weight:600}
+details.howto p{margin-top:8px;color:var(--ink)}
+
+/* view switching below 880px */
+.app[data-view="list"] .detail{display:none}
+.app[data-view="detail"] .list{display:none}
+.app[data-view="detail"] .top .search,.app[data-view="detail"] .top .chips,.app[data-view="detail"] .notice{display:none}
+@media (min-width:880px){
+  .panes{grid-template-columns:330px minmax(0,1fr);gap:24px;align-items:start}
+  .app[data-view="list"] .detail,.app[data-view="detail"] .list{display:flex}
+  .app[data-view="detail"] .top .search,.app[data-view="detail"] .top .chips,.app[data-view="detail"] .notice{display:flex}
+  .list{position:sticky;top:calc(env(safe-area-inset-top,0px) + 132px);max-height:calc(100vh - 150px);overflow:auto;padding-right:4px}
+  .back{display:none}
+  .result{grid-template-columns:auto minmax(0,1fr);align-items:center}
+  .result .syringe,.result .flag,.result .formula{grid-column:1 / -1}
+}
+@media (prefers-reduced-motion:reduce){.syringe .fill{transition:none}}
+</style>
+<style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+
+
+<div class="app" id="app" data-view="list">
+  <header class="top">
+    <div class="brand">
+      <h1>Peptide Dose Guide</h1>
+      <span class="rev">reviewed 2026-10 · U-100 syringe · BAC water</span>
+    </div>
+    <input class="search" id="q" type="search" placeholder="Search by name or alias (reta, tirz, wolverine...)" autocomplete="off" aria-label="Search peptides">
+    <div class="chips" id="cats" role="group" aria-label="Category"></div>
+  </header>
+  <div class="notice"><strong>Not medical advice.</strong> Vendor vials are unverified, so every number here assumes the label is right. Most of these compounds have no human dosing data; the badge on each one says how much is actually known.</div>
+  <main class="panes">
+    <section class="list" id="list" aria-label="Peptides"></section>
+    <section class="detail" id="detail" aria-live="polite"></section>
+  </main>
+  <footer class="sticky-foot">
+    <details class="howto">
+      <summary>How to mix a vial</summary>
+      <p>Draw up the bacteriostatic water, push it in slowly down the inside wall of the vial so it does not spray the powder, then swirl or roll gently. Never shake. Refrigerate after mixing (2–8 °C) and use within the window shown for that peptide, usually about 4 weeks. Check the vial's capacity before adding 3 mL or more; most vendor vials are 3 mL.</p>
+      <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
+    </details>
+    <p>Regulatory status changes fast. FDA compounding decisions on BPC-157, TB-500, KPV, MOTS-c and epithalon were pending after July 2026 advisory votes; CagriSema was under FDA review. Approved drugs are described from their current labels.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+const CATS=[{id:"all",label:"All"},{id:"wl",label:"Weight loss"},{id:"heal",label:"Healing"},{id:"gh",label:"GH & anti-aging"}];
+const CATNAME={wl:"Weight loss / GLP-1 class",heal:"Healing & recovery",gh:"GH & anti-aging",tool:"Tools"};
+const STATUS={
+  approved:{label:"FDA-approved",tone:"good"},
+  trials:{label:"Phase 3 / FDA review",tone:"info"},
+  former:{label:"Formerly approved",tone:"neutral"},
+  limited:{label:"Limited human data",tone:"warn"},
+  none:{label:"No human data",tone:"bad"}
+};
+
+const DATA=[
+{id:"retatrutide",cat:"wl",name:"Retatrutide",aliases:["reta","LY3437943","triple agonist"],status:"trials",
+ for:"Lilly's GIP/GLP-1/glucagon triple agonist for weight loss. Phase 3 (TRIUMPH) done; not approved anywhere yet.",
+ unit:"mg",min:1,max:12,common:12,start:2,freq:"Once weekly",timing:"Any time, with or without food. Rotate sites.",
+ ladder:[{weeks:"1–4",dose:2},{weeks:"5–8",dose:4},{weeks:"9–12",dose:6},{weeks:"13–16",dose:9},{weeks:"17+",dose:12}],
+ ladderNote:"Lilly's Phase 3 schedule: start 2 mg, step up every 4 weeks. Target 4 mg = one step; 9 mg = stop at week 13; 12 mg = the full ladder. Step up only if the current dose is tolerated; the trials allowed staying lower or dropping back permanently for GI effects.",
+ vials:[10,20,40],vialDefault:20,water:2,cycle:"Continuous in trials (80 weeks: 16 escalation + 64 maintenance)",
+ notes:["TRIUMPH-1 (80 wk): 4 mg −19.0%, 9 mg −25.9%, 12 mg −28.3% body weight vs −2.2% on placebo.","Dropouts from side effects 4.1% / 6.9% / 11.3% vs 4.9% placebo. Nausea, diarrhea, constipation and vomiting are the common ones and peak during escalation.","Starting at 2 mg instead of 4 mg clearly reduced GI effects in Phase 2. Heart rate rose with dose and peaked around week 24.","20 mg + 2 mL puts the 12 mg dose at 120 units, so use 1 mL in a 20 mg vial or 2 mL in a 40 mg vial if you plan to reach 12 mg.","Legally available only inside Lilly's trials; vendor vials are unverified."],
+ storage:"Fridge after mixing, use within about 4 weeks.",evidence:"Large Phase 3 program with strong efficacy data; no label yet, so no official dosing.",
+ sources:["https://www.prnewswire.com/news-releases/lillys-triple-agonist-retatrutide-delivered-powerful-weight-loss-in-pivotal-phase-3-obesity-trial-302778859.html","https://www.nejm.org/doi/full/10.1056/NEJMoa2301972","https://www.drugs.com/medical-answers/approved-dose-retatrutide-3580906/"]},
+
+{id:"semaglutide",cat:"wl",name:"Semaglutide",aliases:["sema","Wegovy","Ozempic","Wegovy HD"],status:"approved",
+ for:"GLP-1 agonist for weight loss (Wegovy) and type 2 diabetes (Ozempic). Wegovy HD 7.2 mg approved March 2026.",
+ unit:"mg",min:0.25,max:2.4,common:2.4,start:0.25,freq:"Once weekly, same day",timing:"Any time, with or without food. Can move the day if 2+ days separate doses.",
+ ladder:[{weeks:"1–4",dose:0.25},{weeks:"5–8",dose:0.5},{weeks:"9–12",dose:1},{weeks:"13–16",dose:1.7},{weeks:"17+",dose:2.4}],
+ ladderNote:"Wegovy label. Maintenance is 1.7 or 2.4 mg; if a step is rough, hold it 4 more weeks before moving up. Ozempic (diabetes) tops out at 2 mg. Wegovy HD 7.2 mg is only after 4+ weeks on 2.4 mg.",
+ vials:[2,3,5,10],vialDefault:5,water:2,cycle:"Continuous. STEP 1 (68 wk): −14.9%; about two-thirds of lost weight came back within a year of stopping.",
+ notes:["Missed dose: take it if the next dose is more than 2 days away, otherwise skip. Two or more missed in a row: restart at a lower step.","At 2.4 mg: nausea 44%, diarrhea 30%, vomiting 24%, constipation 24%.","Boxed warning for thyroid C-cell tumors (not with personal or family MTC/MEN2). Watch for pancreatitis, gallbladder problems and low blood sugar with insulin or sulfonylureas.","Tell anesthesia you are on it (slowed stomach emptying).","Compounded copies are no longer permitted since the shortage ended in 2025; vendor vials are unregulated."],
+ storage:"Pens 2–8 °C. Reconstituted vial in the fridge, about 28 days.",evidence:"Very strong: STEP and SELECT trials plus a full FDA label.",
+ sources:["https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/215256s025lbl.pdf","https://www.drugs.com/dosage/wegovy.html"]},
+
+{id:"tirzepatide",cat:"wl",name:"Tirzepatide",aliases:["tirz","Zepbound","Mounjaro"],status:"approved",
+ for:"Dual GIP/GLP-1 agonist for weight loss and sleep apnea (Zepbound) and type 2 diabetes (Mounjaro).",
+ unit:"mg",min:2.5,max:15,common:10,start:2.5,freq:"Once weekly, same day",timing:"Any time, with or without food. Can move the day if 3+ days separate doses.",
+ ladder:[{weeks:"1–4",dose:2.5},{weeks:"5–8",dose:5},{weeks:"9–12",dose:7.5},{weeks:"13–16",dose:10},{weeks:"17–20",dose:12.5},{weeks:"21+",dose:15}],
+ ladderNote:"Zepbound label. Each +2.5 mg step only after at least 4 weeks on the current dose. 2.5 mg is a starter dose, not maintenance; maintenance is 5, 10 or 15 mg. Many hold at 10 mg since 15 adds little.",
+ vials:[5,10,15,30,60],vialDefault:15,water:2,cycle:"Continuous. SURMOUNT-1 (72 wk): 5 mg −15%, 10 mg −19.5%, 15 mg −20.9% vs −3.1%. Switching to placebo regained about 14% in a year.",
+ notes:["Missed dose: take it within 4 days, otherwise skip.","Nausea 28%, diarrhea 23%, constipation 17%, vomiting 13%; worst during escalation.","Boxed warning for thyroid C-cell tumors (MTC/MEN2). Pancreatitis, gallbladder disease, low blood sugar with insulin or sulfonylureas.","Birth-control pills absorb less: use a backup method for 4 weeks after starting and after each step up.","Head to head it beat semaglutide 2.4 mg (−20.2% vs −13.7%, SURMOUNT-5)."],
+ storage:"Pens and vials 2–8 °C (up to 21 days at room temp). Reconstituted vial in the fridge, about 28 days.",evidence:"Very strong: SURMOUNT 1–5 trials plus a full FDA label.",
+ sources:["https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/217806s042lbl.pdf","https://medical.lilly.com/us/products/answers/what-should-a-patient-do-if-they-miss-a-dose-of-zepbound-tirzepatide-209169"]},
+
+{id:"cagrilintide",cat:"wl",name:"Cagrilintide",aliases:["cagri","CagriSema","amylin analog"],status:"trials",
+ for:"Long-acting amylin analog for weight loss, paired 1:1 with semaglutide as CagriSema. Under FDA review; not approved as of October 2026.",
+ unit:"mg",min:0.25,max:2.4,common:2.4,start:0.25,freq:"Once weekly",timing:"Any time; in the trials it was injected together with semaglutide.",
+ ladder:[{weeks:"1–4",dose:0.25},{weeks:"5–8",dose:0.5},{weeks:"9–12",dose:1},{weeks:"13–16",dose:1.7},{weeks:"17+",dose:2.4}],
+ ladderNote:"REDEFINE 1 schedule for each of cagrilintide and semaglutide. Only 57% of participants were on the full dose by week 68, so slowing down is normal.",
+ vials:[5,10],vialDefault:5,water:2,cycle:"68 weeks in trials (16 escalation + 52 maintenance); nothing on what happens after stopping.",
+ notes:["REDEFINE 1 (68 wk): CagriSema −20.4%, semaglutide alone −14.9%, cagrilintide alone −11.5%, placebo −3.0%.","GI effects in 80% vs 40% on placebo; nausea peaks during escalation, constipation lingers. Injection-site reactions are more common than with GLP-1s.","No label yet, so people borrow the semaglutide missed-dose rule: take it if more than 2 days to the next dose, otherwise skip.","FDA decision expected late 2026; vendor vials only until then."],
+ storage:"Fridge after mixing, about 28 days.",evidence:"Strong Phase 3 data for the combination (NEJM 2025); on its own it is Phase 2-level.",
+ sources:["https://www.acc.org/Latest-in-Cardiology/Journal-Scans/2025/07/02/14/43/REDEFINE-1-and-REDEFINE-2","https://www.drugs.com/history/cagrisema.html"]},
+
+{id:"aod9604",cat:"wl",name:"AOD-9604",aliases:["AOD","hGH fragment 177-191"],status:"limited",
+ for:"Growth-hormone fragment sold for fat loss. Human trials were oral tablets and the program was dropped in 2007.",
+ unit:"mcg",min:250,max:500,common:300,freq:"Once daily (some split 250 AM / 250 PM)",timing:"Fasted on waking, 30–60 min before food.",
+ ladder:[],vials:[2,5,10],vialDefault:5,water:2,cycle:"8–12 weeks on, 4–8 weeks off",
+ notes:["The 12-week oral trial lost about 2.6 kg vs 0.8 kg on placebo; the 24-week pivotal trial did not beat placebo. The injectable microgram protocol has no trial behind it.","Safety across roughly 900 trial participants looked like placebo: no IGF-1 rise, no glucose change.","Reported by users: headache, fatigue, dizziness, injection-site redness.","Vendor water volumes disagree (1–3 mL per 5 mg); 2 mL is the median."],
+ storage:"Fridge after mixing, about 28 days.",evidence:"Weak: a small positive oral signal, a failed pivotal trial, nothing on injections.",
+ sources:["https://www.jofem.org/index.php/jofem/article/view/157/194","https://en.wikipedia.org/wiki/AOD9604"]},
+
+{id:"bpc157",cat:"heal",name:"BPC-157",aliases:["BPC","body protection compound","wolverine stack"],status:"none",
+ for:"Pentadecapeptide used for tendon, ligament and muscle injuries and for the gut lining.",
+ unit:"mcg",min:200,max:500,common:250,freq:"1–2× daily (250 mcg 1–2×/day; 500 mcg 2×/day is the high end)",timing:"Near the injury is the convention (the animal data is systemic). Abdomen for gut use.",
+ ladder:[],vials:[2,5,10],vialDefault:5,water:2,cycle:"4–8 weeks on, 2–4 weeks off",
+ notes:["Nearly all data is rodent work from one Croatian group; there is no human controlled trial.","Oral or capsule 250–500 mcg 1–2×/day is the usual route for gut complaints.","Reported: injection-site bumps, nausea, headache, fatigue. Theoretical concern that it promotes blood-vessel growth around tumors.","FDA: Category 2 (safety concerns) Sept 2023, removed April 2026; advisory panel voted 8–6 in July 2026 to allow compounding; FDA decision pending.","The 'wolverine stack' is BPC-157 plus TB-500, drawn in separate syringes."],
+ storage:"Fridge, protect from light, about 28 days.",evidence:"Rodent data only; human reports are tiny uncontrolled series.",
+ sources:["https://pmc.ncbi.nlm.nih.gov/articles/PMC12313605/","https://www.fda.gov/drugs/human-drug-compounding/certain-bulk-drug-substances-use-compounding-may-present-significant-safety-risks","https://www.mcdermottlaw.com/insights/bulk-list-bound-pcac-backs-majority-of-peptides-in-two-day-public-meeting/"]},
+
+{id:"tb500",cat:"heal",name:"TB-500",aliases:["thymosin beta-4 fragment","TB500","wolverine stack"],status:"none",
+ for:"Thymosin beta-4 fragment used for systemic soft-tissue and tendon repair.",
+ unit:"mg",min:2,max:5,common:2.5,freq:"Loading 2×/week for 4–6 weeks, then 1×/week",timing:"Works systemically: abdomen or thigh, no need to inject near the injury.",
+ ladder:[{weeks:"1–6",dose:2.5,label:"twice a week (loading)"},{weeks:"7–12",dose:2.5,label:"once a week (maintenance)"}],
+ ladderNote:"Community convention, not a trial schedule. Many stop once the injury has functionally recovered.",
+ vials:[2,5,10],vialDefault:5,water:2,cycle:"About 3 months (loading + maintenance), then 4–8 weeks off",
+ notes:["No human trial of this fragment exists; the human data is for full-length thymosin beta-4 (RegeneRx), which does not transfer.","Reported: injection-site redness, transient fatigue or head pressure during loading.","FDA: Category 2 Sept 2023, removed April 2026; panel voted 8–6 in July 2026 to allow compounding; decision pending. WADA-prohibited."],
+ storage:"Fridge, about 28 days.",evidence:"None in humans; dosing is community convention.",
+ sources:["https://www.bscg.org/blogs/single/tb-500-peptide-benefits-safety-legal-status-and-research","https://superpower.com/guides/peptides/tb-500"]},
+
+{id:"ghkcu",cat:"heal",name:"GHK-Cu (injectable)",aliases:["copper peptide","GHK","copper tripeptide"],status:"none",
+ for:"Copper tripeptide injected for skin, hair, collagen and inflammation.",
+ unit:"mg",min:1,max:2,common:1,freq:"Once daily (or 3–5×/week)",timing:"Abdomen or thigh, rotate sites. Not injected at the face or scalp.",
+ ladder:[{weeks:"1–2",dose:1},{weeks:"3–4",dose:2}],ladderNote:"Clinic convention; 0.5 mg is a cautious start.",
+ vials:[50,100],vialDefault:50,water:5,cycle:"30 days on / 30 off, or 4–8 weeks on, 2–4 off",
+ notes:["It stings. Dilute more (50 mg in 4–5 mL instead of 2) and inject slowly. Blue-tinted bruising at the site is reported.","Human data is for topical use only; nobody has studied injected GHK-Cu.","Each 1–3 mg delivers roughly 0.1–0.5 mg of copper. A dermatologist reported raised liver enzymes and copper levels in heavy users (NPR, Sept 2026).","Also reported: site lumps, headache, lightheadedness, metallic taste.","FDA: injectable form Category 2 Sept 2023, removed April 2026; not yet reviewed by the panel (due by Feb 2027)."],
+ storage:"Fridge, upright, protect from light, about 28 days.",evidence:"Topical trials only; injectable dosing is community-derived.",
+ sources:["https://www.perfectb.com/ghk-cu-dosage-protocol/","https://www.wypr.org/2026-09-07/the-copper-peptide-trend-has-gone-from-creams-to-injections-ahead-of-the-science"]},
+
+{id:"kpv",cat:"heal",name:"KPV",aliases:["Lys-Pro-Val","alpha-MSH fragment"],status:"none",
+ for:"Alpha-MSH tripeptide used as an anti-inflammatory for the gut and skin.",
+ unit:"mcg",min:200,max:500,common:500,freq:"Once daily (some 250 mcg every 12 h); 3×/week for maintenance",timing:"Abdomen, any time. Oral on an empty stomach 30 min before food.",
+ ladder:[],vials:[5,10],vialDefault:10,water:2,cycle:"4–8 weeks typical; 8–12 weeks for gut protocols",
+ notes:["Mouse colitis and cell data only; no human trial of any route.","Oral capsules 500–1000 mcg 1–2×/day are common for gut use.","Mild reports: site irritation, occasional headache, GI upset at high oral doses. No skin darkening (unlike melanotan).","FDA: Category 2 Sept 2023, removed April 2026; panel voted 8–6 in July 2026 to allow compounding; decision pending.","Often paired with BPC-157 for gut protocols."],
+ storage:"Fridge, protect from light, about 28 days.",evidence:"No human data.",
+ sources:["https://outliyr.com/reports/kpv","https://www.peptidedosingprotocols.com/protocol/kpv"]},
+
+{id:"cjc",cat:"gh",name:"CJC-1295 (no DAC)",aliases:["Mod GRF 1-29","modified GRF","CJC"],status:"none",
+ for:"Short-acting GHRH analog that amplifies your own GH pulse. Usually stacked with ipamorelin.",
+ unit:"mcg",min:100,max:300,common:100,freq:"1–3× daily; most often once at bedtime",timing:"Fasted: 2+ hours after food, nothing for 30 min after. The bedtime dose rides the sleep GH pulse.",
+ ladder:[{weeks:"1–2",dose:100,label:"once at bedtime"},{weeks:"3+",dose:100,label:"2–3× per day, or 200 mcg at bedtime"}],ladderNote:"Community convention.",
+ vials:[2,5,10],vialDefault:5,water:2,cycle:"8–12 weeks on, 4–6 weeks off",
+ notes:["100 mcg is the saturation dose; bigger shots add side effects, not GH.","Flushing or head rush, headache, site redness, mild water retention; usually gone within an hour.","GH raises blood sugar: check fasting glucose or A1c, and IGF-1 at baseline and 4–6 weeks.","FDA Category 2 (immunogenicity; heart-rate and flushing reports), so it cannot be compounded. Avoid with active cancer or pituitary disease."],
+ storage:"Fridge, protect from light, 2–4 weeks.",evidence:"No human trials of the no-DAC version; extrapolated from sermorelin and GHRH pharmacology.",
+ sources:["https://www.peptideprotocolwiki.com/peptides/cjc-1295-no-dac/dosing","https://www.fda.gov/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm"]},
+
+{id:"cjcdac",cat:"gh",name:"CJC-1295 with DAC",aliases:["CJC DAC","long-acting CJC"],status:"limited",
+ for:"Long-acting GHRH analog (half-life about 6–8 days) for a continuous GH and IGF-1 lift.",
+ unit:"mg",min:0.5,max:2,common:1,freq:"Once weekly (some split Mon/Thu); 1–2 mg per week total",timing:"Any time; fasting is not critical.",
+ ladder:[],vials:[2,5,10],vialDefault:5,water:2,cycle:"8–12 weeks (up to 16), then 4+ weeks off",
+ notes:["Non-pulsatile 'GH bleed': GH stays 2–10× higher for about 6 days and IGF-1 for 9–11 days per dose, so side effects last days, not minutes.","Water retention, puffy face, flushing, lethargy, tingling, lower insulin sensitivity.","Phase 1 trials (2006) were clean; Phase 2 was halted after a participant death and development was abandoned.","Monitor IGF-1 and fasting glucose. FDA Category 2; WADA-prohibited."],
+ storage:"Fridge, 3–4 weeks.",evidence:"Two randomized Phase 1 trials showed a dose-dependent GH/IGF-1 rise; no outcome trials.",
+ sources:["https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:16352683&resultType=core&format=json","https://outliyr.com/reports/cjc-1295-dac"]},
+
+{id:"blend",cat:"gh",name:"CJC-1295 / Ipamorelin blend",aliases:["CJC/Ipa","ipamorelin CJC","5mg/5mg"],status:"none",
+ for:"CJC-1295 (no DAC) and ipamorelin in one vial for a synergistic, still-pulsatile GH release.",
+ unit:"mcg",unitLabel:"mcg of each",min:100,max:300,common:200,freq:"Once at bedtime (clinics: 5 nights on, 2 off); some add a fasted morning dose",timing:"30–60 min before bed on an empty stomach: 2+ hours after food, nothing for 30 min after.",
+ ladder:[{weeks:"1",dose:100,label:"of each, at bedtime"},{weeks:"2+",dose:200,label:"200–300 mcg of each"}],ladderNote:"Clinic convention.",
+ vials:[5,10],vialDefault:5,vialNote:"Enter the mg of EACH component: a 5 mg / 5 mg vial is 5.",water:2,cycle:"8–12 weeks on, 4 weeks off",
+ notes:["A '5 mg / 5 mg' vial holds 5 mg of each (10 mg total). With 2 mL of water, 200 mcg of each is 8 units.","Headache in weeks 1–2, flushing, water retention, vivid dreams, mild hunger, site irritation.","Labs: IGF-1 at baseline and mid-cycle, fasting glucose or A1c. Avoid with active cancer.","Never studied as a combination. Both components are FDA Category 2, so US pharmacies cannot compound it."],
+ storage:"Fridge, 3–4 weeks.",evidence:"Zero clinical data for the combination; the rationale is mechanistic plus anecdote.",
+ sources:["https://peptidedossier.com/guides/cjc-1295-ipamorelin-dosage-guide/","https://formblends.com/peptides/cjc-1295-with-ipamorelin"]},
+
+{id:"ipamorelin",cat:"gh",name:"Ipamorelin",aliases:["ipa","NNC 26-0161"],status:"limited",
+ for:"Selective ghrelin-receptor GH secretagogue: a GH pulse without the cortisol or prolactin rise.",
+ unit:"mcg",min:100,max:300,common:200,freq:"1–3× daily; once at bedtime is most common",timing:"Fasted 1–2 hours after food, wait 20–30 min before eating. Half-life about 2 hours, so each shot is one pulse.",
+ ladder:[{weeks:"1",dose:100},{weeks:"2–3",dose:200},{weeks:"4–12",dose:300,label:"200–300 mcg"}],ladderNote:"Community convention.",
+ vials:[2,5,10],vialDefault:5,water:2,cycle:"8–12 weeks on, 2–4 weeks off",
+ notes:["Human trials were intravenous, for post-surgical ileus, and failed (2014). There is no human data for the way it is actually used.","Headache, flushing, mild water retention, brief hunger, site reactions; usually settle in 1–2 weeks.","Monitor IGF-1 (baseline, 4–6 weeks) and fasting glucose. Avoid with active cancer or pituitary disorders.","FDA Category 2 (immunogenicity; serious events including a death with IV use). WADA-prohibited."],
+ storage:"Fridge, 21–28 days. Do not shake.",evidence:"IV pharmacology studies only.",
+ sources:["https://www.peptideprotocolwiki.com/peptides/ipamorelin/research","https://pubmed.ncbi.nlm.nih.gov/10496658/"]},
+
+{id:"tesamorelin",cat:"gh",name:"Tesamorelin",aliases:["Egrifta","tesa","TH9507"],status:"approved",
+ for:"GHRH analog that cuts visceral belly fat. Approved (Egrifta) for HIV-related lipodystrophy; used off-label for visceral fat and liver fat.",
+ unit:"mg",min:1,max:2,common:2,freq:"Once daily",timing:"Label: any time, abdomen only, rotate. Off-label users go bedtime, fasted.",
+ ladder:[],vials:[2,5,10],vialDefault:10,water:2,cycle:"Continuous (26–52 week trials); fat returns within months of stopping. Recheck IGF-1 at 3–6 months.",
+ notes:["Label products: Egrifta WR 1.28 mg/day and Egrifta SV 1.4 mg/day give the same exposure as the original 2 mg. 2 mg is the gray-market default; 1 mg is common for cost or side effects.","Visceral fat about −15–20% at 26 weeks; also lowers liver fat.","IGF-1 monitoring is on the label. Check glucose before and periodically (diabetes 5% vs 1% on placebo).","Fluid retention: swelling, joint pain, carpal tunnel. Site reactions about 25%. Half develop antibodies without losing effect.","Contraindicated with active cancer, pregnancy, or pituitary tumor, surgery or head radiation."],
+ storage:"Egrifta WR: room temperature, 7 days after mixing. Vendor vials: fridge, about 28 days. Swirl, do not shake.",evidence:"Strongest of the GH group: pooled Phase 3 (n=816) plus a 12-month fatty-liver trial, in HIV populations and for fat, not anti-aging.",
+ sources:["https://www.accessdata.fda.gov/drugsatfda_docs/label/2025/022505s020lbl.pdf","https://www.drugs.com/pro/egrifta-wr.html"]},
+
+{id:"sermorelin",cat:"gh",name:"Sermorelin",aliases:["GRF 1-29","Geref","GHRH 1-29"],status:"former",
+ for:"GHRH(1-29) that restores pulsatile GH. Geref was approved for children and withdrawn in 2009 (not for safety); now compounded only.",
+ unit:"mcg",min:100,max:500,common:300,freq:"Once nightly (7 nights, or 5 on / 2 off)",timing:"30–60 min before bed on an empty stomach (90+ min after food).",
+ ladder:[{weeks:"1–2",dose:100},{weeks:"3–4",dose:200},{weeks:"5–8",dose:300},{weeks:"9+",dose:400,label:"400–500 only if IGF-1 has not risen"}],ladderNote:"Clinic convention.",
+ vials:[2,5,10,15],vialDefault:5,water:2,cycle:"3–6 months on, then 1–2 months off and reassess with IGF-1",
+ notes:["Compounded prescriptions are often 9 mg / 3 mL or 15 mg / 5 mL (3 mg/mL, so 300 mcg is 10 units).","Site reactions about 17% in trials, flushing, headache, dizziness, vivid dreams. Hypothyroidism about 6.5% in trials, so check TSH.","Monitor IGF-1 at baseline and 6–8 weeks, plus fasting glucose. Avoid with active cancer.","Approval-grade trials exist only in GH-deficient children; adult anti-aging data is small and old."],
+ storage:"Fridge, 14–30 days (sources disagree).",evidence:"Pediatric approval history; adult use rests on small older studies.",
+ sources:["https://public-inspection.federalregister.gov/2013-04827.pdf","https://www.peptideprotocolwiki.com/peptides/sermorelin"]},
+
+{id:"motsc",cat:"gh",name:"MOTS-c",aliases:["mitochondrial peptide","MOTS"],status:"none",
+ for:"Mitochondrial peptide and AMPK activator sold for insulin sensitivity, fat loss and exercise capacity.",
+ unit:"mg",min:5,max:10,common:5,freq:"2–3× per week (range 1–3×)",timing:"Morning; 30–60 min before or within an hour after exercise. Fasting not required.",
+ ladder:[{weeks:"1–2",dose:5,label:"once a week (tolerance check)"},{weeks:"3+",dose:5,label:"2–3× per week"}],ladderNote:"Community convention.",
+ vials:[10,40],vialDefault:10,water:1,cycle:"4–8 weeks on, 4–8 weeks off; 2–4 cycles a year",
+ notes:["Mouse data only. The one human trial was an analog (CB4211, 25 mg/day for 4 weeks, 2021) that was safe, shifted biomarkers and was shelved.","Site redness and swelling are common; also flushing, headache, fatigue, nausea, palpitations, possible blood-sugar swings.","Less stable than most peptides once mixed: use within 2–3 weeks.","FDA: Category 2, removed April 2026; panel voted 7–5 in July 2026 to allow compounding; decision pending. WADA-prohibited."],
+ storage:"Fridge, protect from light, 2–3 weeks.",evidence:"Rodent data; no human dosing study of MOTS-c itself.",
+ sources:["https://www.peptideprotocolwiki.com/peptides/mots-c/dosing","https://longevity.technology/news/cohbar-announces-positive-human-data-from-obesity-study/"]},
+
+{id:"epithalon",cat:"gh",name:"Epithalon",aliases:["epitalon","AEDG","pineal peptide"],status:"none",
+ for:"Pineal tetrapeptide sold for telomerase activation, sleep and circadian rhythm.",
+ unit:"mg",min:5,max:10,common:10,freq:"Once daily for 10–20 days per course",timing:"Evening or bedtime. Fasting not required.",
+ ladder:[],vials:[10,50],vialDefault:10,water:1,cycle:"10–20 day course, 1–2× per year, spaced 4–6 months apart",
+ notes:["The Russian human data (15-year follow-up, n=79) used the pineal extract Epithalamin, not synthetic epitalon, and nothing has been independently replicated.","Common courses: 5 mg × 20 days or 10 mg × 10 days (100 mg total). A 50 mg vial is 10 days at 5 mg.","The 5–10 mg/day convention has no dose-finding study behind it; a low-dose camp runs 100–250 mcg daily.","Reported: site redness, drowsiness or vivid dreams, transient fatigue. Theoretical telomerase/cancer concern, so avoid with any cancer history.","FDA: Category 2, removed April 2026; panel voted 7–4 in July 2026 to allow compounding; decision pending."],
+ storage:"Fridge, about 3 weeks. Do not shake.",evidence:"Weakest in the set: one research group, animal and lab-dish data.",
+ sources:["https://www.peptideprotocolwiki.com/peptides/epitalon/dosing","https://outliyr.com/reports/epitalon"]},
+
+{id:"nad",cat:"gh",name:"NAD+",aliases:["nicotinamide adenine dinucleotide","NAD"],status:"limited",
+ for:"Coenzyme injected for energy and 'longevity'. No approved injectable dosing; the numbers are clinic practice.",
+ unit:"mg",min:50,max:200,common:100,start:50,freq:"2–3× per week (some daily for a 1–2 week loading phase)",timing:"Any time you can sit still for 20 minutes. Inject slowly (10+ seconds) and rotate sites.",
+ ladder:[{weeks:"1–2",dose:50,label:"25–50 mg, 2–3× per week (test)"},{weeks:"3+",dose:100,label:"2–3× per week"}],ladderNote:"Clinic practice, not trial data. Higher single doses (150–200 mg) mostly add side effects.",
+ vials:[100,250,500,1000],vialDefault:500,water:5,cycle:"Ongoing; many run 4–8 week blocks",
+ notes:["The solution is acidic, so it stings. Inject slowly and split 100 mg across two sites if it burns.","Flushing, nausea, headache or a heavy, tired feeling for about an hour, worse when injected fast or at high doses.","500 mg usually ships in a 10 mL vial: 5 mL of water gives 100 mg/mL, so 50 mg = 50 units and 100 mg = 100 units.","Less stable than peptides: discard if it turns yellow or brown or shows particles."],
+ storage:"Fridge, 2–4 weeks.",evidence:"Small IV-infusion studies only; subcutaneous dosing is clinic practice.",
+ sources:["https://www.peptidedosingprotocols.com/protocol/nad-plus","https://www.justanswer.com/pharmacy/articles/nad-500mg-reconstitution-dosage"]},
+
+{id:"custom",cat:"tool",name:"Any vial (custom)",aliases:["calculator","custom","other"],status:null,
+ for:"Reconstitution math for anything not listed. Enter the vial size, the water you add and the dose you want.",
+ unit:"mg",min:0.1,max:10,common:1,freq:"",timing:"",ladder:[],vials:[2,5,10,20,50],vialDefault:5,water:2,cycle:"",notes:[],storage:"",evidence:"",sources:[],unitSwitch:true}
+];
+
+/* ---------- helpers ---------- */
+const $=(s,r)=> (r||document).querySelector(s);
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function fmt(n,d){ if(!isFinite(n)) return "–"; const p=Math.pow(10,d==null?2:d); const r=Math.round(n*p)/p; return r.toLocaleString(undefined,{maximumFractionDigits:d==null?2:d}); }
+function toMg(dose,unit){ return unit==="mcg"? dose/1000 : dose; }
+function unitsFor(doseMg,vialMg,waterMl){ return doseMg/vialMg*waterMl*100; }
+function load(k,fb){ try{ const v=localStorage.getItem(k); return v==null?fb:JSON.parse(v); }catch(e){ return fb; } }
+function save(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+function doseRange(p){
+  const u=p.unitLabel||p.unit;
+  if(p.min===p.max) return fmt(p.min)+" "+u;
+  return fmt(p.min)+"–"+fmt(p.max)+" "+u;
+}
+
+/* ---------- state ---------- */
+const app=$("#app"), listEl=$("#list"), detailEl=$("#detail"), catsEl=$("#cats"), qEl=$("#q");
+let cat=load("pdg:cat","all"); if(!CATS.some(c=>c.id===cat)) cat="all";
+let q="";
+let current=load("pdg:last",null);
+let calcState={};
+
+function getCalc(p){
+  if(calcState[p.id]) return calcState[p.id];
+  const saved=load("pdg:calc:"+p.id,null);
+  const def={vial:p.vialDefault||p.vials[0],water:p.water,dose:(p.start!=null?p.start:p.common),unit:p.unit};
+  const c=Object.assign(def,saved||{});
+  if(!(c.vial>0)) c.vial=def.vial; if(!(c.water>0)) c.water=def.water; if(!(c.dose>0)) c.dose=def.dose;
+  if(c.unit!=="mg"&&c.unit!=="mcg") c.unit=p.unit;
+  calcState[p.id]=c; return c;
+}
+function compute(p,c){
+  const unit=p.unitSwitch?c.unit:p.unit;
+  const doseMg=toMg(c.dose,unit);
+  const units=unitsFor(doseMg,c.vial,c.water);
+  const conc=c.vial/c.water;
+  const perVial=doseMg>0?Math.floor(c.vial/doseMg+1e-9):0;
+  const flags=[];
+  if(units>100) flags.push("More than one full syringe ("+fmt(units/100,1)+" mL). Use less water so one dose fits in 100 units.");
+  else if(units<5) flags.push("Under 5 units is hard to measure accurately. Use more water for a bigger draw.");
+  if(c.water>3) flags.push("Make sure the vial actually holds "+fmt(c.water)+" mL; most vendor vials are 3 mL (NAD+ is usually 10 mL).");
+  return {unit,doseMg,units,ml:units/100,conc,perVial,flags};
+}
+
+/* ---------- rendering ---------- */
+function renderCats(){
+  catsEl.innerHTML=CATS.map(c=>'<button type="button" class="chip" data-cat="'+c.id+'" aria-pressed="'+(cat===c.id)+'">'+esc(c.label)+'</button>').join("");
+}
+function matches(p){
+  if(p.cat!=="tool"&&cat!=="all"&&p.cat!==cat) return false;
+  if(!q) return true;
+  const hay=(p.name+" "+p.aliases.join(" ")+" "+p.for).toLowerCase();
+  return q.split(/\s+/).every(w=>hay.indexOf(w)>=0);
+}
+function renderList(){
+  const items=DATA.filter(matches);
+  if(!items.length){ listEl.innerHTML='<p class="empty">Nothing matches that. Try a shorter name or an alias.</p>'; return; }
+  let html="", lastCat=null;
+  for(const p of items){
+    if(cat==="all"&&p.cat!==lastCat){ html+='<div class="cat-label">'+esc(CATNAME[p.cat])+'</div>'; lastCat=p.cat; }
+    const st=p.status?STATUS[p.status]:null;
+    html+='<button type="button" class="card" data-id="'+p.id+'" aria-current="'+(current===p.id)+'">'
+      +'<div class="row1"><span class="name">'+esc(p.name)+'</span>'+(st?'<span class="badge tone-'+st.tone+'">'+esc(st.label)+'</span>':'')+'</div>'
+      +'<div class="for">'+esc(p.for.split(". ")[0].replace(/\.$/,""))+'</div>'
+      +(p.freq?'<div class="dose"><span class="mono">'+esc(doseRange(p))+'</span> · '+esc(p.freq.split(";")[0].split(" (")[0])+'</div>':'')
+      +'</button>';
+  }
+  listEl.innerHTML=html;
+}
+function chipRow(name,vals,cur,unitTxt){
+  return vals.map(v=>'<button type="button" class="chip mono" data-set="'+name+'" data-val="'+v+'" aria-pressed="'+(Number(v)===Number(cur))+'">'+fmt(v)+(unitTxt?" "+unitTxt:"")+'</button>').join("");
+}
+function dosePresets(p){
+  const out=[]; const push=v=>{ if(v!=null&&!out.includes(v)) out.push(v); };
+  push(p.start); push(p.min); push(p.common); push(p.max);
+  for(const s of p.ladder) push(s.dose);
+  return out.sort((a,b)=>a-b);
+}
+function renderDetail(){
+  const p=DATA.find(x=>x.id===current);
+  if(!p){ detailEl.innerHTML='<p class="empty">Pick a peptide from the list.</p>'; return; }
+  const st=p.status?STATUS[p.status]:null;
+  const c=getCalc(p);
+  const unit=p.unitSwitch?c.unit:p.unit;
+  const unitLabel=p.unitLabel||unit;
+  let html='<button type="button" class="back" id="back">&larr; All peptides</button>';
+  html+='<div class="dhead"><div class="titlerow"><h2>'+esc(p.name)+'</h2>'+(st?'<span class="badge tone-'+st.tone+'">'+esc(st.label)+'</span>':'')+'</div>';
+  if(p.aliases.length&&p.id!=="custom") html+='<p class="aliases">Also: '+esc(p.aliases.join(", "))+'</p>';
+  html+='<p class="for-long">'+esc(p.for)+'</p></div>';
+  if(p.freq){
+    html+='<div class="glance">'
+      +'<div><span class="k">Typical dose</span><span class="v mono">'+esc(doseRange(p))+'</span></div>'
+      +'<div><span class="k">Frequency</span><span class="v">'+esc(p.freq)+'</span></div>'
+      +'<div><span class="k">Timing</span><span class="v">'+esc(p.timing)+'</span></div>'
+      +'<div><span class="k">Cycle</span><span class="v">'+esc(p.cycle)+'</span></div>'
+      +'</div>';
+  }
+  /* calculator */
+  html+='<section class="block calc" aria-label="Reconstitution calculator"><h3>Reconstitution calculator</h3>'
+    +'<div class="field"><label for="vial">Vial size (mg)</label><div class="inrow"><div class="chips">'+chipRow("vial",p.vials,c.vial,"mg")+'</div>'
+    +'<input class="num" id="vial" type="number" inputmode="decimal" min="0.01" step="any" value="'+c.vial+'"></div>'
+    +(p.vialNote?'<span class="hint">'+esc(p.vialNote)+'</span>':'')+'</div>'
+    +'<div class="field"><label for="water">Bacteriostatic water added (mL)</label><div class="inrow"><div class="chips">'+chipRow("water",[1,2,3,5],c.water,"mL")+'</div>'
+    +'<input class="num" id="water" type="number" inputmode="decimal" min="0.1" step="any" value="'+c.water+'"></div></div>'
+    +'<div class="field"><label for="dose">Dose ('+esc(unitLabel)+')</label><div class="inrow"><div class="chips">'+(p.id==="custom"?"":chipRow("dose",dosePresets(p),c.dose,""))+'</div>'
+    +'<input class="num" id="dose" type="number" inputmode="decimal" min="0.001" step="any" value="'+c.dose+'">'
+    +(p.unitSwitch?'<button type="button" class="unit-toggle" id="unit-toggle" aria-label="Switch dose unit">'+esc(unit)+' &#8646;</button>':'')+'</div></div>'
+    +'<div class="result" id="calc-out"></div>'
+    +'</section>';
+  /* ladder */
+  if(p.ladder.length){
+    html+='<section class="block ladder" aria-label="Dosing sequence"><h3>Dosing sequence</h3>'
+      +(p.ladderNote?'<p class="hint">'+esc(p.ladderNote)+'</p>':'')
+      +'<div class="tbl-wrap"><table><thead><tr><th>Weeks</th><th>Dose</th><th class="mono">Units</th><th>Note</th></tr></thead><tbody id="ladder-body"></tbody></table></div></section>';
+  }
+  if(p.notes.length){
+    html+='<section class="block notes"><h3>What to know</h3><ul>'+p.notes.map(n=>'<li>'+esc(n)+'</li>').join("")+'</ul></section>';
+  }
+  if(p.storage||p.evidence){
+    html+='<section class="block kv">'+(p.storage?'<div><span class="k">Storage after mixing: </span>'+esc(p.storage)+'</div>':'')+(p.evidence?'<div><span class="k">Evidence: </span>'+esc(p.evidence)+'</div>':'')+'</section>';
+  }
+  if(p.sources.length){
+    html+='<details class="sources"><summary>Sources</summary><ul>'+p.sources.map(u=>'<li><a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(u.replace(/^https?:\/\//,"").slice(0,80))+'</a></li>').join("")+'</ul></details>';
+  }
+  detailEl.innerHTML=html;
+  renderCalcOut(p);
+}
+function renderCalcOut(p){
+  const c=getCalc(p); const r=compute(p,c);
+  const unitLabel=p.unitLabel||r.unit;
+  const out=$("#calc-out",detailEl); if(!out) return;
+  const concTxt=r.unit==="mcg"? fmt(r.conc*1000,0)+" mcg/mL ("+fmt(r.conc)+" mg/mL)" : fmt(r.conc)+" mg/mL";
+  out.innerHTML='<div class="big"><span class="units">'+fmt(r.units,1)+'</span><span class="lbl">units on a U-100 syringe for '+fmt(c.dose)+' '+esc(unitLabel)+'</span></div>'
+    +'<div class="facts"><span>= <b>'+fmt(r.ml,3)+' mL</b></span><span>concentration <b>'+concTxt+'</b></span><span><b>'+(r.perVial||"–")+'</b> doses per vial</span></div>'
+    +'<div class="syringe" aria-hidden="true"><div class="fill" style="width:'+Math.max(0,Math.min(100,r.units))+'%"></div>'+(r.units>100?'<div class="cap"></div>':'')+'</div>'
+    +r.flags.map(f=>'<p class="flag">'+esc(f)+'</p>').join("")
+    +'<p class="formula">'+fmt(c.dose)+' ÷ '+fmt(c.vial*(r.unit==="mcg"?1000:1))+' × '+fmt(c.water)+' × 100 = '+fmt(r.units,1)+' units</p>';
+  const lb=$("#ladder-body",detailEl);
+  if(lb){
+    lb.innerHTML=p.ladder.map(s=>{
+      const u=unitsFor(toMg(s.dose,p.unit),c.vial,c.water);
+      return '<tr><td class="mono">'+esc(s.weeks)+'</td><td class="mono">'+fmt(s.dose)+' '+esc(p.unitLabel||p.unit)+'</td><td class="mono">'+fmt(u,1)+'u'+(u>100?' *':'')+'</td><td>'+esc(s.label||"")+'</td></tr>';
+    }).join("")+(p.ladder.some(s=>unitsFor(toMg(s.dose,p.unit),c.vial,c.water)>100)?'<tr><td colspan="4" class="hint">* over 100 units at this mix: use less water or a bigger vial.</td></tr>':'');
+  }
+  /* sync chip states */
+  detailEl.querySelectorAll('.chip[data-set]').forEach(b=>{ b.setAttribute("aria-pressed", String(Number(b.dataset.val)===Number(c[b.dataset.set]))); });
+}
+
+/* ---------- events ---------- */
+catsEl.addEventListener("click",e=>{
+  const b=e.target.closest("[data-cat]"); if(!b) return;
+  cat=b.dataset.cat; save("pdg:cat",cat); renderCats(); renderList();
+});
+qEl.addEventListener("input",()=>{ q=qEl.value.trim().toLowerCase(); renderList(); });
+listEl.addEventListener("click",e=>{
+  const b=e.target.closest("[data-id]"); if(!b) return;
+  current=b.dataset.id; save("pdg:last",current);
+  renderList(); renderDetail(); app.dataset.view="detail"; window.scrollTo({top:0});
+});
+detailEl.addEventListener("click",e=>{
+  if(e.target.closest("#back")){ app.dataset.view="list"; return; }
+  const chip=e.target.closest(".chip[data-set]");
+  const p=DATA.find(x=>x.id===current); if(!p) return;
+  if(chip){
+    const c=getCalc(p); c[chip.dataset.set]=Number(chip.dataset.val);
+    const inp=$("#"+chip.dataset.set,detailEl); if(inp) inp.value=c[chip.dataset.set];
+    save("pdg:calc:"+p.id,c); renderCalcOut(p); return;
+  }
+  if(e.target.closest("#unit-toggle")){
+    const c=getCalc(p); c.unit=c.unit==="mg"?"mcg":"mg"; save("pdg:calc:"+p.id,c);
+    renderDetail(); return;
+  }
+});
+detailEl.addEventListener("input",e=>{
+  const inp=e.target; if(!inp.matches("input.num")) return;
+  const p=DATA.find(x=>x.id===current); if(!p) return;
+  const v=parseFloat(inp.value); if(!(v>0)) return;
+  const c=getCalc(p); c[inp.id]=v; save("pdg:calc:"+p.id,c); renderCalcOut(p);
+});
+
+/* ---------- boot ---------- */
+if(current&&!DATA.some(p=>p.id===current)) current=null;
+renderCats(); renderList(); renderDetail();
+if(window.matchMedia("(min-width:880px)").matches && !current){ current="retatrutide"; renderList(); renderDetail(); }
+app.dataset.view="list";
+})();
+</script>
+
+</body>
+</html>
