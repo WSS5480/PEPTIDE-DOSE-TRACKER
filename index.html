@@ -89,6 +89,18 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 .tone-bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
 .tone-neutral{color:var(--neutral);background:color-mix(in srgb,var(--neutral) 16%,transparent)}
 
+/* my vials (list pane) */
+.vialcard{background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius);padding:10px 12px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 3px 0 0 var(--accent)}
+.vialcard .vrow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.vialcard .open{border:0;background:transparent;text-align:left;padding:0;font-weight:600;font-size:1rem;color:var(--ink);flex:1;min-width:0}
+.vialcard .meta{font-size:.82rem;color:var(--muted)}
+.vialcard .meta b{color:var(--ink);font-family:var(--font-mono);font-weight:600}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;font-size:.84rem;font-weight:600;color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,var(--line))}
+.btn.small{padding:4px 9px;font-size:.78rem}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+
 /* detail */
 .detail{min-width:0;display:flex;flex-direction:column;gap:18px}
 .back{align-self:flex-start;border:0;background:transparent;color:var(--accent);font-weight:600;padding:4px 0}
@@ -102,10 +114,12 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 .glance .v{display:block;margin-top:2px;font-size:.92rem}
 section.block{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:12px}
 section.block.calc{box-shadow:var(--shadow)}
+section.block.tracker{border-color:var(--accent);box-shadow:var(--shadow)}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label{font-size:.78rem;font-weight:600;color:var(--muted)}
 .field .inrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .num{width:110px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-family:var(--font-mono);font-size:1rem}
+input[type="date"].num{width:auto;min-width:150px}
 .unit-toggle{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 10px;font-family:var(--font-mono);font-size:.82rem}
 .hint{font-size:.78rem;color:var(--muted)}
 .result{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:12px;border-radius:8px;background:var(--accent-soft)}
@@ -119,6 +133,9 @@ section.block.calc{box-shadow:var(--shadow)}
 .syringe .fill{height:100%;background:var(--accent);transition:width .2s ease}
 .syringe .cap{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0 6px,color-mix(in srgb,var(--bad) 35%,transparent) 6px 12px)}
 .flag{font-size:.84rem;padding:8px 10px;border-radius:6px;background:color-mix(in srgb,var(--warn) 12%,transparent);color:var(--ink);border-left:3px solid var(--warn)}
+.flag.bad{background:color-mix(in srgb,var(--bad) 12%,transparent);border-left-color:var(--bad)}
+.flag.good{background:color-mix(in srgb,var(--good) 12%,transparent);border-left-color:var(--good)}
+.flag b{font-family:var(--font-mono);font-weight:600}
 .formula{font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
 .tbl-wrap{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:.88rem}
@@ -126,6 +143,8 @@ th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertic
 th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
 td.mono,th.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 tr:last-child td{border-bottom:0}
+tr.now td{background:var(--accent-soft);font-weight:600}
+tr.now td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 .notes ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
 .kv{display:flex;flex-direction:column;gap:8px;font-size:.9rem}
 .kv .k{font-weight:600}
@@ -136,6 +155,32 @@ details.sources ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:
 details.howto{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;font-size:.88rem}
 details.howto summary{cursor:pointer;font-weight:600}
 details.howto p{margin-top:8px;color:var(--ink)}
+
+/* tracker */
+.trk-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.trk-week{font-size:1.4rem;font-weight:700;letter-spacing:-.01em}
+.trk-week small{font-size:.84rem;font-weight:500;color:var(--muted)}
+.trk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.trk-grid>div{background:var(--surface);padding:9px 11px;min-width:0}
+.trk-grid .k{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.trk-grid .v{display:block;margin-top:2px;font-size:.95rem}
+.trk-grid .v.mono{font-size:1.05rem;font-weight:600}
+.loglist{font-size:.82rem;color:var(--muted);display:flex;gap:6px 14px;flex-wrap:wrap}
+.loglist span b{font-family:var(--font-mono);color:var(--ink);font-weight:500}
+.vform{display:flex;flex-direction:column;gap:10px;padding:12px;border:1px dashed var(--line);border-radius:8px}
+select.num{font-family:var(--font-ui);width:auto;min-width:220px;max-width:100%}
+
+/* my vials view */
+.vials{display:none;flex-direction:column;gap:16px;margin-top:14px;min-width:0}
+.app[data-view="vials"] .panes{display:none}
+.app[data-view="vials"] .vials{display:flex}
+.app[data-view="vials"] .top .search,.app[data-view="vials"] .top .chips,.app[data-view="vials"] .notice{display:none}
+.vhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;align-items:start}
+.vialcard .vstats{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font-size:.84rem;color:var(--muted)}
+.vialcard .vstats b{display:block;color:var(--ink);font-family:var(--font-mono);font-weight:600;font-size:.95rem}
+.hist td .x{border:0;background:transparent;color:var(--bad);font-weight:700;padding:0 6px;font-size:1rem;line-height:1}
+textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-size:.78rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);padding:8px}
 
 /* view switching below 880px */
 .app[data-view="list"] .detail{display:none}
@@ -148,7 +193,7 @@ details.howto p{margin-top:8px;color:var(--ink)}
   .list{position:sticky;top:calc(env(safe-area-inset-top,0px) + 132px);max-height:calc(100vh - 150px);overflow:auto;padding-right:4px}
   .back{display:none}
   .result{grid-template-columns:auto minmax(0,1fr);align-items:center}
-  .result .syringe,.result .flag,.result .formula{grid-column:1 / -1}
+  .result .syringe,.result .flag,.result .formula,.result .btnrow{grid-column:1 / -1}
 }
 @media (prefers-reduced-motion:reduce){.syringe .fill{transition:none}}
 </style>
@@ -160,13 +205,14 @@ details.howto p{margin-top:8px;color:var(--ink)}
 <div class="app" id="app" data-view="list">
   <header class="top">
     <div class="brand">
-      <h1>Peptide Dose Guide</h1>
+      <div class="btnrow" style="align-items:center"><h1>Peptide Dose Guide</h1><button type="button" class="btn small primary" id="vials-btn">My vials</button></div>
       <span class="rev">reviewed 2026-10 · U-100 syringe · BAC water</span>
     </div>
     <input class="search" id="q" type="search" placeholder="Search by name or alias (reta, tirz, wolverine...)" autocomplete="off" aria-label="Search peptides">
     <div class="chips" id="cats" role="group" aria-label="Category"></div>
   </header>
   <div class="notice"><strong>Not medical advice.</strong> Vendor vials are unverified, so every number here assumes the label is right. Most of these compounds have no human dosing data; the badge on each one says how much is actually known.</div>
+  <section class="vials" id="vials" aria-label="My vials and dose log"></section>
   <main class="panes">
     <section class="list" id="list" aria-label="Peptides"></section>
     <section class="detail" id="detail" aria-live="polite"></section>
@@ -177,7 +223,7 @@ details.howto p{margin-top:8px;color:var(--ink)}
       <p>Draw up the bacteriostatic water, push it in slowly down the inside wall of the vial so it does not spray the powder, then swirl or roll gently. Never shake. Refrigerate after mixing (2–8 °C) and use within the window shown for that peptide, usually about 4 weeks. Check the vial's capacity before adding 3 mL or more; most vendor vials are 3 mL.</p>
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
-    <p>Regulatory status changes fast. FDA compounding decisions on BPC-157, TB-500, KPV, MOTS-c and epithalon were pending after July 2026 advisory votes; CagriSema was under FDA review. Approved drugs are described from their current labels.</p>
+    <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: FDA compounding decisions on BPC-157, TB-500, KPV, MOTS-c and epithalon were pending after July 2026 advisory votes; CagriSema was under FDA review. Approved drugs are described from their current labels.</p>
   </footer>
 </div>
 
@@ -197,7 +243,7 @@ const STATUS={
 const DATA=[
 {id:"retatrutide",cat:"wl",name:"Retatrutide",aliases:["reta","LY3437943","triple agonist"],status:"trials",
  for:"Lilly's GIP/GLP-1/glucagon triple agonist for weight loss. Phase 3 (TRIUMPH) done; not approved anywhere yet.",
- unit:"mg",min:1,max:12,common:12,start:2,freq:"Once weekly",timing:"Any time, with or without food. Rotate sites.",
+ unit:"mg",min:1,max:12,common:12,start:2,freq:"Once weekly",interval:7,timing:"Any time, with or without food. Rotate sites.",
  ladder:[{weeks:"1–4",dose:2},{weeks:"5–8",dose:4},{weeks:"9–12",dose:6},{weeks:"13–16",dose:9},{weeks:"17+",dose:12}],
  ladderNote:"Lilly's Phase 3 schedule: start 2 mg, step up every 4 weeks. Target 4 mg = one step; 9 mg = stop at week 13; 12 mg = the full ladder. Step up only if the current dose is tolerated; the trials allowed staying lower or dropping back permanently for GI effects.",
  vials:[10,20,40],vialDefault:20,water:2,cycle:"Continuous in trials (80 weeks: 16 escalation + 64 maintenance)",
@@ -207,7 +253,7 @@ const DATA=[
 
 {id:"semaglutide",cat:"wl",name:"Semaglutide",aliases:["sema","Wegovy","Ozempic","Wegovy HD"],status:"approved",
  for:"GLP-1 agonist for weight loss (Wegovy) and type 2 diabetes (Ozempic). Wegovy HD 7.2 mg approved March 2026.",
- unit:"mg",min:0.25,max:2.4,common:2.4,start:0.25,freq:"Once weekly, same day",timing:"Any time, with or without food. Can move the day if 2+ days separate doses.",
+ unit:"mg",min:0.25,max:2.4,common:2.4,start:0.25,freq:"Once weekly, same day",interval:7,timing:"Any time, with or without food. Can move the day if 2+ days separate doses.",
  ladder:[{weeks:"1–4",dose:0.25},{weeks:"5–8",dose:0.5},{weeks:"9–12",dose:1},{weeks:"13–16",dose:1.7},{weeks:"17+",dose:2.4}],
  ladderNote:"Wegovy label. Maintenance is 1.7 or 2.4 mg; if a step is rough, hold it 4 more weeks before moving up. Ozempic (diabetes) tops out at 2 mg. Wegovy HD 7.2 mg is only after 4+ weeks on 2.4 mg.",
  vials:[2,3,5,10],vialDefault:5,water:2,cycle:"Continuous. STEP 1 (68 wk): −14.9%; about two-thirds of lost weight came back within a year of stopping.",
@@ -217,7 +263,7 @@ const DATA=[
 
 {id:"tirzepatide",cat:"wl",name:"Tirzepatide",aliases:["tirz","Zepbound","Mounjaro"],status:"approved",
  for:"Dual GIP/GLP-1 agonist for weight loss and sleep apnea (Zepbound) and type 2 diabetes (Mounjaro).",
- unit:"mg",min:2.5,max:15,common:10,start:2.5,freq:"Once weekly, same day",timing:"Any time, with or without food. Can move the day if 3+ days separate doses.",
+ unit:"mg",min:2.5,max:15,common:10,start:2.5,freq:"Once weekly, same day",interval:7,timing:"Any time, with or without food. Can move the day if 3+ days separate doses.",
  ladder:[{weeks:"1–4",dose:2.5},{weeks:"5–8",dose:5},{weeks:"9–12",dose:7.5},{weeks:"13–16",dose:10},{weeks:"17–20",dose:12.5},{weeks:"21+",dose:15}],
  ladderNote:"Zepbound label. Each +2.5 mg step only after at least 4 weeks on the current dose. 2.5 mg is a starter dose, not maintenance; maintenance is 5, 10 or 15 mg. Many hold at 10 mg since 15 adds little.",
  vials:[5,10,15,30,60],vialDefault:15,water:2,cycle:"Continuous. SURMOUNT-1 (72 wk): 5 mg −15%, 10 mg −19.5%, 15 mg −20.9% vs −3.1%. Switching to placebo regained about 14% in a year.",
@@ -227,7 +273,7 @@ const DATA=[
 
 {id:"cagrilintide",cat:"wl",name:"Cagrilintide",aliases:["cagri","CagriSema","amylin analog"],status:"trials",
  for:"Long-acting amylin analog for weight loss, paired 1:1 with semaglutide as CagriSema. Under FDA review; not approved as of October 2026.",
- unit:"mg",min:0.25,max:2.4,common:2.4,start:0.25,freq:"Once weekly",timing:"Any time; in the trials it was injected together with semaglutide.",
+ unit:"mg",min:0.25,max:2.4,common:2.4,start:0.25,freq:"Once weekly",interval:7,timing:"Any time; in the trials it was injected together with semaglutide.",
  ladder:[{weeks:"1–4",dose:0.25},{weeks:"5–8",dose:0.5},{weeks:"9–12",dose:1},{weeks:"13–16",dose:1.7},{weeks:"17+",dose:2.4}],
  ladderNote:"REDEFINE 1 schedule for each of cagrilintide and semaglutide. Only 57% of participants were on the full dose by week 68, so slowing down is normal.",
  vials:[5,10],vialDefault:5,water:2,cycle:"68 weeks in trials (16 escalation + 52 maintenance); nothing on what happens after stopping.",
@@ -237,7 +283,7 @@ const DATA=[
 
 {id:"aod9604",cat:"wl",name:"AOD-9604",aliases:["AOD","hGH fragment 177-191"],status:"limited",
  for:"Growth-hormone fragment sold for fat loss. Human trials were oral tablets and the program was dropped in 2007.",
- unit:"mcg",min:250,max:500,common:300,freq:"Once daily (some split 250 AM / 250 PM)",timing:"Fasted on waking, 30–60 min before food.",
+ unit:"mcg",min:250,max:500,common:300,freq:"Once daily (some split 250 AM / 250 PM)",interval:1,timing:"Fasted on waking, 30–60 min before food.",
  ladder:[],vials:[2,5,10],vialDefault:5,water:2,cycle:"8–12 weeks on, 4–8 weeks off",
  notes:["The 12-week oral trial lost about 2.6 kg vs 0.8 kg on placebo; the 24-week pivotal trial did not beat placebo. The injectable microgram protocol has no trial behind it.","Safety across roughly 900 trial participants looked like placebo: no IGF-1 rise, no glucose change.","Reported by users: headache, fatigue, dizziness, injection-site redness.","Vendor water volumes disagree (1–3 mL per 5 mg); 2 mL is the median."],
  storage:"Fridge after mixing, about 28 days.",evidence:"Weak: a small positive oral signal, a failed pivotal trial, nothing on injections.",
@@ -245,7 +291,7 @@ const DATA=[
 
 {id:"bpc157",cat:"heal",name:"BPC-157",aliases:["BPC","body protection compound","wolverine stack"],status:"none",
  for:"Pentadecapeptide used for tendon, ligament and muscle injuries and for the gut lining.",
- unit:"mcg",min:200,max:500,common:250,freq:"1–2× daily (250 mcg 1–2×/day; 500 mcg 2×/day is the high end)",timing:"Near the injury is the convention (the animal data is systemic). Abdomen for gut use.",
+ unit:"mcg",min:200,max:500,common:250,freq:"1–2× daily (250 mcg 1–2×/day; 500 mcg 2×/day is the high end)",interval:1,timing:"Near the injury is the convention (the animal data is systemic). Abdomen for gut use.",
  ladder:[],vials:[2,5,10],vialDefault:5,water:2,cycle:"4–8 weeks on, 2–4 weeks off",
  notes:["Nearly all data is rodent work from one Croatian group; there is no human controlled trial.","Oral or capsule 250–500 mcg 1–2×/day is the usual route for gut complaints.","Reported: injection-site bumps, nausea, headache, fatigue. Theoretical concern that it promotes blood-vessel growth around tumors.","FDA: Category 2 (safety concerns) Sept 2023, removed April 2026; advisory panel voted 8–6 in July 2026 to allow compounding; FDA decision pending.","The 'wolverine stack' is BPC-157 plus TB-500, drawn in separate syringes."],
  storage:"Fridge, protect from light, about 28 days.",evidence:"Rodent data only; human reports are tiny uncontrolled series.",
@@ -253,7 +299,7 @@ const DATA=[
 
 {id:"tb500",cat:"heal",name:"TB-500",aliases:["thymosin beta-4 fragment","TB500","wolverine stack"],status:"none",
  for:"Thymosin beta-4 fragment used for systemic soft-tissue and tendon repair.",
- unit:"mg",min:2,max:5,common:2.5,freq:"Loading 2×/week for 4–6 weeks, then 1×/week",timing:"Works systemically: abdomen or thigh, no need to inject near the injury.",
+ unit:"mg",min:2,max:5,common:2.5,freq:"Loading 2×/week for 4–6 weeks, then 1×/week",interval:null,timing:"Works systemically: abdomen or thigh, no need to inject near the injury.",
  ladder:[{weeks:"1–6",dose:2.5,label:"twice a week (loading)"},{weeks:"7–12",dose:2.5,label:"once a week (maintenance)"}],
  ladderNote:"Community convention, not a trial schedule. Many stop once the injury has functionally recovered.",
  vials:[2,5,10],vialDefault:5,water:2,cycle:"About 3 months (loading + maintenance), then 4–8 weeks off",
@@ -263,7 +309,7 @@ const DATA=[
 
 {id:"ghkcu",cat:"heal",name:"GHK-Cu (injectable)",aliases:["copper peptide","GHK","copper tripeptide"],status:"none",
  for:"Copper tripeptide injected for skin, hair, collagen and inflammation.",
- unit:"mg",min:1,max:2,common:1,freq:"Once daily (or 3–5×/week)",timing:"Abdomen or thigh, rotate sites. Not injected at the face or scalp.",
+ unit:"mg",min:1,max:2,common:1,freq:"Once daily (or 3–5×/week)",interval:1,timing:"Abdomen or thigh, rotate sites. Not injected at the face or scalp.",
  ladder:[{weeks:"1–2",dose:1},{weeks:"3–4",dose:2}],ladderNote:"Clinic convention; 0.5 mg is a cautious start.",
  vials:[50,100],vialDefault:50,water:5,cycle:"30 days on / 30 off, or 4–8 weeks on, 2–4 off",
  notes:["It stings. Dilute more (50 mg in 4–5 mL instead of 2) and inject slowly. Blue-tinted bruising at the site is reported.","Human data is for topical use only; nobody has studied injected GHK-Cu.","Each 1–3 mg delivers roughly 0.1–0.5 mg of copper. A dermatologist reported raised liver enzymes and copper levels in heavy users (NPR, Sept 2026).","Also reported: site lumps, headache, lightheadedness, metallic taste.","FDA: injectable form Category 2 Sept 2023, removed April 2026; not yet reviewed by the panel (due by Feb 2027)."],
@@ -272,7 +318,7 @@ const DATA=[
 
 {id:"kpv",cat:"heal",name:"KPV",aliases:["Lys-Pro-Val","alpha-MSH fragment"],status:"none",
  for:"Alpha-MSH tripeptide used as an anti-inflammatory for the gut and skin.",
- unit:"mcg",min:200,max:500,common:500,freq:"Once daily (some 250 mcg every 12 h); 3×/week for maintenance",timing:"Abdomen, any time. Oral on an empty stomach 30 min before food.",
+ unit:"mcg",min:200,max:500,common:500,freq:"Once daily (some 250 mcg every 12 h); 3×/week for maintenance",interval:1,timing:"Abdomen, any time. Oral on an empty stomach 30 min before food.",
  ladder:[],vials:[5,10],vialDefault:10,water:2,cycle:"4–8 weeks typical; 8–12 weeks for gut protocols",
  notes:["Mouse colitis and cell data only; no human trial of any route.","Oral capsules 500–1000 mcg 1–2×/day are common for gut use.","Mild reports: site irritation, occasional headache, GI upset at high oral doses. No skin darkening (unlike melanotan).","FDA: Category 2 Sept 2023, removed April 2026; panel voted 8–6 in July 2026 to allow compounding; decision pending.","Often paired with BPC-157 for gut protocols."],
  storage:"Fridge, protect from light, about 28 days.",evidence:"No human data.",
@@ -280,7 +326,7 @@ const DATA=[
 
 {id:"cjc",cat:"gh",name:"CJC-1295 (no DAC)",aliases:["Mod GRF 1-29","modified GRF","CJC"],status:"none",
  for:"Short-acting GHRH analog that amplifies your own GH pulse. Usually stacked with ipamorelin.",
- unit:"mcg",min:100,max:300,common:100,freq:"1–3× daily; most often once at bedtime",timing:"Fasted: 2+ hours after food, nothing for 30 min after. The bedtime dose rides the sleep GH pulse.",
+ unit:"mcg",min:100,max:300,common:100,freq:"1–3× daily; most often once at bedtime",interval:1,timing:"Fasted: 2+ hours after food, nothing for 30 min after. The bedtime dose rides the sleep GH pulse.",
  ladder:[{weeks:"1–2",dose:100,label:"once at bedtime"},{weeks:"3+",dose:100,label:"2–3× per day, or 200 mcg at bedtime"}],ladderNote:"Community convention.",
  vials:[2,5,10],vialDefault:5,water:2,cycle:"8–12 weeks on, 4–6 weeks off",
  notes:["100 mcg is the saturation dose; bigger shots add side effects, not GH.","Flushing or head rush, headache, site redness, mild water retention; usually gone within an hour.","GH raises blood sugar: check fasting glucose or A1c, and IGF-1 at baseline and 4–6 weeks.","FDA Category 2 (immunogenicity; heart-rate and flushing reports), so it cannot be compounded. Avoid with active cancer or pituitary disease."],
@@ -289,7 +335,7 @@ const DATA=[
 
 {id:"cjcdac",cat:"gh",name:"CJC-1295 with DAC",aliases:["CJC DAC","long-acting CJC"],status:"limited",
  for:"Long-acting GHRH analog (half-life about 6–8 days) for a continuous GH and IGF-1 lift.",
- unit:"mg",min:0.5,max:2,common:1,freq:"Once weekly (some split Mon/Thu); 1–2 mg per week total",timing:"Any time; fasting is not critical.",
+ unit:"mg",min:0.5,max:2,common:1,freq:"Once weekly (some split Mon/Thu); 1–2 mg per week total",interval:7,timing:"Any time; fasting is not critical.",
  ladder:[],vials:[2,5,10],vialDefault:5,water:2,cycle:"8–12 weeks (up to 16), then 4+ weeks off",
  notes:["Non-pulsatile 'GH bleed': GH stays 2–10× higher for about 6 days and IGF-1 for 9–11 days per dose, so side effects last days, not minutes.","Water retention, puffy face, flushing, lethargy, tingling, lower insulin sensitivity.","Phase 1 trials (2006) were clean; Phase 2 was halted after a participant death and development was abandoned.","Monitor IGF-1 and fasting glucose. FDA Category 2; WADA-prohibited."],
  storage:"Fridge, 3–4 weeks.",evidence:"Two randomized Phase 1 trials showed a dose-dependent GH/IGF-1 rise; no outcome trials.",
@@ -297,7 +343,7 @@ const DATA=[
 
 {id:"blend",cat:"gh",name:"CJC-1295 / Ipamorelin blend",aliases:["CJC/Ipa","ipamorelin CJC","5mg/5mg"],status:"none",
  for:"CJC-1295 (no DAC) and ipamorelin in one vial for a synergistic, still-pulsatile GH release.",
- unit:"mcg",unitLabel:"mcg of each",min:100,max:300,common:200,freq:"Once at bedtime (clinics: 5 nights on, 2 off); some add a fasted morning dose",timing:"30–60 min before bed on an empty stomach: 2+ hours after food, nothing for 30 min after.",
+ unit:"mcg",unitLabel:"mcg of each",min:100,max:300,common:200,freq:"Once at bedtime (clinics: 5 nights on, 2 off); some add a fasted morning dose",interval:1,timing:"30–60 min before bed on an empty stomach: 2+ hours after food, nothing for 30 min after.",
  ladder:[{weeks:"1",dose:100,label:"of each, at bedtime"},{weeks:"2+",dose:200,label:"200–300 mcg of each"}],ladderNote:"Clinic convention.",
  vials:[5,10],vialDefault:5,vialNote:"Enter the mg of EACH component: a 5 mg / 5 mg vial is 5.",water:2,cycle:"8–12 weeks on, 4 weeks off",
  notes:["A '5 mg / 5 mg' vial holds 5 mg of each (10 mg total). With 2 mL of water, 200 mcg of each is 8 units.","Headache in weeks 1–2, flushing, water retention, vivid dreams, mild hunger, site irritation.","Labs: IGF-1 at baseline and mid-cycle, fasting glucose or A1c. Avoid with active cancer.","Never studied as a combination. Both components are FDA Category 2, so US pharmacies cannot compound it."],
@@ -306,7 +352,7 @@ const DATA=[
 
 {id:"ipamorelin",cat:"gh",name:"Ipamorelin",aliases:["ipa","NNC 26-0161"],status:"limited",
  for:"Selective ghrelin-receptor GH secretagogue: a GH pulse without the cortisol or prolactin rise.",
- unit:"mcg",min:100,max:300,common:200,freq:"1–3× daily; once at bedtime is most common",timing:"Fasted 1–2 hours after food, wait 20–30 min before eating. Half-life about 2 hours, so each shot is one pulse.",
+ unit:"mcg",min:100,max:300,common:200,freq:"1–3× daily; once at bedtime is most common",interval:1,timing:"Fasted 1–2 hours after food, wait 20–30 min before eating. Half-life about 2 hours, so each shot is one pulse.",
  ladder:[{weeks:"1",dose:100},{weeks:"2–3",dose:200},{weeks:"4–12",dose:300,label:"200–300 mcg"}],ladderNote:"Community convention.",
  vials:[2,5,10],vialDefault:5,water:2,cycle:"8–12 weeks on, 2–4 weeks off",
  notes:["Human trials were intravenous, for post-surgical ileus, and failed (2014). There is no human data for the way it is actually used.","Headache, flushing, mild water retention, brief hunger, site reactions; usually settle in 1–2 weeks.","Monitor IGF-1 (baseline, 4–6 weeks) and fasting glucose. Avoid with active cancer or pituitary disorders.","FDA Category 2 (immunogenicity; serious events including a death with IV use). WADA-prohibited."],
@@ -315,7 +361,7 @@ const DATA=[
 
 {id:"tesamorelin",cat:"gh",name:"Tesamorelin",aliases:["Egrifta","tesa","TH9507"],status:"approved",
  for:"GHRH analog that cuts visceral belly fat. Approved (Egrifta) for HIV-related lipodystrophy; used off-label for visceral fat and liver fat.",
- unit:"mg",min:1,max:2,common:2,freq:"Once daily",timing:"Label: any time, abdomen only, rotate. Off-label users go bedtime, fasted.",
+ unit:"mg",min:1,max:2,common:2,freq:"Once daily",interval:1,timing:"Label: any time, abdomen only, rotate. Off-label users go bedtime, fasted.",
  ladder:[],vials:[2,5,10],vialDefault:10,water:2,cycle:"Continuous (26–52 week trials); fat returns within months of stopping. Recheck IGF-1 at 3–6 months.",
  notes:["Label products: Egrifta WR 1.28 mg/day and Egrifta SV 1.4 mg/day give the same exposure as the original 2 mg. 2 mg is the gray-market default; 1 mg is common for cost or side effects.","Visceral fat about −15–20% at 26 weeks; also lowers liver fat.","IGF-1 monitoring is on the label. Check glucose before and periodically (diabetes 5% vs 1% on placebo).","Fluid retention: swelling, joint pain, carpal tunnel. Site reactions about 25%. Half develop antibodies without losing effect.","Contraindicated with active cancer, pregnancy, or pituitary tumor, surgery or head radiation."],
  storage:"Egrifta WR: room temperature, 7 days after mixing. Vendor vials: fridge, about 28 days. Swirl, do not shake.",evidence:"Strongest of the GH group: pooled Phase 3 (n=816) plus a 12-month fatty-liver trial, in HIV populations and for fat, not anti-aging.",
@@ -323,7 +369,7 @@ const DATA=[
 
 {id:"sermorelin",cat:"gh",name:"Sermorelin",aliases:["GRF 1-29","Geref","GHRH 1-29"],status:"former",
  for:"GHRH(1-29) that restores pulsatile GH. Geref was approved for children and withdrawn in 2009 (not for safety); now compounded only.",
- unit:"mcg",min:100,max:500,common:300,freq:"Once nightly (7 nights, or 5 on / 2 off)",timing:"30–60 min before bed on an empty stomach (90+ min after food).",
+ unit:"mcg",min:100,max:500,common:300,freq:"Once nightly (7 nights, or 5 on / 2 off)",interval:1,timing:"30–60 min before bed on an empty stomach (90+ min after food).",
  ladder:[{weeks:"1–2",dose:100},{weeks:"3–4",dose:200},{weeks:"5–8",dose:300},{weeks:"9+",dose:400,label:"400–500 only if IGF-1 has not risen"}],ladderNote:"Clinic convention.",
  vials:[2,5,10,15],vialDefault:5,water:2,cycle:"3–6 months on, then 1–2 months off and reassess with IGF-1",
  notes:["Compounded prescriptions are often 9 mg / 3 mL or 15 mg / 5 mL (3 mg/mL, so 300 mcg is 10 units).","Site reactions about 17% in trials, flushing, headache, dizziness, vivid dreams. Hypothyroidism about 6.5% in trials, so check TSH.","Monitor IGF-1 at baseline and 6–8 weeks, plus fasting glucose. Avoid with active cancer.","Approval-grade trials exist only in GH-deficient children; adult anti-aging data is small and old."],
@@ -332,33 +378,33 @@ const DATA=[
 
 {id:"motsc",cat:"gh",name:"MOTS-c",aliases:["mitochondrial peptide","MOTS"],status:"none",
  for:"Mitochondrial peptide and AMPK activator sold for insulin sensitivity, fat loss and exercise capacity.",
- unit:"mg",min:5,max:10,common:5,freq:"2–3× per week (range 1–3×)",timing:"Morning; 30–60 min before or within an hour after exercise. Fasting not required.",
+ unit:"mg",min:5,max:10,common:5,freq:"2–3× per week (range 1–3×)",interval:null,timing:"Morning; 30–60 min before or within an hour after exercise. Fasting not required.",
  ladder:[{weeks:"1–2",dose:5,label:"once a week (tolerance check)"},{weeks:"3+",dose:5,label:"2–3× per week"}],ladderNote:"Community convention.",
- vials:[10,40],vialDefault:10,water:1,cycle:"4–8 weeks on, 4–8 weeks off; 2–4 cycles a year",
+ vials:[10,40],vialDefault:10,water:1,useDays:21,cycle:"4–8 weeks on, 4–8 weeks off; 2–4 cycles a year",
  notes:["Mouse data only. The one human trial was an analog (CB4211, 25 mg/day for 4 weeks, 2021) that was safe, shifted biomarkers and was shelved.","Site redness and swelling are common; also flushing, headache, fatigue, nausea, palpitations, possible blood-sugar swings.","Less stable than most peptides once mixed: use within 2–3 weeks.","FDA: Category 2, removed April 2026; panel voted 7–5 in July 2026 to allow compounding; decision pending. WADA-prohibited."],
  storage:"Fridge, protect from light, 2–3 weeks.",evidence:"Rodent data; no human dosing study of MOTS-c itself.",
  sources:["https://www.peptideprotocolwiki.com/peptides/mots-c/dosing","https://longevity.technology/news/cohbar-announces-positive-human-data-from-obesity-study/"]},
 
 {id:"epithalon",cat:"gh",name:"Epithalon",aliases:["epitalon","AEDG","pineal peptide"],status:"none",
  for:"Pineal tetrapeptide sold for telomerase activation, sleep and circadian rhythm.",
- unit:"mg",min:5,max:10,common:10,freq:"Once daily for 10–20 days per course",timing:"Evening or bedtime. Fasting not required.",
- ladder:[],vials:[10,50],vialDefault:10,water:1,cycle:"10–20 day course, 1–2× per year, spaced 4–6 months apart",
+ unit:"mg",min:5,max:10,common:10,freq:"Once daily for 10–20 days per course",interval:1,timing:"Evening or bedtime. Fasting not required.",
+ ladder:[],vials:[10,50],vialDefault:10,water:1,useDays:21,cycle:"10–20 day course, 1–2× per year, spaced 4–6 months apart",
  notes:["The Russian human data (15-year follow-up, n=79) used the pineal extract Epithalamin, not synthetic epitalon, and nothing has been independently replicated.","Common courses: 5 mg × 20 days or 10 mg × 10 days (100 mg total). A 50 mg vial is 10 days at 5 mg.","The 5–10 mg/day convention has no dose-finding study behind it; a low-dose camp runs 100–250 mcg daily.","Reported: site redness, drowsiness or vivid dreams, transient fatigue. Theoretical telomerase/cancer concern, so avoid with any cancer history.","FDA: Category 2, removed April 2026; panel voted 7–4 in July 2026 to allow compounding; decision pending."],
  storage:"Fridge, about 3 weeks. Do not shake.",evidence:"Weakest in the set: one research group, animal and lab-dish data.",
  sources:["https://www.peptideprotocolwiki.com/peptides/epitalon/dosing","https://outliyr.com/reports/epitalon"]},
 
 {id:"nad",cat:"gh",name:"NAD+",aliases:["nicotinamide adenine dinucleotide","NAD"],status:"limited",
  for:"Coenzyme injected for energy and 'longevity'. No approved injectable dosing; the numbers are clinic practice.",
- unit:"mg",min:50,max:200,common:100,start:50,freq:"2–3× per week (some daily for a 1–2 week loading phase)",timing:"Any time you can sit still for 20 minutes. Inject slowly (10+ seconds) and rotate sites.",
+ unit:"mg",min:50,max:200,common:100,start:50,freq:"2–3× per week (some daily for a 1–2 week loading phase)",interval:null,timing:"Any time you can sit still for 20 minutes. Inject slowly (10+ seconds) and rotate sites.",
  ladder:[{weeks:"1–2",dose:50,label:"25–50 mg, 2–3× per week (test)"},{weeks:"3+",dose:100,label:"2–3× per week"}],ladderNote:"Clinic practice, not trial data. Higher single doses (150–200 mg) mostly add side effects.",
  vials:[100,250,500,1000],vialDefault:500,water:5,cycle:"Ongoing; many run 4–8 week blocks",
  notes:["The solution is acidic, so it stings. Inject slowly and split 100 mg across two sites if it burns.","Flushing, nausea, headache or a heavy, tired feeling for about an hour, worse when injected fast or at high doses.","500 mg usually ships in a 10 mL vial: 5 mL of water gives 100 mg/mL, so 50 mg = 50 units and 100 mg = 100 units.","Less stable than peptides: discard if it turns yellow or brown or shows particles."],
  storage:"Fridge, 2–4 weeks.",evidence:"Small IV-infusion studies only; subcutaneous dosing is clinic practice.",
  sources:["https://www.peptidedosingprotocols.com/protocol/nad-plus","https://www.justanswer.com/pharmacy/articles/nad-500mg-reconstitution-dosage"]},
 
-{id:"custom",cat:"tool",name:"Any vial (custom)",aliases:["calculator","custom","other"],status:null,
+{id:"custom",cat:"tool",name:"Any vial (custom)",aliases:["calculator","custom","other"],status:null,noAlerts:true,
  for:"Reconstitution math for anything not listed. Enter the vial size, the water you add and the dose you want.",
- unit:"mg",min:0.1,max:10,common:1,freq:"",timing:"",ladder:[],vials:[2,5,10,20,50],vialDefault:5,water:2,cycle:"",notes:[],storage:"",evidence:"",sources:[],unitSwitch:true}
+ unit:"mg",min:0.1,max:10,common:1,freq:"",interval:null,timing:"",ladder:[],vials:[2,5,10,20,50],vialDefault:5,water:2,cycle:"",notes:[],storage:"",evidence:"",sources:[],unitSwitch:true}
 ];
 
 /* ---------- helpers ---------- */
@@ -369,19 +415,36 @@ function toMg(dose,unit){ return unit==="mcg"? dose/1000 : dose; }
 function unitsFor(doseMg,vialMg,waterMl){ return doseMg/vialMg*waterMl*100; }
 function load(k,fb){ try{ const v=localStorage.getItem(k); return v==null?fb:JSON.parse(v); }catch(e){ return fb; } }
 function save(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
-function doseRange(p){
-  const u=p.unitLabel||p.unit;
-  if(p.min===p.max) return fmt(p.min)+" "+u;
-  return fmt(p.min)+"–"+fmt(p.max)+" "+u;
-}
+function doseRange(p){ const u=p.unitLabel||p.unit; return (p.min===p.max? fmt(p.min) : fmt(p.min)+"–"+fmt(p.max))+" "+u; }
+function pad(n){ return String(n).padStart(2,"0"); }
+function todayISO(){ const d=new Date(); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function parts(iso){ const m=String(iso||"").match(/^(\d{4})-(\d{2})-(\d{2})/); return m?[+m[1],+m[2],+m[3]]:null; }
+function daysBetween(a,b){ const A=parts(a),B=parts(b); if(!A||!B) return 0; return Math.round((Date.UTC(B[0],B[1]-1,B[2])-Date.UTC(A[0],A[1]-1,A[2]))/86400000); }
+function addDays(iso,n){ const A=parts(iso); if(!A) return iso; const t=new Date(Date.UTC(A[0],A[1]-1,A[2]+n)); return t.getUTCFullYear()+"-"+pad(t.getUTCMonth()+1)+"-"+pad(t.getUTCDate()); }
+function fmtDate(iso){ const A=parts(iso); if(!A) return "–"; return new Date(A[0],A[1]-1,A[2]).toLocaleDateString(undefined,{month:"short",day:"numeric"}); }
+function ago(n){ return n===0?"today":n===1?"yesterday":n+" days ago"; }
+function parseWeeks(s){ s=String(s).replace(/[–—]/g,"-").trim(); let m;
+  if((m=s.match(/^(\d+)\s*-\s*(\d+)/))) return [+m[1],+m[2]];
+  if((m=s.match(/^(\d+)\s*\+/))) return [+m[1],Infinity];
+  if((m=s.match(/^(\d+)/))) return [+m[1],+m[1]];
+  return [1,Infinity]; }
 
 /* ---------- state ---------- */
-const app=$("#app"), listEl=$("#list"), detailEl=$("#detail"), catsEl=$("#cats"), qEl=$("#q");
+const app=$("#app"), listEl=$("#list"), detailEl=$("#detail"), catsEl=$("#cats"), qEl=$("#q"), vialsEl=$("#vials"), vialsBtn=$("#vials-btn");
 let cat=load("pdg:cat","all"); if(!CATS.some(c=>c.id===cat)) cat="all";
 let q="";
 let current=load("pdg:last",null);
 let calcState={};
+let vials=load("pdg:vials",[]); if(!Array.isArray(vials)) vials=[];
+let uiFlags={form:false,confirm:null,logFor:null,add:false,exportOpen:false};   /* transient UI state */
+let seq=0; const newId=(p)=>p+Date.now().toString(36)+(seq++).toString(36);
+/* migrate: every vial and log entry gets an id */
+vials.forEach(v=>{ if(!v.id) v.id=newId("v"); if(!Array.isArray(v.log)) v.log=[]; v.log.forEach(e=>{ if(!e.id) e.id=newId("e"); }); v.log.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0); });
 
+function saveVials(){ save("pdg:vials",vials); updateVialsBtn(); }
+function vialFor(pid){ const m=vials.filter(v=>v.pid===pid); return m.length?m[m.length-1]:null; }
+function updateVialsBtn(){ if(vialsBtn) vialsBtn.textContent="My vials"+(vials.length?" ("+vials.length+")":""); }
+function peptideOf(v){ return DATA.find(x=>x.id===v.pid)||null; }
 function getCalc(p){
   if(calcState[p.id]) return calcState[p.id];
   const saved=load("pdg:calc:"+p.id,null);
@@ -398,10 +461,90 @@ function compute(p,c){
   const conc=c.vial/c.water;
   const perVial=doseMg>0?Math.floor(c.vial/doseMg+1e-9):0;
   const flags=[];
-  if(units>100) flags.push("More than one full syringe ("+fmt(units/100,1)+" mL). Use less water so one dose fits in 100 units.");
-  else if(units<5) flags.push("Under 5 units is hard to measure accurately. Use more water for a bigger draw.");
-  if(c.water>3) flags.push("Make sure the vial actually holds "+fmt(c.water)+" mL; most vendor vials are 3 mL (NAD+ is usually 10 mL).");
+  if(units>100) flags.push({level:"warn",text:"More than one full syringe ("+fmt(units/100,1)+" mL). Use less water so one dose fits in 100 units."});
+  else if(units<5) flags.push({level:"warn",text:"Under 5 units is hard to measure accurately. Use more water for a bigger draw."});
+  if(c.water>3) flags.push({level:"warn",text:"Make sure the vial actually holds "+fmt(c.water)+" mL; most vendor vials are 3 mL (NAD+ is usually 10 mL)."});
   return {unit,doseMg,units,ml:units/100,conc,perVial,flags};
+}
+
+/* ---------- plan / tracker math ---------- */
+function planFor(p,v){
+  const u=p.unitLabel||p.unit;
+  if(!p.ladder.length) return [{from:1,to:Infinity,dose:v.target,label:""}];
+  const out=[];
+  for(const s of p.ladder){
+    const [a,b]=parseWeeks(s.weeks);
+    if(s.dose>v.target){
+      const last=out[out.length-1];
+      if(last&&last.dose===v.target){ last.to=Infinity; last.label=(last.label?last.label+" · ":"")+"hold here"; }
+      else out.push({from:a,to:Infinity,dose:v.target,label:"hold at target"});
+      return out;
+    }
+    out.push({from:a,to:b,dose:s.dose,label:s.label||""});
+  }
+  if(out.length&&isFinite(out[out.length-1].to)) out[out.length-1].to=Infinity;
+  return out;
+}
+function trackerState(p,v,asOf){
+  const today=asOf||todayISO();
+  const dayN=daysBetween(v.start,today);                 /* days since plan start */
+  const week=dayN<0?0:Math.floor(dayN/7)+1;
+  const plan=planFor(p,v);
+  let step=plan.find(s=>week>=s.from&&week<=s.to)||null;
+  if(!step&&week>0){ const before=plan.filter(s=>s.from<=week); step=before.length?before[before.length-1]:plan[0]; }
+  if(!step) step=plan[0];
+  const next=plan.find(s=>s.from>week&&(s.dose!==step.dose||s.label!==step.label))||null;
+  const nextDate=next?addDays(v.start,(next.from-1)*7):null;
+  const dose=step.dose;
+  const units=unitsFor(toMg(dose,p.unit),v.vial,v.water);
+  const all=Array.isArray(v.log)?v.log:[];
+  const log=all.filter(e=>daysBetween(e.d,today)>=0);    /* entries on or before the as-of date */
+  const usedUnitTotal=log.reduce((s,e)=>s+(+e.dose||0),0);
+  const remainingMg=v.vial-toMg(usedUnitTotal,p.unit);
+  const dosesLeft=dose>0?Math.floor(remainingMg/toMg(dose,p.unit)+1e-9):0;
+  const openDays=daysBetween(v.mixed,today);
+  const useBy=addDays(v.mixed,p.useDays||28);
+  const expired=daysBetween(useBy,today)>0;
+  const last=log.length?log[log.length-1]:null;
+  const sinceLast=last?daysBetween(last.d,today):null;
+  const dueIn=(last&&p.interval)?p.interval-sinceLast:null;   /* negative = overdue */
+  return {today,dayN,week,plan,step,next,nextDate,dose,units,log,remainingMg,dosesLeft,openDays,useBy,expired,last,sinceLast,dueIn};
+}
+/* over / under dose alerts for a proposed dose (in the peptide's unit) */
+function doseAlerts(p,v,dose){
+  const out=[]; if(p.noAlerts||!(dose>0)) return out;
+  const u=p.unitLabel||p.unit;
+  const maxLabel=p.status==="approved"?"the label maximum":"the highest dose used in trials or common practice";
+  if(dose>p.max) out.push({level:"bad",text:"OVER: "+fmt(dose)+" "+u+" is above "+maxLabel+" ("+fmt(p.max)+" "+u+")."});
+  if(dose<p.min) out.push({level:"warn",text:"UNDER: "+fmt(dose)+" "+u+" is below the lowest dose typically used ("+fmt(p.min)+" "+u+")."});
+  if(v){
+    const t=trackerState(p,v);
+    if(dose>t.dose*1.001&&dose<=p.max) out.push({level:"bad",text:"OVER PLAN: your plan says "+fmt(t.dose)+" "+u+" for week "+t.week+" ("+fmt(t.units,1)+" units). "+fmt(dose)+" is "+fmt(dose/t.dose,1)+"× that."});
+    if(dose<t.dose*0.999&&dose>=p.min) out.push({level:"warn",text:"UNDER PLAN: your plan says "+fmt(t.dose)+" "+u+" this week; "+fmt(dose)+" is lower. Fine if you are holding back for side effects."});
+  }
+  return out;
+}
+function timingAlerts(p,t){
+  const out=[];
+  if(t.expired) out.push({level:"bad",text:"Vial past its use-by date ("+fmtDate(t.useBy)+", mixed "+t.openDays+" days ago). Mix a fresh one."});
+  else if(daysBetween(t.today,t.useBy)<=3) out.push({level:"warn",text:"Vial use-by is "+fmtDate(t.useBy)+" ("+daysBetween(t.today,t.useBy)+" days). Plan the next one."});
+  if(t.last&&p.interval){
+    if(t.dueIn>0&&t.sinceLast===0) out.push({level:"good",text:"Dose logged today. Next due "+fmtDate(addDays(t.last.d,p.interval))+"."});
+    else if(t.dueIn>0) out.push({level:"good",text:"Next dose due "+fmtDate(addDays(t.last.d,p.interval))+" (in "+t.dueIn+" day"+(t.dueIn===1?"":"s")+")."});
+    else if(t.dueIn===0) out.push({level:"warn",text:"Dose due today."});
+    else out.push({level:"bad",text:"UNDER: dose overdue by "+(-t.dueIn)+" day"+(t.dueIn===-1?"":"s")+" (last one "+ago(t.sinceLast)+")."+(p.interval===7?" Check the missed-dose rule in the notes.":"")});
+  } else if(!t.last) out.push({level:"warn",text:"No doses logged yet. Tap Log dose after each injection to track what is left and when the next one is due."});
+  if(t.remainingMg<=0&&t.log.length) out.push({level:"bad",text:"Logged doses add up to the whole vial ("+fmt(t.remainingMg,2)+" "+(p.unitLabel?"mg of each":"mg")+" left). Mix a new one."});
+  else if(t.dosesLeft<=1&&t.log.length&&t.remainingMg>0) out.push({level:"warn",text:"About "+t.dosesLeft+" dose left in this vial."});
+  return out;
+}
+function logAlerts(p,v,t,dose){
+  const out=doseAlerts(p,v,dose);
+  if(t.last&&p.interval){
+    if(p.interval>=7&&t.sinceLast<p.interval-2) out.push({level:"bad",text:"OVER: last dose was "+ago(t.sinceLast)+". This is a once-weekly peptide, so another one now stacks on top of it."});
+    else if(p.interval===1&&t.sinceLast===0&&!/2×|1–2×|1–3×|2–3×|twice|split/i.test(p.freq)) out.push({level:"bad",text:"OVER: a dose is already logged today and this one is dosed once a day."});
+  }
+  return out;
 }
 
 /* ---------- rendering ---------- */
@@ -414,10 +557,30 @@ function matches(p){
   const hay=(p.name+" "+p.aliases.join(" ")+" "+p.for).toLowerCase();
   return q.split(/\s+/).every(w=>hay.indexOf(w)>=0);
 }
+function flagsHtml(list){ return list.map(f=>'<p class="flag '+(f.level==="bad"?"bad":f.level==="good"?"good":"")+'">'+esc(f.text)+'</p>').join(""); }
+function myVialsHtml(){
+  if(!vials.length) return "";
+  let html='<div class="cat-label">My vials</div>';
+  for(const v of vials){
+    const p=DATA.find(x=>x.id===v.pid); if(!p) continue;
+    const t=trackerState(p,v); const u=p.unitLabel||p.unit;
+    const alerts=timingAlerts(p,t).filter(a=>a.level!=="good");
+    const worst=alerts.some(a=>a.level==="bad")?"bad":alerts.length?"warn":"good";
+    html+='<div class="vialcard" data-vial="'+v.id+'">'
+      +'<div class="vrow"><button type="button" class="open" data-open="'+p.id+'">'+esc(p.name)+'</button><span class="badge tone-'+worst+'">'+(t.week>0?"Week "+t.week:"starts "+fmtDate(v.start))+'</span></div>'
+      +'<div class="meta">This week: <b>'+fmt(t.dose)+' '+esc(u)+'</b> = <b>'+fmt(t.units,1)+'u</b> · '+fmt(v.vial)+' mg + '+fmt(v.water)+' mL</div>'
+      +'<div class="meta">'+(t.last?'Last dose '+ago(t.sinceLast)+(t.dueIn!=null?(t.dueIn>0?' · next in '+t.dueIn+'d':t.dueIn===0?' · <b>due today</b>':' · <b>overdue '+(-t.dueIn)+'d</b>'):''):'No doses logged')+' · use by '+fmtDate(t.useBy)+(t.expired?' <b>(expired)</b>':'')+'</div>'
+      +(alerts.length?'<div class="meta">'+esc(alerts[0].text)+'</div>':'')
+      +'<div class="btnrow"><button type="button" class="btn small primary" data-log="'+v.id+'">Log dose</button><button type="button" class="btn small" data-open="'+p.id+'">Open</button></div>'
+      +'</div>';
+  }
+  return html;
+}
 function renderList(){
   const items=DATA.filter(matches);
-  if(!items.length){ listEl.innerHTML='<p class="empty">Nothing matches that. Try a shorter name or an alias.</p>'; return; }
-  let html="", lastCat=null;
+  let html=(q||cat!=="all")?"":myVialsHtml();
+  if(!items.length){ listEl.innerHTML=html+'<p class="empty">Nothing matches that. Try a shorter name or an alias.</p>'; return; }
+  let lastCat=null;
   for(const p of items){
     if(cat==="all"&&p.cat!==lastCat){ html+='<div class="cat-label">'+esc(CATNAME[p.cat])+'</div>'; lastCat=p.cat; }
     const st=p.status?STATUS[p.status]:null;
@@ -438,17 +601,165 @@ function dosePresets(p){
   for(const s of p.ladder) push(s.dose);
   return out.sort((a,b)=>a-b);
 }
+function targetPresets(p){
+  const out=[]; const push=v=>{ if(v!=null&&!out.includes(v)) out.push(v); };
+  for(const s of p.ladder) push(s.dose); push(p.common); push(p.max);
+  return out.sort((a,b)=>a-b);
+}
+function vialFormHtml(p,c,v){
+  const u=p.unitLabel||p.unit;
+  const draft=v||{mixed:todayISO(),start:todayISO(),target:(p.ladder.length?p.common:c.dose)};
+  return '<div class="vform" id="vform">'
+    +'<h3>'+(v?"Edit this vial":"Save this vial &amp; start counting weeks")+'</h3>'
+    +'<p class="hint">Uses the mix above: '+fmt(c.vial)+' mg + '+fmt(c.water)+' mL. Change those first if they are wrong.</p>'
+    +'<div class="field"><label for="vf-mixed">Date mixed (reconstituted)</label><input class="num" id="vf-mixed" type="date" value="'+esc(draft.mixed)+'"></div>'
+    +'<div class="field"><label for="vf-start">Plan start date (week 1, day 1)</label><input class="num" id="vf-start" type="date" value="'+esc(draft.start)+'"></div>'
+    +'<div class="field"><label for="vf-target">'+(p.ladder.length?"Target dose ("+esc(u)+")":"Dose per injection ("+esc(u)+")")+'</label><div class="inrow">'
+    +(p.ladder.length?'<div class="chips">'+chipRow("target",targetPresets(p),draft.target,"")+'</div>':'')
+    +'<input class="num" id="vf-target" type="number" inputmode="decimal" min="0.001" step="any" value="'+draft.target+'"></div>'
+    +(p.ladder.length?'<span class="hint">The ladder stops stepping up once it reaches this.</span>':'')+'</div>'
+    +'<div class="btnrow"><button type="button" class="btn primary" id="vf-save">'+(v?"Save changes":"Save vial")+'</button><button type="button" class="btn" id="vf-cancel">Cancel</button></div>'
+    +'</div>';
+}
+function trackerHtml(p,v){
+  const t=trackerState(p,v); const u=p.unitLabel||p.unit;
+  const alerts=timingAlerts(p,t);
+  let html='<section class="block tracker" id="tracker" aria-label="My vial"><h3>My vial · week counter</h3>'
+    +'<div class="trk-top"><div class="trk-week">'+(t.week>0?'Week '+t.week:'Starts '+fmtDate(v.start))+' <small>of plan · started '+fmtDate(v.start)+'</small></div>'
+    +'<span class="rev">'+fmt(v.vial)+' mg + '+fmt(v.water)+' mL = '+fmt(v.vial/v.water)+' mg/mL</span></div>'
+    +'<div class="trk-grid">'
+    +'<div><span class="k">This week\'s dose</span><span class="v mono">'+fmt(t.dose)+' '+esc(u)+' = '+fmt(t.units,1)+'u</span>'+(t.step.label?'<span class="hint">'+esc(t.step.label)+'</span>':'')+'</div>'
+    +'<div><span class="k">Next change</span><span class="v">'+(t.next?fmt(t.next.dose)+' '+esc(u)+(t.next.label?' ('+esc(t.next.label)+')':'')+' from '+fmtDate(t.nextDate)+' (week '+t.next.from+')':'None, holding here')+'</span></div>'
+    +'<div><span class="k">Vial</span><span class="v">Mixed '+fmtDate(v.mixed)+' · open '+t.openDays+' day'+(t.openDays===1?'':'s')+' · use by '+fmtDate(t.useBy)+'</span></div>'
+    +'<div><span class="k">Left in vial</span><span class="v mono">'+(t.log.length?fmt(Math.max(0,t.remainingMg),2)+' mg · ~'+Math.max(0,t.dosesLeft)+' doses':'log doses to track')+'</span></div>'
+    +'</div>'
+    +flagsHtml(alerts);
+  html+=confirmHtml(v,u)
+    +'<div class="btnrow"><button type="button" class="btn primary" data-log="'+v.id+'">Log dose today ('+fmt(t.dose)+' '+esc(u)+')</button>'
+    +'<button type="button" class="btn" data-logcustom="'+v.id+'">Log other amount / date</button>'
+    +(v.log.length?'<button type="button" class="btn" data-undo="'+v.id+'">Undo last</button>':'')
+    +'<button type="button" class="btn" data-newvial="'+v.id+'">New vial mixed</button>'
+    +'<button type="button" class="btn" data-edit="'+v.id+'">Edit</button>'
+    +'<button type="button" class="btn danger" data-remove="'+v.id+'">Remove</button></div>';
+  if(uiFlags.logFor===v.id) html+=logFormHtml(p,v,t);
+  if(v.log.length){
+    const recent=v.log.slice(-6).reverse();
+    html+='<div class="loglist">'+recent.map(e=>'<span>'+fmtDate(e.d)+' <b>'+fmt(e.dose)+' '+esc(u)+'</b></span>').join("")+(v.log.length>6?'<span>+'+(v.log.length-6)+' more in My vials</span>':'')+'</div>';
+  }
+  html+='</section>';
+  return html;
+}
+function confirmHtml(v,u){
+  if(!(uiFlags.confirm&&uiFlags.confirm.vid===v.id)) return "";
+  const c=uiFlags.confirm;
+  return '<div class="vform"><h3>Check before logging</h3>'+flagsHtml(c.alerts)
+    +'<div class="btnrow"><button type="button" class="btn danger" data-logforce="'+v.id+'">Log anyway ('+fmt(c.dose)+' '+esc(u)+(c.date!==todayISO()?', '+fmtDate(c.date):'')+')</button><button type="button" class="btn" data-logcancel="1">Cancel</button></div></div>';
+}
+function logFormHtml(p,v,t){
+  const u=p.unitLabel||p.unit;
+  return '<div class="vform" id="logform"><h3>Log a dose</h3>'
+    +'<div class="field"><label for="lf-amt">Amount taken ('+esc(u)+')</label><input class="num" id="lf-amt" type="number" inputmode="decimal" min="0.001" step="any" value="'+t.dose+'"></div>'
+    +'<div class="field"><label for="lf-date">Date</label><input class="num" id="lf-date" type="date" value="'+todayISO()+'" max="'+todayISO()+'"></div>'
+    +'<div id="lf-alerts"></div>'
+    +'<div class="btnrow"><button type="button" class="btn primary" data-lfsave="'+v.id+'">Log it</button><button type="button" class="btn" data-lfcancel="1">Cancel</button></div></div>';
+}
+function liveLogAlerts(root){
+  const box=$("#lf-alerts",root); if(!box) return;
+  const v=vials.find(x=>x.id===uiFlags.logFor); if(!v) return; const p=peptideOf(v);
+  const amt=parseFloat(($("#lf-amt",root)||{}).value), date=($("#lf-date",root)||{}).value||todayISO();
+  box.innerHTML=amt>0?flagsHtml(logAlerts(p,v,trackerState(p,v,date),amt)):"";
+}
+
+/* ---------- My vials view ---------- */
+function addVialFormHtml(){
+  const opts=DATA.filter(p=>p.id!=="custom").map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join("")+'<option value="custom">Other / custom vial</option>';
+  return '<div class="vform" id="addform"><h3>Add a vial</h3>'
+    +'<div class="field"><label for="av-pid">Peptide</label><select class="num" id="av-pid">'+opts+'</select></div>'
+    +'<div class="field"><label for="av-vial">Vial size (mg)</label><input class="num" id="av-vial" type="number" inputmode="decimal" step="any" min="0.01"></div>'
+    +'<div class="field"><label for="av-water">Bacteriostatic water added (mL)</label><input class="num" id="av-water" type="number" inputmode="decimal" step="any" min="0.1"></div>'
+    +'<div class="field"><label for="av-mixed">Date mixed</label><input class="num" id="av-mixed" type="date" value="'+todayISO()+'"></div>'
+    +'<div class="field"><label for="av-start">Plan start (week 1, day 1)</label><input class="num" id="av-start" type="date" value="'+todayISO()+'"></div>'
+    +'<div class="field"><label for="av-target" id="av-target-label">Target dose</label><input class="num" id="av-target" type="number" inputmode="decimal" step="any" min="0.001"><span class="hint" id="av-hint"></span></div>'
+    +'<div class="btnrow"><button type="button" class="btn primary" id="av-save">Save vial</button><button type="button" class="btn" id="av-cancel">Cancel</button></div></div>';
+}
+function fillAddDefaults(){
+  const sel=$("#av-pid",vialsEl); if(!sel) return;
+  const p=DATA.find(x=>x.id===sel.value)||DATA[0]; const u=p.unitLabel||p.unit;
+  $("#av-vial",vialsEl).value=p.vialDefault||p.vials[0]; $("#av-water",vialsEl).value=p.water;
+  $("#av-target",vialsEl).value=p.ladder.length?p.common:(p.start!=null?p.start:p.common);
+  $("#av-target-label",vialsEl).textContent=(p.ladder.length?"Target dose (":"Dose per injection (")+u+")";
+  $("#av-hint",vialsEl).textContent=p.id==="custom"?"":(p.ladder.length?"Ladder: "+p.ladder.map(s=>fmt(s.dose)).join(" → ")+" "+u+". The plan stops stepping up at your target.":"Typical "+doseRange(p)+". "+p.freq);
+}
+function vialCardHtml(v){
+  const p=peptideOf(v); if(!p) return "";
+  const t=trackerState(p,v); const u=p.unitLabel||p.unit;
+  const alerts=timingAlerts(p,t); const bad=alerts.filter(a=>a.level!=="good");
+  const worst=bad.some(a=>a.level==="bad")?"bad":bad.length?"warn":"good";
+  let html='<div class="vialcard" data-vial="'+v.id+'">'
+    +'<div class="vrow"><button type="button" class="open" data-open="'+p.id+'">'+esc(p.name)+'</button><span class="badge tone-'+worst+'">'+(t.week>0?"Week "+t.week:"starts "+fmtDate(v.start))+'</span></div>'
+    +'<div class="vstats">'
+    +'<div>This week<b>'+fmt(t.dose)+' '+esc(u)+' = '+fmt(t.units,1)+'u</b></div>'
+    +'<div>Mix<b>'+fmt(v.vial)+' mg + '+fmt(v.water)+' mL</b></div>'
+    +'<div>Last dose<b>'+(t.last?fmtDate(t.last.d)+' ('+ago(t.sinceLast)+')':'none yet')+'</b></div>'
+    +'<div>Next due<b>'+(t.last&&p.interval?(t.dueIn>0?fmtDate(addDays(t.last.d,p.interval))+' (in '+t.dueIn+'d)':t.dueIn===0?'today':'overdue '+(-t.dueIn)+'d'):(p.interval?'log a dose':'see schedule'))+'</b></div>'
+    +'<div>Left in vial<b>'+(v.log.length?fmt(Math.max(0,t.remainingMg),2)+' mg · ~'+Math.max(0,t.dosesLeft)+' doses':'log to track')+'</b></div>'
+    +'<div>Use by<b>'+fmtDate(t.useBy)+(t.expired?' · expired':' · '+daysBetween(t.today,t.useBy)+'d')+'</b></div>'
+    +'</div>'
+    +(bad.length?flagsHtml(bad.slice(0,2)):'')
+    +confirmHtml(v,u)
+    +'<div class="btnrow"><button type="button" class="btn small primary" data-log="'+v.id+'">Log dose today ('+fmt(t.dose)+' '+esc(u)+')</button>'
+    +'<button type="button" class="btn small" data-logcustom="'+v.id+'">Log other</button>'
+    +'<button type="button" class="btn small" data-open="'+p.id+'">Open</button>'
+    +'<button type="button" class="btn small" data-newvial="'+v.id+'">New vial mixed</button>'
+    +'<button type="button" class="btn small danger" data-remove="'+v.id+'">Remove</button></div>'
+    +(uiFlags.logFor===v.id?logFormHtml(p,v,t):'')
+    +'</div>';
+  return html;
+}
+function allEntries(){
+  const rows=[];
+  for(const v of vials){ const p=peptideOf(v); if(!p) continue; for(const e of v.log) rows.push({v,p,e,units:e.u!=null?e.u:unitsFor(toMg(e.dose,p.unit),v.vial,v.water)}); }
+  rows.sort((a,b)=>a.e.d<b.e.d?1:a.e.d>b.e.d?-1:0);
+  return rows;
+}
+function exportText(){
+  const rows=allEntries().slice().reverse();
+  let s="date,peptide,dose,unit,units_drawn,vial_mg,water_ml\n";
+  for(const r of rows) s+=[r.e.d,'"'+r.p.name+'"',r.e.dose,(r.p.unitLabel||r.p.unit),fmt(r.units,1),r.v.vial,r.v.water].join(",")+"\n";
+  return s;
+}
+function renderVials(){
+  let html='<div class="vhead"><div><h2>My vials</h2><p class="hint">Saved on this device only. Log every injection and the app tracks weeks, what is left, and what is due.</p></div>'
+    +'<div class="btnrow"><button type="button" class="btn" id="vials-back">&larr; Peptides</button><button type="button" class="btn primary" id="add-vial">+ Add vial</button></div></div>';
+  if(uiFlags.add) html+=addVialFormHtml();
+  if(!vials.length&&!uiFlags.add) html+='<p class="empty">No vials yet. Tap + Add vial, or open any peptide and tap "Save this vial &amp; count weeks".</p>';
+  else html+='<div class="vgrid">'+vials.map(vialCardHtml).join("")+'</div>';
+  const rows=allEntries();
+  html+='<section class="block hist"><div class="vhead"><h3>Dose log · '+rows.length+' entr'+(rows.length===1?'y':'ies')+'</h3>'+(rows.length?'<button type="button" class="btn small" id="export-log">Copy as CSV</button>':'')+'</div>';
+  if(uiFlags.exportOpen) html+='<textarea class="export" id="export-text" readonly>'+esc(exportText())+'</textarea><p class="hint">Select all and copy if the button did not work.</p>';
+  if(rows.length){
+    html+='<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Peptide</th><th class="mono">Dose</th><th class="mono">Units</th><th></th></tr></thead><tbody>'
+      +rows.slice(0,100).map(r=>'<tr><td class="mono">'+fmtDate(r.e.d)+'</td><td>'+esc(r.p.name)+'</td><td class="mono">'+fmt(r.e.dose)+' '+esc(r.p.unitLabel||r.p.unit)+'</td><td class="mono">'+fmt(r.units,1)+'u</td><td><button type="button" class="x" data-delentry="'+r.e.id+'" data-delvial="'+r.v.id+'" aria-label="Delete entry">&times;</button></td></tr>').join("")
+      +'</tbody></table></div>'+(rows.length>100?'<p class="hint">Showing the latest 100.</p>':'');
+  } else html+='<p class="hint">Nothing logged yet.</p>';
+  html+='</section>';
+  vialsEl.innerHTML=html;
+  if(uiFlags.add) fillAddDefaults();
+  liveLogAlerts(vialsEl);
+}
+function renderAll(){ renderList(); renderDetail(); renderVials(); updateVialsBtn(); }
 function renderDetail(){
   const p=DATA.find(x=>x.id===current);
   if(!p){ detailEl.innerHTML='<p class="empty">Pick a peptide from the list.</p>'; return; }
   const st=p.status?STATUS[p.status]:null;
-  const c=getCalc(p);
+  const c=getCalc(p); const v=vialFor(p.id);
   const unit=p.unitSwitch?c.unit:p.unit;
   const unitLabel=p.unitLabel||unit;
   let html='<button type="button" class="back" id="back">&larr; All peptides</button>';
   html+='<div class="dhead"><div class="titlerow"><h2>'+esc(p.name)+'</h2>'+(st?'<span class="badge tone-'+st.tone+'">'+esc(st.label)+'</span>':'')+'</div>';
   if(p.aliases.length&&p.id!=="custom") html+='<p class="aliases">Also: '+esc(p.aliases.join(", "))+'</p>';
   html+='<p class="for-long">'+esc(p.for)+'</p></div>';
+  if(v&&!uiFlags.form) html+=trackerHtml(p,v);
   if(p.freq){
     html+='<div class="glance">'
       +'<div><span class="k">Typical dose</span><span class="v mono">'+esc(doseRange(p))+'</span></div>'
@@ -468,10 +779,11 @@ function renderDetail(){
     +'<input class="num" id="dose" type="number" inputmode="decimal" min="0.001" step="any" value="'+c.dose+'">'
     +(p.unitSwitch?'<button type="button" class="unit-toggle" id="unit-toggle" aria-label="Switch dose unit">'+esc(unit)+' &#8646;</button>':'')+'</div></div>'
     +'<div class="result" id="calc-out"></div>'
+    +(uiFlags.form?vialFormHtml(p,c,uiFlags.form==="edit"?v:null):'<div class="btnrow">'+(v?'<button type="button" class="btn" data-edit="'+v.id+'">Edit saved vial</button>':'<button type="button" class="btn primary" id="save-vial">Save this vial &amp; count weeks</button>')+'</div>')
     +'</section>';
   /* ladder */
   if(p.ladder.length){
-    html+='<section class="block ladder" aria-label="Dosing sequence"><h3>Dosing sequence</h3>'
+    html+='<section class="block ladder" aria-label="Dosing sequence"><h3>Dosing sequence'+(v?' · your plan':'')+'</h3>'
       +(p.ladderNote?'<p class="hint">'+esc(p.ladderNote)+'</p>':'')
       +'<div class="tbl-wrap"><table><thead><tr><th>Weeks</th><th>Dose</th><th class="mono">Units</th><th>Note</th></tr></thead><tbody id="ladder-body"></tbody></table></div></section>';
   }
@@ -488,24 +800,74 @@ function renderDetail(){
   renderCalcOut(p);
 }
 function renderCalcOut(p){
-  const c=getCalc(p); const r=compute(p,c);
+  const c=getCalc(p); const r=compute(p,c); const v=vialFor(p.id);
   const unitLabel=p.unitLabel||r.unit;
   const out=$("#calc-out",detailEl); if(!out) return;
   const concTxt=r.unit==="mcg"? fmt(r.conc*1000,0)+" mcg/mL ("+fmt(r.conc)+" mg/mL)" : fmt(r.conc)+" mg/mL";
+  const alerts=(p.unitSwitch?[]:doseAlerts(p,v,c.dose)).concat(r.flags);
   out.innerHTML='<div class="big"><span class="units">'+fmt(r.units,1)+'</span><span class="lbl">units on a U-100 syringe for '+fmt(c.dose)+' '+esc(unitLabel)+'</span></div>'
     +'<div class="facts"><span>= <b>'+fmt(r.ml,3)+' mL</b></span><span>concentration <b>'+concTxt+'</b></span><span><b>'+(r.perVial||"–")+'</b> doses per vial</span></div>'
     +'<div class="syringe" aria-hidden="true"><div class="fill" style="width:'+Math.max(0,Math.min(100,r.units))+'%"></div>'+(r.units>100?'<div class="cap"></div>':'')+'</div>'
-    +r.flags.map(f=>'<p class="flag">'+esc(f)+'</p>').join("")
+    +flagsHtml(alerts)
     +'<p class="formula">'+fmt(c.dose)+' ÷ '+fmt(c.vial*(r.unit==="mcg"?1000:1))+' × '+fmt(c.water)+' × 100 = '+fmt(r.units,1)+' units</p>';
   const lb=$("#ladder-body",detailEl);
   if(lb){
-    lb.innerHTML=p.ladder.map(s=>{
-      const u=unitsFor(toMg(s.dose,p.unit),c.vial,c.water);
-      return '<tr><td class="mono">'+esc(s.weeks)+'</td><td class="mono">'+fmt(s.dose)+' '+esc(p.unitLabel||p.unit)+'</td><td class="mono">'+fmt(u,1)+'u'+(u>100?' *':'')+'</td><td>'+esc(s.label||"")+'</td></tr>';
-    }).join("")+(p.ladder.some(s=>unitsFor(toMg(s.dose,p.unit),c.vial,c.water)>100)?'<tr><td colspan="4" class="hint">* over 100 units at this mix: use less water or a bigger vial.</td></tr>':'');
+    const u=p.unitLabel||p.unit;
+    if(v){
+      const t=trackerState(p,v);
+      lb.innerHTML=t.plan.map(s=>{
+        const un=unitsFor(toMg(s.dose,p.unit),v.vial,v.water); const now=t.week>=s.from&&t.week<=s.to;
+        return '<tr'+(now?' class="now"':'')+'><td class="mono">'+(isFinite(s.to)?(s.from===s.to?s.from:s.from+'–'+s.to):s.from+'+')+'</td><td class="mono">'+fmt(s.dose)+' '+esc(u)+'</td><td class="mono">'+fmt(un,1)+'u'+(un>100?' *':'')+'</td><td>'+esc(s.label||"")+(now?' ← you are here':'')+'</td></tr>';
+      }).join("")+(t.plan.some(s=>unitsFor(toMg(s.dose,p.unit),v.vial,v.water)>100)?'<tr><td colspan="4" class="hint">* over 100 units at this mix: use less water or a bigger vial.</td></tr>':'');
+    } else {
+      lb.innerHTML=p.ladder.map(s=>{
+        const un=unitsFor(toMg(s.dose,p.unit),c.vial,c.water);
+        return '<tr><td class="mono">'+esc(s.weeks)+'</td><td class="mono">'+fmt(s.dose)+' '+esc(u)+'</td><td class="mono">'+fmt(un,1)+'u'+(un>100?' *':'')+'</td><td>'+esc(s.label||"")+'</td></tr>';
+      }).join("")+(p.ladder.some(s=>unitsFor(toMg(s.dose,p.unit),c.vial,c.water)>100)?'<tr><td colspan="4" class="hint">* over 100 units at this mix: use less water or a bigger vial.</td></tr>':'');
+    }
   }
-  /* sync chip states */
-  detailEl.querySelectorAll('.chip[data-set]').forEach(b=>{ b.setAttribute("aria-pressed", String(Number(b.dataset.val)===Number(c[b.dataset.set]))); });
+  detailEl.querySelectorAll('.chip[data-set]').forEach(b=>{ if(b.dataset.set!=="target") b.setAttribute("aria-pressed", String(Number(b.dataset.val)===Number(c[b.dataset.set]))); });
+}
+
+/* ---------- tracker actions ---------- */
+function doLog(v,p,dose,date,force){
+  date=date||todayISO(); if(daysBetween(date,todayISO())<0) date=todayISO();
+  const t=trackerState(p,v,date);
+  const alerts=logAlerts(p,v,t,dose);
+  if(alerts.some(a=>a.level==="bad")&&!force){ uiFlags.confirm={vid:v.id,dose,date,alerts}; uiFlags.logFor=null; renderAll(); return; }
+  v.log=Array.isArray(v.log)?v.log:[];
+  v.log.push({id:newId("e"),d:date,dose:dose,u:Math.round(unitsFor(toMg(dose,p.unit),v.vial,v.water)*10)/10});
+  v.log.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);
+  uiFlags.confirm=null; uiFlags.logFor=null; saveVials(); renderAll();
+}
+function openPeptide(id){
+  current=id; save("pdg:last",current); uiFlags.form=false; uiFlags.confirm=null; uiFlags.logFor=null; uiFlags.removeArmed=null;
+  const v=vialFor(id); if(v){ const p=DATA.find(x=>x.id===id); const c=getCalc(p); c.vial=v.vial; c.water=v.water; save("pdg:calc:"+id,c); }
+  renderList(); renderDetail(); app.dataset.view="detail"; window.scrollTo({top:0});
+}
+/* actions shared by the tracker block, the list cards and the My vials view; returns true when handled */
+function vialAction(e){
+  const el=t=>e.target.closest(t);
+  let b;
+  if((b=el("[data-open]"))){ openPeptide(b.dataset.open); return true; }
+  if((b=el("[data-logcancel]"))){ uiFlags.confirm=null; renderAll(); return true; }
+  if((b=el("[data-lfcancel]"))){ uiFlags.logFor=null; renderAll(); return true; }
+  const vid=(el("[data-log]")||el("[data-logforce]")||el("[data-logcustom]")||el("[data-lfsave]")||el("[data-undo]")||el("[data-newvial]")||el("[data-remove]")||{dataset:{}}).dataset;
+  const id=vid.log||vid.logforce||vid.logcustom||vid.lfsave||vid.undo||vid.newvial||vid.remove;
+  if(!id) return false;
+  const v=vials.find(x=>x.id===id); if(!v) return true; const p=peptideOf(v); if(!p) return true;
+  if(vid.log){ doLog(v,p,trackerState(p,v).dose,todayISO(),false); return true; }
+  if(vid.logforce){ const c=uiFlags.confirm||{}; doLog(v,p,c.dose||trackerState(p,v).dose,c.date||todayISO(),true); return true; }
+  if(vid.logcustom){ uiFlags.logFor=v.id; uiFlags.confirm=null; renderAll(); const f=$("#lf-amt",document); if(f) f.focus(); return true; }
+  if(vid.lfsave){ const root=el("#logform"); const amt=parseFloat(($("#lf-amt",root)||{}).value), date=($("#lf-date",root)||{}).value||todayISO(); if(amt>0) doLog(v,p,amt,date,false); return true; }
+  if(vid.undo){ if(v.log.length){ v.log.pop(); saveVials(); renderAll(); } return true; }
+  if(vid.newvial){ v.mixed=todayISO(); v.log=[]; const c=getCalc(p); v.vial=c.vial; v.water=c.water; uiFlags.confirm=null; saveVials(); renderAll(); return true; }
+  if(vid.remove){
+    if(uiFlags.removeArmed===v.id){ vials=vials.filter(x=>x.id!==v.id); uiFlags.removeArmed=null; uiFlags.confirm=null; uiFlags.logFor=null; saveVials(); renderAll(); }
+    else { uiFlags.removeArmed=v.id; el("[data-remove]").textContent="Tap again to remove"; }
+    return true;
+  }
+  return false;
 }
 
 /* ---------- events ---------- */
@@ -515,38 +877,76 @@ catsEl.addEventListener("click",e=>{
 });
 qEl.addEventListener("input",()=>{ q=qEl.value.trim().toLowerCase(); renderList(); });
 listEl.addEventListener("click",e=>{
+  if(vialAction(e)) return;
   const b=e.target.closest("[data-id]"); if(!b) return;
-  current=b.dataset.id; save("pdg:last",current);
-  renderList(); renderDetail(); app.dataset.view="detail"; window.scrollTo({top:0});
+  openPeptide(b.dataset.id);
 });
+vialsBtn.addEventListener("click",()=>{ uiFlags.confirm=null; uiFlags.logFor=null; renderVials(); app.dataset.view="vials"; window.scrollTo({top:0}); });
+vialsEl.addEventListener("click",e=>{
+  if(e.target.closest("#vials-back")){ app.dataset.view="list"; return; }
+  if(e.target.closest("#add-vial")){ uiFlags.add=true; uiFlags.logFor=null; renderVials(); return; }
+  if(e.target.closest("#av-cancel")){ uiFlags.add=false; renderVials(); return; }
+  if(e.target.closest("#av-save")){
+    const pid=($("#av-pid",vialsEl)||{}).value; const p=DATA.find(x=>x.id===pid); if(!p) return;
+    const vial=parseFloat($("#av-vial",vialsEl).value), water=parseFloat($("#av-water",vialsEl).value), target=parseFloat($("#av-target",vialsEl).value);
+    if(!(vial>0&&water>0&&target>0)) return;
+    const v={id:newId("v"),pid,vial,water,mixed:$("#av-mixed",vialsEl).value||todayISO(),start:$("#av-start",vialsEl).value||todayISO(),target,log:[]};
+    vials.push(v); const c=getCalc(p); c.vial=vial; c.water=water; save("pdg:calc:"+pid,c);
+    uiFlags.add=false; saveVials(); renderAll(); return;
+  }
+  if(e.target.closest("#export-log")){
+    const txt=exportText();
+    const done=()=>{ const b=$("#export-log",vialsEl); if(b) b.textContent="Copied"; };
+    const fallback=()=>{ uiFlags.exportOpen=true; renderVials(); const ta=$("#export-text",vialsEl); if(ta){ ta.focus(); ta.select(); } };
+    try{ navigator.clipboard.writeText(txt).then(done,fallback); }catch(err){ fallback(); }
+    return;
+  }
+  const del=e.target.closest("[data-delentry]");
+  if(del){ const v=vials.find(x=>x.id===del.dataset.delvial); if(v){ v.log=v.log.filter(en=>en.id!==del.dataset.delentry); saveVials(); renderAll(); } return; }
+  vialAction(e);
+});
+vialsEl.addEventListener("change",e=>{ if(e.target.id==="av-pid") fillAddDefaults(); });
+vialsEl.addEventListener("input",e=>{ if(e.target.id==="lf-amt"||e.target.id==="lf-date") liveLogAlerts(vialsEl); });
 detailEl.addEventListener("click",e=>{
   if(e.target.closest("#back")){ app.dataset.view="list"; return; }
-  const chip=e.target.closest(".chip[data-set]");
   const p=DATA.find(x=>x.id===current); if(!p) return;
+  const c=getCalc(p); let v=vialFor(p.id);
+  const chip=e.target.closest(".chip[data-set]");
   if(chip){
-    const c=getCalc(p); c[chip.dataset.set]=Number(chip.dataset.val);
+    if(chip.dataset.set==="target"){ const inp=$("#vf-target",detailEl); if(inp) inp.value=chip.dataset.val; detailEl.querySelectorAll('.chip[data-set="target"]').forEach(b=>b.setAttribute("aria-pressed",String(b===chip))); return; }
+    c[chip.dataset.set]=Number(chip.dataset.val);
     const inp=$("#"+chip.dataset.set,detailEl); if(inp) inp.value=c[chip.dataset.set];
     save("pdg:calc:"+p.id,c); renderCalcOut(p); return;
   }
-  if(e.target.closest("#unit-toggle")){
-    const c=getCalc(p); c.unit=c.unit==="mg"?"mcg":"mg"; save("pdg:calc:"+p.id,c);
-    renderDetail(); return;
+  if(e.target.closest("#unit-toggle")){ c.unit=c.unit==="mg"?"mcg":"mg"; save("pdg:calc:"+p.id,c); renderDetail(); return; }
+  if(e.target.closest("#save-vial")){ uiFlags.form="new"; renderDetail(); $("#vform",detailEl)&&$("#vform",detailEl).scrollIntoView({block:"center"}); return; }
+  if(e.target.closest("[data-edit]")){ uiFlags.form="edit"; renderDetail(); $("#vform",detailEl)&&$("#vform",detailEl).scrollIntoView({block:"center"}); return; }
+  if(e.target.closest("#vf-cancel")){ uiFlags.form=false; renderDetail(); return; }
+  if(e.target.closest("#vf-save")){
+    const mixed=($("#vf-mixed",detailEl)||{}).value||todayISO(), start=($("#vf-start",detailEl)||{}).value||todayISO();
+    const target=parseFloat(($("#vf-target",detailEl)||{}).value); if(!(target>0)) return;
+    if(v&&uiFlags.form==="edit"){ Object.assign(v,{vial:c.vial,water:c.water,mixed,start,target}); }
+    else { v={id:newId("v"),pid:p.id,vial:c.vial,water:c.water,mixed,start,target,log:[]}; vials.push(v); }
+    uiFlags.form=false; saveVials(); renderAll(); return;
   }
+  vialAction(e);
 });
 detailEl.addEventListener("input",e=>{
-  const inp=e.target; if(!inp.matches("input.num")) return;
-  const p=DATA.find(x=>x.id===current); if(!p) return;
-  const v=parseFloat(inp.value); if(!(v>0)) return;
-  const c=getCalc(p); c[inp.id]=v; save("pdg:calc:"+p.id,c); renderCalcOut(p);
+  const inp=e.target; const p=DATA.find(x=>x.id===current); if(!p) return;
+  if(inp.id==="lf-amt"||inp.id==="lf-date"){ liveLogAlerts(detailEl); return; }
+  if(!inp.matches("input.num")||inp.type==="date"||inp.id==="vf-target") return;
+  const val=parseFloat(inp.value); if(!(val>0)) return;
+  const c=getCalc(p); c[inp.id]=val; save("pdg:calc:"+p.id,c); renderCalcOut(p);
 });
 
 /* ---------- boot ---------- */
 if(current&&!DATA.some(p=>p.id===current)) current=null;
-renderCats(); renderList(); renderDetail();
-if(window.matchMedia("(min-width:880px)").matches && !current){ current="retatrutide"; renderList(); renderDetail(); }
+renderCats(); renderAll();
+if(window.matchMedia("(min-width:880px)").matches && !current){ current=vials.length?vials[vials.length-1].pid:"retatrutide"; renderList(); renderDetail(); }
 app.dataset.view="list";
 })();
 </script>
 
+<script>if('serviceWorker' in navigator&&location.protocol==='https:'){addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
 </body>
 </html>
