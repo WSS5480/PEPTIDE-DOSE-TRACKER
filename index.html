@@ -81,7 +81,9 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 .cat-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin:8px 0 2px}
 .empty{color:var(--muted);padding:20px 4px}
 
-.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 9px;font-size:.72rem;font-weight:600;white-space:nowrap;letter-spacing:.01em}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 9px;font-size:.72rem;font-weight:600;white-space:nowrap;letter-spacing:.01em;max-width:100%}
+.card .row1 .badge{white-space:normal;text-align:right;flex:0 1 auto}
+.card .row1 .name{min-width:0}
 .badge::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
 .tone-good{color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}
 .tone-info{color:var(--info);background:color-mix(in srgb,var(--info) 14%,transparent)}
@@ -208,10 +210,10 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <div class="btnrow" style="align-items:center"><h1>Peptide Dose Guide</h1><button type="button" class="btn small primary" id="vials-btn">My vials</button></div>
       <span class="rev">reviewed 2026-10 · U-100 syringe · BAC water</span>
     </div>
-    <input class="search" id="q" type="search" placeholder="Search by name or alias (reta, tirz, wolverine...)" autocomplete="off" aria-label="Search peptides">
+    <input class="search" id="q" type="search" placeholder="Search by name or alias (reta, hcg, selank, glow...)" autocomplete="off" aria-label="Search peptides">
     <div class="chips" id="cats" role="group" aria-label="Category"></div>
   </header>
-  <div class="notice"><strong>Not medical advice.</strong> Vendor vials are unverified, so every number here assumes the label is right. Most of these compounds have no human dosing data; the badge on each one says how much is actually known.</div>
+  <div class="notice"><strong>Not medical advice.</strong> Vendor vials are unverified, so every number here assumes the label is right. Most of these compounds have no human dosing data; the badge on each one says how much is actually known. Entries marked reference-only have no dose because no human dose exists.</div>
   <section class="vials" id="vials" aria-label="My vials and dose log"></section>
   <main class="panes">
     <section class="list" id="list" aria-label="Peptides"></section>
@@ -223,20 +225,22 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p>Draw up the bacteriostatic water, push it in slowly down the inside wall of the vial so it does not spray the powder, then swirl or roll gently. Never shake. Refrigerate after mixing (2–8 °C) and use within the window shown for that peptide, usually about 4 weeks. Check the vial's capacity before adding 3 mL or more; most vendor vials are 3 mL.</p>
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
-    <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: FDA compounding decisions on BPC-157, TB-500, KPV, MOTS-c and epithalon were pending after July 2026 advisory votes; CagriSema was under FDA review. Approved drugs are described from their current labels.</p>
+    <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: the FDA's July 2026 advisory panel backed compounding of BPC-157, TB-500, KPV, MOTS-c, epithalon and Semax and rejected DSIP, with FDA decisions still pending; melanotan II and injectable GHK-Cu are due for review by February 2027; CagriSema was under FDA review. Approved drugs are described from their current labels.</p>
   </footer>
 </div>
 
 <script>
 (function(){
 "use strict";
-const CATS=[{id:"all",label:"All"},{id:"wl",label:"Weight loss"},{id:"heal",label:"Healing"},{id:"gh",label:"GH & anti-aging"}];
-const CATNAME={wl:"Weight loss / GLP-1 class",heal:"Healing & recovery",gh:"GH & anti-aging",tool:"Tools"};
+const CATS=[{id:"all",label:"All"},{id:"wl",label:"Weight loss"},{id:"heal",label:"Healing"},{id:"gh",label:"GH & anti-aging"},{id:"hormone",label:"Hormones"},{id:"brain",label:"Brain & sleep"},{id:"immune",label:"Immune & mito"},{id:"skin",label:"Skin & sexual"},{id:"research",label:"No human dose"}];
+const CATNAME={wl:"Weight loss / GLP-1 class",heal:"Healing & recovery",gh:"GH & anti-aging",hormone:"Hormones, fertility & bone",brain:"Brain, mood & sleep",immune:"Immune, mitochondria & repair",skin:"Skin, tanning & sexual",research:"Research-only · no human dose",tool:"Tools"};
 const STATUS={
   approved:{label:"FDA-approved",tone:"good"},
   trials:{label:"Phase 3 / FDA review",tone:"info"},
+  abroad:{label:"Approved abroad",tone:"info"},
   former:{label:"Formerly approved",tone:"neutral"},
   limited:{label:"Limited human data",tone:"warn"},
+  halted:{label:"Trials halted",tone:"warn"},
   none:{label:"No human data",tone:"bad"}
 };
 
@@ -280,6 +284,16 @@ const DATA=[
  notes:["REDEFINE 1 (68 wk): CagriSema −20.4%, semaglutide alone −14.9%, cagrilintide alone −11.5%, placebo −3.0%.","GI effects in 80% vs 40% on placebo; nausea peaks during escalation, constipation lingers. Injection-site reactions are more common than with GLP-1s.","No label yet, so people borrow the semaglutide missed-dose rule: take it if more than 2 days to the next dose, otherwise skip.","FDA decision expected late 2026; vendor vials only until then."],
  storage:"Fridge after mixing, about 28 days.",evidence:"Strong Phase 3 data for the combination (NEJM 2025); on its own it is Phase 2-level.",
  sources:["https://www.acc.org/Latest-in-Cardiology/Journal-Scans/2025/07/02/14/43/REDEFINE-1-and-REDEFINE-2","https://www.drugs.com/history/cagrisema.html"]},
+
+{id:"mazdutide",cat:"wl",name:"Mazdutide",aliases:["mazdu","mezdutide","Xinermei","IBI362","LY3305677","GLP-1/glucagon"],status:"abroad",statusLabel:"Approved in China",
+ for:"GLP-1/glucagon dual agonist from Innovent and Lilly. Approved in China in 2025 for weight loss and type 2 diabetes; not FDA-approved.",
+ unit:"mg",min:2,max:9,common:6,start:2,freq:"Once weekly, same day",interval:7,timing:"Any time, with or without food. Rotate sites.",
+ ladder:[{weeks:"1–4",dose:2},{weeks:"5–8",dose:4},{weeks:"9–12",dose:6},{weeks:"13+",dose:9,label:"9 mg only for heavier patients; see note"}],
+ ladderNote:"GLORY-1 schedule: start 2 mg, add 2 mg every 4 weeks to 4 or 6 mg. The 9 mg studies stepped 3 → 6 → 9 mg instead; here 9 mg sits after 6 mg. Set your target to 6 unless you mean to go to 9.",
+ vials:[5,10],vialDefault:10,water:1,cycle:"Continuous in trials (48–60 weeks)",
+ notes:["10 mg + 1 mL keeps every step under 100 units (2 mg = 20u, 6 mg = 60u, 9 mg = 90u). With 2 mL, 6 mg is 120u.","A 10 mg vial is only one or two weekly doses at 6–9 mg, so it goes fast; a 5 mg vial will not hold a 6 mg dose.","GLORY-1 (48 wk): about −11% at 4 mg and −14% at 6 mg, with placebo near zero. GLORY-2 (9 mg, 60 wk): about −18.6%, still falling at the end.","Nausea, diarrhea, vomiting and lower appetite, mostly during escalation; GLORY-1 dropouts for side effects were only about 1–1.5%. Heart rate rises a few beats. Same thyroid C-cell caution as other GLP-1 drugs.","No US label, so no official missed-dose rule; people borrow the semaglutide one (take it if more than 2 days to the next dose, otherwise skip).","Lilly holds the rights outside China; US trials are still early, so vendor vials are the only source here."],
+ storage:"Fridge after mixing, about 28 days.",evidence:"Strong Phase 3 data in Chinese adults (GLORY-1 published in NEJM 2025) and a Chinese approval; no US Phase 3 yet.",
+ sources:["https://superpower.com/guides/peptides/mazdutide","https://www.peptideschedule.com/peptides/mazdutide","https://www.sciencedirect.com/science/article/pii/S2589537022004217"]},
 
 {id:"aod9604",cat:"wl",name:"AOD-9604",aliases:["AOD","hGH fragment 177-191"],status:"limited",
  for:"Growth-hormone fragment sold for fat loss. Human trials were oral tablets and the program was dropped in 2007.",
@@ -329,7 +343,7 @@ const DATA=[
  unit:"mcg",min:100,max:300,common:100,freq:"1–3× daily; most often once at bedtime",interval:1,timing:"Fasted: 2+ hours after food, nothing for 30 min after. The bedtime dose rides the sleep GH pulse.",
  ladder:[{weeks:"1–2",dose:100,label:"once at bedtime"},{weeks:"3+",dose:100,label:"2–3× per day, or 200 mcg at bedtime"}],ladderNote:"Community convention.",
  vials:[2,5,10],vialDefault:5,water:2,cycle:"8–12 weeks on, 4–6 weeks off",
- notes:["100 mcg is the saturation dose; bigger shots add side effects, not GH.","Flushing or head rush, headache, site redness, mild water retention; usually gone within an hour.","GH raises blood sugar: check fasting glucose or A1c, and IGF-1 at baseline and 4–6 weeks.","FDA Category 2 (immunogenicity; heart-rate and flushing reports), so it cannot be compounded. Avoid with active cancer or pituitary disease."],
+ notes:["100 mcg is the saturation dose; bigger shots add side effects, not GH.","Flushing or head rush, headache, site redness, mild water retention; usually gone within an hour.","GH raises blood sugar: check fasting glucose or A1c, and IGF-1 at baseline and 4–6 weeks.","FDA: nominated for compounding and withdrawn after the December 2024 advisory panel advised against it (immunogenicity; heart-rate and flushing reports), so it cannot be compounded. Avoid with active cancer or pituitary disease."],
  storage:"Fridge, protect from light, 2–4 weeks.",evidence:"No human trials of the no-DAC version; extrapolated from sermorelin and GHRH pharmacology.",
  sources:["https://www.peptideprotocolwiki.com/peptides/cjc-1295-no-dac/dosing","https://www.fda.gov/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm"]},
 
@@ -346,7 +360,7 @@ const DATA=[
  unit:"mcg",unitLabel:"mcg of each",min:100,max:300,common:200,freq:"Once at bedtime (clinics: 5 nights on, 2 off); some add a fasted morning dose",interval:1,timing:"30–60 min before bed on an empty stomach: 2+ hours after food, nothing for 30 min after.",
  ladder:[{weeks:"1",dose:100,label:"of each, at bedtime"},{weeks:"2+",dose:200,label:"200–300 mcg of each"}],ladderNote:"Clinic convention.",
  vials:[5,10],vialDefault:5,vialNote:"Enter the mg of EACH component: a 5 mg / 5 mg vial is 5.",water:2,cycle:"8–12 weeks on, 4 weeks off",
- notes:["A '5 mg / 5 mg' vial holds 5 mg of each (10 mg total). With 2 mL of water, 200 mcg of each is 8 units.","Headache in weeks 1–2, flushing, water retention, vivid dreams, mild hunger, site irritation.","Labs: IGF-1 at baseline and mid-cycle, fasting glucose or A1c. Avoid with active cancer.","Never studied as a combination. Both components are FDA Category 2, so US pharmacies cannot compound it."],
+ notes:["A '5 mg / 5 mg' vial holds 5 mg of each (10 mg total). With 2 mL of water, 200 mcg of each is 8 units.","Headache in weeks 1–2, flushing, water retention, vivid dreams, mild hunger, site irritation.","Labs: IGF-1 at baseline and mid-cycle, fasting glucose or A1c. Avoid with active cancer.","Never studied as a combination. Ipamorelin is FDA Category 2 and CJC-1295's nomination was withdrawn after a negative panel review, so US pharmacies cannot compound it."],
  storage:"Fridge, 3–4 weeks.",evidence:"Zero clinical data for the combination; the rationale is mechanistic plus anecdote.",
  sources:["https://peptidedossier.com/guides/cjc-1295-ipamorelin-dosage-guide/","https://formblends.com/peptides/cjc-1295-with-ipamorelin"]},
 
@@ -393,19 +407,392 @@ const DATA=[
  storage:"Fridge, about 3 weeks. Do not shake.",evidence:"Weakest in the set: one research group, animal and lab-dish data.",
  sources:["https://www.peptideprotocolwiki.com/peptides/epitalon/dosing","https://outliyr.com/reports/epitalon"]},
 
+{id:"mk677",cat:"gh",name:"MK-677 (ibutamoren)",aliases:["MK677","MK 677","ibutamoren","MK-0677","oral GH secretagogue"],status:"halted",route:"oral",
+ for:"Oral ghrelin mimetic (a pill or liquid, not an injection) that raises GH and IGF-1 around the clock. Merck ran Phase 2 trials and dropped it.",
+ unit:"mg",min:10,max:25,common:25,start:10,freq:"Once daily",interval:1,timing:"30–60 min before bed on an empty stomach, so the hunger and drowsiness land at night.",
+ ladder:[{weeks:"1–2",dose:10,label:"tolerance check"},{weeks:"3+",dose:25,label:"15–25 mg; many hold at 15 if hunger or water retention is bad"}],ladderNote:"Community convention. The trials used a flat 25 mg/day.",
+ vials:[300,750,1500],vialDefault:750,vialLabel:"Bottle total (mg)",water:30,waterLabel:"Bottle volume (mL)",waterPresets:[30,50,60],vialNote:"Liquid is usually 25 mg/mL in a 30 mL bottle (750 mg). Capsules are 10 or 25 mg each, so no math needed.",useDays:180,
+ cycle:"8–16 weeks on, 4–8 weeks off; some run 10 mg long-term with bloodwork",
+ notes:["At 25 mg/mL: 10 mg = 0.4 mL, 15 mg = 0.6 mL, 25 mg = 1 mL. Measure with an oral syringe.","Nass 2008 (Annals of Internal Medicine): 25 mg/day for a year in 65 healthy 60–81-year-olds raised IGF-1 about 40–60% and added roughly 1.1 kg of fat-free mass; early weight gain was mostly water and strength gains were modest.","A hip-fracture trial was stopped early for congestive heart failure (6.5% vs 1.7% on placebo). The 563-person Alzheimer's trial raised IGF-1 but did nothing for cognition.","Expect a big appetite increase, water retention and puffiness, tingling hands, lethargy, and higher fasting glucose with lower insulin sensitivity. Check fasting glucose or A1c and IGF-1.","Not approved anywhere; FDA warning letters and safety alerts in 2025–2026 over the heart-failure risk. WADA-prohibited. Skip it with any heart-failure history, diabetes, or active cancer."],
+ storage:"Room temperature, away from light. No mixing; liquid bottles keep for months.",evidence:"Several Phase 2 RCTs in hundreds of people, then development was abandoned; the heart-failure signal is real.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/?term=Nass+2008+MK-677+growth+hormone+secretagogue+annals","https://peptibase.dev/peptides/mk-677","https://www.peptideschedule.com/peptides/mk-677-ibutamoren"]},
+
 {id:"nad",cat:"gh",name:"NAD+",aliases:["nicotinamide adenine dinucleotide","NAD"],status:"limited",
  for:"Coenzyme injected for energy and 'longevity'. No approved injectable dosing; the numbers are clinic practice.",
  unit:"mg",min:50,max:200,common:100,start:50,freq:"2–3× per week (some daily for a 1–2 week loading phase)",interval:null,timing:"Any time you can sit still for 20 minutes. Inject slowly (10+ seconds) and rotate sites.",
  ladder:[{weeks:"1–2",dose:50,label:"25–50 mg, 2–3× per week (test)"},{weeks:"3+",dose:100,label:"2–3× per week"}],ladderNote:"Clinic practice, not trial data. Higher single doses (150–200 mg) mostly add side effects.",
- vials:[100,250,500,1000],vialDefault:500,water:5,cycle:"Ongoing; many run 4–8 week blocks",
+ vials:[100,250,500,1000],vialDefault:500,vialMl:10,water:5,cycle:"Ongoing; many run 4–8 week blocks",
  notes:["The solution is acidic, so it stings. Inject slowly and split 100 mg across two sites if it burns.","Flushing, nausea, headache or a heavy, tired feeling for about an hour, worse when injected fast or at high doses.","500 mg usually ships in a 10 mL vial: 5 mL of water gives 100 mg/mL, so 50 mg = 50 units and 100 mg = 100 units.","Less stable than peptides: discard if it turns yellow or brown or shows particles."],
  storage:"Fridge, 2–4 weeks.",evidence:"Small IV-infusion studies only; subcutaneous dosing is clinic practice.",
  sources:["https://www.peptidedosingprotocols.com/protocol/nad-plus","https://www.justanswer.com/pharmacy/articles/nad-500mg-reconstitution-dosage"]},
+
+
+/* ---- weight loss ---- */
+{id:"liraglutide",cat:"wl",name:"Liraglutide",aliases:["Saxenda","Victoza","lira","daily GLP-1"],status:"approved",
+ for:"Once-daily GLP-1 agonist. Saxenda (3 mg) is approved for weight loss, Victoza (up to 1.8 mg) for type 2 diabetes; US generics arrived in 2024–2025.",
+ unit:"mg",min:0.6,max:3,common:3,start:0.6,freq:"Once daily, any time",interval:1,timing:"Any time of day, with or without food; keep it at the same time. Abdomen, thigh or upper arm.",
+ ladder:[{weeks:"1",dose:0.6},{weeks:"2",dose:1.2},{weeks:"3",dose:1.8},{weeks:"4",dose:2.4},{weeks:"5+",dose:3}],
+ ladderNote:"Saxenda label: one step up per week. If a step is rough, hold it another week; if 3 mg is not tolerated, stop. Victoza (diabetes) is 0.6 mg for one week, then 1.2 mg, max 1.8 mg.",
+ vials:[5,10,30],vialDefault:5,water:1,useDays:30,cycle:"Continuous. SCALE (56 wk): −8.4 kg vs −2.8 kg on placebo; the label says stop at 16 weeks if less than 4% is lost.",
+ notes:["Missed dose: skip it and take the next one on schedule, never a double dose. More than 3 days missed: restart at 0.6 mg and climb again.","5 mg + 1 mL = 5 mg/mL, so 0.6 mg = 12 units and 3 mg = 60 units (the pen is 6 mg/mL).","Saxenda vs placebo: nausea 39% vs 14%, diarrhea 21% vs 10%, constipation 19% vs 9%, vomiting 16% vs 4%; 10% quit for side effects vs 4%.","Boxed warning for thyroid C-cell tumors (not with personal or family MTC/MEN2). Pancreatitis, gallstones (2.2% vs 0.8%), heart rate +2–3 bpm, dehydration-related kidney injury, low blood sugar with insulin or sulfonylureas.","Pens keep 30 days in use at room temperature or in the fridge; nothing is known about vendor powder."],
+ storage:"Fridge, about 30 days after mixing (the pen's in-use limit). Never freeze.",evidence:"Very strong: SCALE trials and a full FDA label.",
+ sources:["https://www.novo-pi.com/saxenda.pdf","https://www.novo-pi.com/victoza.pdf","https://pubmed.ncbi.nlm.nih.gov/26132939/"]},
+
+{id:"survodutide",cat:"wl",name:"Survodutide",aliases:["BI 456906","survo","glucagon/GLP-1 dual agonist","Boehringer"],status:"trials",
+ for:"Boehringer Ingelheim's glucagon/GLP-1 dual agonist for obesity and MASH. Phase 3 (SYNCHRONIZE-1 and -2) reported in 2026; not filed or approved anywhere as of October 2026.",
+ unit:"mg",min:0.6,max:6,common:3.6,start:0.6,freq:"Once weekly",interval:7,timing:"Any time; rotate sites.",
+ ladder:[{weeks:"1–4",dose:0.6},{weeks:"5–8",dose:1.2},{weeks:"9–12",dose:2.4},{weeks:"13–16",dose:3.6},{weeks:"17–20",dose:4.8},{weeks:"21+",dose:6}],
+ ladderNote:"Reconstructed, not published: Phase 3 stepped up every 4 weeks over about 24 weeks to the 3.6 or 6 mg arm, and 2.4 mg was the lowest maintenance dose allowed. The exact step sizes are not public, so treat this as a shape, not a schedule. Phase 2 arms were 0.6, 2.4, 3.6 and 4.8 mg.",
+ vials:[10],vialDefault:10,water:1,cycle:"Continuous in trials (46–76 weeks)",
+ notes:["SYNCHRONIZE-1 (76 wk, no diabetes): −12.2% at 3.6 mg and −13.0% at 6 mg vs −5.4% (treatment-regimen estimand). SYNCHRONIZE-2 (type 2 diabetes): up to −13.1%, HbA1c −1.2 points.","GI side effects in 81–90% vs 48% on placebo; about 18–20% quit for GI effects vs 3%. Heart rate +3–4 bpm. Phase 2's faster escalation had 25% dropouts, which is why Phase 3 went slower.","Phase 2 missed-dose rule: take it within 48 h of the planned day, otherwise skip; keep at least 5 days between doses; never skip two in a row.","Trial exclusions worth copying: pancreatitis history, personal or family MTC/MEN2, severe heart failure, gastroparesis, long QT. Same thyroid C-cell caution as the rest of the class.","10 mg + 1 mL: 0.6 mg = 6 units, 3.6 mg = 36 units, 6 mg = 60 units."],
+ storage:"Fridge after mixing, about 28 days (assumed from the class; nothing published).",evidence:"Strong Phase 3 efficacy data (NEJM 2026); no label, so no official dosing.",
+ sources:["https://www.ajmc.com/view/survodutide-phase-3-data-signal-metabolic-gains-beyond-weight-loss","https://www.nature.com/articles/s41591-026-04479-3","https://cdn.clinicaltrials.gov/large-docs/77/NCT04667377/Prot_000.pdf"]},
+
+{id:"cagrisema",cat:"wl",name:"Cagrilintide / semaglutide blend",aliases:["CagriSema","cagri sema","CS blend","amylin + GLP-1"],status:"trials",
+ for:"Cagrilintide and semaglutide in one vial at 1:1, copying Novo's CagriSema. The combination is under FDA review; a decision was expected late 2026.",
+ unit:"mg",unitLabel:"mg of each",min:0.25,max:2.4,common:2.4,start:0.25,freq:"Once weekly",interval:7,timing:"Any time; the trials injected both at once.",
+ ladder:[{weeks:"1–4",dose:0.25},{weeks:"5–8",dose:0.5},{weeks:"9–12",dose:1},{weeks:"13–16",dose:1.7},{weeks:"17+",dose:2.4}],
+ ladderNote:"REDEFINE 1 schedule for each component. Only 57% of participants were on the full 2.4/2.4 mg by week 68, so slowing down is normal.",
+ vials:[5,10],vialDefault:5,vialNote:"Enter the mg of EACH component: a 5 mg / 5 mg vial is 5.",water:2,cycle:"68 weeks in trials; nothing published on stopping.",
+ notes:["A '5 mg / 5 mg' vial holds 5 mg of each (10 mg total). With 2 mL, 2.4 mg of each is 96 units, so 1 mL (48 units) fits better at the top dose.","REDEFINE 1 (68 wk): CagriSema −20.4%, semaglutide alone −14.9%, cagrilintide alone −11.5%, placebo −3.0%.","GI effects in 80% vs 40% on placebo; injection-site reactions are more common than with semaglutide alone.","A premixed vial locks the ratio at 1:1. If one component needs holding back, use separate vials.","Retatrutide + cagrilintide blends also exist; no trial has ever combined those two, so there is no dose basis at all."],
+ storage:"Fridge after mixing, about 28 days.",evidence:"Strong Phase 3 data for the combination (NEJM 2025); no label yet.",
+ sources:["https://www.acc.org/Latest-in-Cardiology/Journal-Scans/2025/07/02/14/43/REDEFINE-1-and-REDEFINE-2","https://www.drugs.com/history/cagrisema.html"]},
+
+{id:"frag176",cat:"wl",name:"HGH Fragment 176-191",aliases:["frag","176-191","fragment 176","lipolytic fragment"],status:"none",
+ for:"The last 16 amino acids of growth hormone, sold for fat loss. This is the unmodified fragment; AOD-9604 is the modified version that was actually tested in people.",
+ unit:"mcg",min:250,max:500,common:250,freq:"1–2× daily",interval:1,timing:"Fasted on waking and/or before bed; 30+ min before food (convention).",
+ ladder:[],vials:[2,5],vialDefault:5,water:2,cycle:"4–8 weeks on, 2–4 off (convention)",
+ notes:["No human study of this fragment exists. The AOD-9604 trials (about 900 people) were oral or single IV doses and the 24-week pivotal trial failed, so even that data does not transfer to injections.","Dosing is pure community convention: 250–500 mcg once or twice a day. 5 mg + 2 mL = 2.5 mg/mL, so 250 mcg = 10 units.","No human safety data. Expect the usual injection-site reactions; immunogenicity and impurities are the unknowns with research-grade peptide.","WADA-prohibited (named). Never nominated to FDA's compounding lists, so no category."],
+ storage:"Fridge, 2–3 weeks (convention).",evidence:"None in humans.",
+ sources:["https://www.jofem.org/index.php/jofem/article/view/157/194","https://en.wikipedia.org/wiki/HGH_Fragment_176%E2%80%93191"]},
+
+/* ---- healing ---- */
+{id:"bpctb",cat:"heal",name:"BPC-157 / TB-500 blend",aliases:["BB blend","wolverine blend","BPC TB500 combo","5mg/5mg healing"],status:"none",
+ for:"BPC-157 and TB-500 premixed 1:1 in one vial. Each component is in this guide on its own; the blend forces them onto one schedule.",
+ unit:"mg",unitLabel:"mg of each",min:0.25,max:0.5,common:0.25,freq:"Once daily (convention)",interval:1,timing:"Abdomen or near the injury; either works for TB-500.",
+ ladder:[],vials:[5,10],vialDefault:5,vialNote:"Enter the mg of EACH component: a 5 mg / 5 mg vial is 5.",water:2,cycle:"4–8 weeks on, 2–4 off (convention)",
+ notes:["0.25–0.5 mg of each per day matches the BPC-157 convention (250–500 mcg) and gives TB-500 about 1.75–3.5 mg a week, inside its loading range. At 2 mL per 5/5 vial, 0.25 mg of each is 10 units.","Neither component has a human controlled trial, and nobody has studied the pair together. The 'wolverine stack' convention is the two drawn separately so each can be dosed on its own schedule.","Reported: injection-site bumps, nausea, headache, fatigue. Both carry a theoretical concern around active cancer (blood-vessel growth).","FDA: both were voted 8–6 for compounding by the July 2026 advisory panel; decisions pending. TB-500 is WADA-prohibited."],
+ storage:"Fridge, protect from light, about 28 days.",evidence:"Rodent data for each component; nothing for the combination.",
+ sources:["https://pmc.ncbi.nlm.nih.gov/articles/PMC12313605/","https://www.mcdermottlaw.com/insights/bulk-list-bound-pcac-backs-majority-of-peptides-in-two-day-public-meeting/"]},
+
+{id:"glow",cat:"heal",name:"GLOW blend (BPC-157 / TB-500 / GHK-Cu)",aliases:["GLOW","glow 70","BBG","KLOW","skin stack","BPC GHK TB blend"],status:"none",
+ for:"A 'skin and recovery' premix. The common 70 mg vial is 10 mg BPC-157 + 50 mg GHK-Cu + 10 mg TB-500; the 80 mg 'KLOW' adds 10 mg KPV; a 50 mg version is 35 mg GHK-Cu + 10 TB-500 + 5 BPC.",
+ unit:"mg",unitLabel:"mg total",min:1.4,max:2.8,common:2.8,freq:"Once daily (convention)",interval:1,timing:"Abdomen or thigh. GHK-Cu stings, so inject slowly and dilute well.",
+ ladder:[],vials:[50,70,80],vialDefault:70,vialLabel:"Vial total (mg)",water:3,waterPresets:[2,3,5],useDays:28,cycle:"4–8 weeks on, 4 off (convention)",
+ notes:["Dose by the GHK-Cu, which is 5/7 of the 70 mg vial: 2.8 mg total = 2 mg GHK-Cu + 0.4 mg BPC-157 + 0.4 mg TB-500 (the GHK-Cu convention is 1–2 mg/day). 70 mg + 3 mL = 23 mg/mL, so 2.8 mg = 12 units.","The 80 mg vial is 10/50/10/10, so 2.8 mg total gives 1.75 mg GHK-Cu and 0.35 mg of each other component. The 50 mg (35/10/5) version is 70% GHK-Cu.","Nobody has studied any of these together; the ratio is a vendor's choice, not a trial's. TB-500 ends up at roughly 2.8 mg a week, which is inside its convention.","GHK-Cu dominates the side effects: stinging, blue-tinted bruising, headache; copper load of about 0.2 mg per 2 mg dose. A dermatologist reported raised liver enzymes and copper levels in heavy users (Sept 2026).","Theoretical cancer concern for BPC-157 and TB-500 (blood-vessel growth); TB-500 is WADA-prohibited."],
+ storage:"Fridge, upright, protect from light, about 28 days.",evidence:"None for the combination; each component is rodent or topical data only.",
+ sources:["https://www.perfectb.com/ghk-cu-dosage-protocol/","https://www.wypr.org/2026-09-07/the-copper-peptide-trend-has-gone-from-creams-to-injections-ahead-of-the-science"]},
+
+{id:"ara290",cat:"heal",name:"ARA-290 (cibinetide)",aliases:["ARA 290","cibinetide","innate repair receptor","EPO-derived peptide"],status:"limited",
+ for:"An 11-amino-acid piece of erythropoietin that does not raise red cells; studied for small-fiber nerve pain in sarcoidosis and diabetes. Development stalled after Phase 2.",
+ unit:"mg",min:1,max:8,common:4,freq:"Once daily for 28 days (trial regimen)",interval:1,timing:"Any time; same time each day. Abdomen.",
+ ladder:[],vials:[10],vialDefault:10,water:1,cycle:"28-day course in trials, then observation; no data on repeating",
+ notes:["Trials: 4 mg SC daily for 28 days in sarcoidosis small-fiber neuropathy (n=64, arms 1/4/8 mg) improved corneal nerve-fiber measures, a marker of small-fiber regrowth; 2 mg IV three times a week for 4 weeks (n=22) cut neuropathy symptom scores. A 28-day diabetic study used 4 mg daily.","10 mg + 1 mL = 10 mg/mL, so 4 mg = 40 units.","No safety signals in the trials and no anti-drug antibodies were found; long-term use was never studied.","FDA 503A: Category 3 (nominated without adequate support), so not compoundable."],
+ storage:"Fridge, about 28 days (convention; no published stability).",evidence:"Small randomized Phase 2 trials; the dose above is theirs.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/23168581/","https://pubmed.ncbi.nlm.nih.gov/28475703/","https://pubmed.ncbi.nlm.nih.gov/25387363/"]},
+
+/* ---- GH axis ---- */
+{id:"ghrp2",cat:"gh",name:"GHRP-2 (pralmorelin)",aliases:["GHRP 2","pralmorelin","KP-102","growth hormone releasing peptide 2"],status:"abroad",statusLabel:"Approved in Japan (diagnostic)",
+ for:"Ghrelin-receptor peptide that releases GH, plus cortisol, prolactin and appetite. Approved in Japan only as a single IV test dose for GH deficiency.",
+ unit:"mcg",min:100,max:300,common:100,freq:"1–3× daily, fasted (convention)",interval:1,timing:"Fasted: 2+ hours after food, nothing for 30 min after. Bedtime rides the sleep GH pulse.",
+ ladder:[],vials:[5,10],vialDefault:5,water:2,cycle:"8–12 weeks on, 4 off (convention)",
+ notes:["The approved use is 100 mcg IV once, as a test. A 30-day continuous SC infusion in older adults tripled GH on day 1 and was still 1.8× at day 30; no treatment trials exist.","100–300 mcg 1–3× a day is community convention. 5 mg + 2 mL = 2.5 mg/mL, so 100 mcg = 4 units.","Hunger (one study: 36% more food eaten), flushing, lightheadedness, sleepiness; cortisol and prolactin rise more than with ipamorelin.","FDA: 503B Category 2 since 2023 (immunogenicity; reports of higher insulin need, infection, pancreatitis and deaths in critically ill study subjects). WADA-prohibited. Avoid with cancer, pituitary disease or diabetes; check fasting glucose and IGF-1."],
+ storage:"Fridge, 2–4 weeks (convention).",evidence:"Good human pharmacology (Japanese label, infusion studies); no data for the way it is actually used.",
+ sources:["https://www.pmda.go.jp/PmdaSearch/iyakuDetail/200022_7223407D2023_1_01","https://academic.oup.com/jcem/article/83/7/2355/2865347","https://www.fda.gov/drugs/human-drug-compounding/certain-bulk-drug-substances-use-compounding-may-present-significant-safety-risks"]},
+
+{id:"ghrp6",cat:"gh",name:"GHRP-6",aliases:["GHRP 6","growth hormone releasing hexapeptide","hunger peptide"],status:"limited",
+ for:"First-generation ghrelin-receptor peptide. Releases GH with a strong appetite surge and some cortisol and prolactin.",
+ unit:"mcg",min:100,max:300,common:100,freq:"2–3× daily, 30+ min before food (convention)",interval:1,timing:"Fasted; many take it 20–30 min before a meal on purpose, for the hunger.",
+ ladder:[],vials:[5,10],vialDefault:5,water:2,cycle:"8–12 weeks on, 2–4 off (convention)",
+ notes:["Human data is IV: 0.1–1 mcg/kg boluses raised GH 7–70×; a 24-hour infusion raised IGF-1 12–22% and blunted the response to a later bolus (desensitization). Phase 1 single doses up to 400 mcg/kg: mostly mild sweating and a slow pulse.","100–300 mcg 2–3× a day is convention. 5 mg + 2 mL = 2.5 mg/mL, so 100 mcg = 4 units.","Expect real hunger. Cortisol and prolactin rise at higher doses; glucose can creep up. Continuous exposure desensitizes, so space doses.","FDA: 503B Category 2 since 2023 (immunogenicity, raised glucose). WADA-prohibited. Avoid with cancer, pituitary or adrenal disease, diabetes; monitor fasting glucose and IGF-1."],
+ storage:"Fridge, 2–4 weeks (convention).",evidence:"IV pharmacology only; no trial of repeated SC use.",
+ sources:["https://academic.oup.com/jcem/article-abstract/70/4/975/2652594","https://academic.oup.com/jcem/article-abstract/76/5/1202/2650875","https://www.fda.gov/media/94155/download"]},
+
+{id:"hexarelin",cat:"gh",name:"Hexarelin",aliases:["hexa","examorelin","hexarelin acetate"],status:"limited",
+ for:"The strongest of the GHRP family per dose, with the biggest cortisol and prolactin rise and the fastest loss of effect.",
+ unit:"mcg",min:100,max:200,common:100,freq:"1–2× daily (convention); the long trial used twice daily",interval:1,timing:"Fasted, 2+ hours after food. Often run once in the morning rather than at bedtime.",
+ ladder:[],vials:[2,5],vialDefault:5,water:2,cycle:"4–6 weeks, then 4+ weeks off: the GH response fades by week 4 (convention follows the trial)",
+ notes:["Human trial: 1.5 mcg/kg SC twice daily (about 100 mcg) for 16 weeks in healthy older volunteers; the GH response had faded by week 4 and partly recovered after 4 weeks off. Single IV doses of 2 mcg/kg give the largest GH peak of any GHRP.","5 mg + 2 mL = 2.5 mg/mL, so 100 mcg = 4 units.","Cortisol and prolactin rise clearly at useful doses; also flushing, water retention, hunger, tingling. Small studies showed direct heart effects (a rise in stroke volume) that were never followed up.","Never nominated to FDA's compounding lists; the Category 2 concerns for the other GHRPs apply. WADA-prohibited. Avoid with cancer or pituitary disease; check IGF-1 and fasting glucose."],
+ storage:"Fridge, 2–4 weeks (convention).",evidence:"Short human trials in volunteers and patients; the desensitization is the best-documented fact.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/?term=hexarelin+long-term+therapy+growth+hormone+status+Rahim","https://pubmed.ncbi.nlm.nih.gov/?term=hexarelin+GH+releasing+activity+humans+Arvat"]},
+
+{id:"igf1lr3",cat:"gh",name:"IGF-1 LR3",aliases:["Long R3 IGF-1","LR3","IGF-1 long","insulin-like growth factor"],status:"none",
+ for:"A lab-modified IGF-1 that barely binds its carrier proteins, so it is far more potent than the natural hormone. It is a cell-culture reagent; nobody has injected it in a study.",
+ unit:"mcg",min:20,max:80,common:40,freq:"Once daily, with food (convention)",interval:1,timing:"After a meal or post-workout, never fasted or at bedtime: hypoglycemia is the acute risk.",
+ ladder:[],vials:[0.1,1],vialDefault:1,water:2,cycle:"4–6 weeks on, 4–6 off (convention)",
+ notes:["Hypoglycemia first: with no binding-protein buffer, blood sugar can crash within an hour. Keep fast carbs nearby and never dose before sleep or a fast.","Cancer: IGF-1 signalling is mitogenic. Higher natural IGF-1 raises prostate and premenopausal breast cancer odds about 1.5× in pooled studies; nobody knows what an unbuffered analog does. Avoid with any cancer history.","No human data for LR3. The approved native IGF-1 (mecasermin, for children) causes hypoglycemia in 42%, intracranial hypertension, tonsil enlargement and jaw growth; adult ALS trials of native IGF-1 showed no benefit and, in one, higher mortality.","20–50 mcg daily is convention; 80–100 mcg is the high end. 1 mg + 2 mL = 0.5 mg/mL, so 40 mcg = 8 units.","Not on any FDA compounding list. WADA-prohibited."],
+ storage:"Fridge, about 28 days (convention; the native drug keeps 30 days).",evidence:"None in humans; the native IGF-1 label and trials are the closest thing.",
+ sources:["https://www.accessdata.fda.gov/drugsatfda_docs/label/2025/021839s033lbl.pdf","https://www.fda.gov/files/drugs/published/FDA-Summary-of-Controlled-Clinical-Data-for-Human-IGF-1-in-Treatment-of-Patients-with-Amyotrophic-Lateral-Sclerosis.pdf","https://en.wikipedia.org/wiki/IGF-1_LR3"]},
+
+{id:"igf1des",cat:"gh",name:"IGF-1 DES (1-3)",aliases:["DES IGF-1","IGF-DES","des(1-3)IGF-1"],status:"none",
+ for:"IGF-1 missing its first three amino acids, which weakens carrier-protein binding. Short-acting; sold for local muscle use. No human study exists.",
+ unit:"mcg",min:50,max:200,common:100,freq:"1–2× daily, around training (convention)",interval:1,timing:"Right before or after training, with food. Not within 2 hours of sleep (hypoglycemia).",
+ ladder:[],vials:[1,2],vialDefault:1,water:2,cycle:"4–6 weeks on, equal time off (convention)",
+ notes:["Same two risks as IGF-1 LR3, with a shorter window: hypoglycemia soon after the shot, and tumor promotion with repeated use. Avoid with any cancer history or diabetes drugs.","50–100 mcg per shot is convention; the claimed 20–30 minute half-life is also unverified. 1 mg + 2 mL = 0.5 mg/mL, so 100 mcg = 20 units.","The 'local growth' idea comes from rodent and cell data; the native IGF-1 label (mecasermin) is the only human safety reference.","Not on any FDA compounding list. WADA-prohibited."],
+ storage:"Fridge, 2–4 weeks (unverified).",evidence:"None in humans.",
+ sources:["https://en.wikipedia.org/wiki/Des(1-3)IGF-1","https://www.accessdata.fda.gov/drugsatfda_docs/label/2025/021839s033lbl.pdf"]},
+
+{id:"hgh",cat:"gh",name:"HGH (somatropin, 191 aa)",aliases:["growth hormone","somatropin","GH","191AA","rhGH"],status:"approved",
+ for:"Recombinant human growth hormone. Approved for GH deficiency and a few other conditions; anti-aging and physique use is off-label and, in the US, distributing it for that is a federal crime.",
+ unit:"IU",vialUnit:"IU",vialLabel:"Vial size (IU)",min:0.5,max:2.4,common:1,start:0.6,freq:"Once daily (label); 5 days on / 2 off is clinic convention",interval:1,timing:"Label: any time, same time daily. Off-label users go bedtime or fasted morning. Rotate sites.",
+ ladder:[{weeks:"1–8",dose:0.6,label:"0.2 mg/day label start; check IGF-1 at 4–8 weeks"},{weeks:"9+",dose:1,label:"step up 0.3–0.6 IU every 1–2 months by IGF-1 and side effects"}],
+ ladderNote:"Adult GH-deficiency label: start 0.2 mg/day (about 0.6 IU; range 0.15–0.3 mg), raise by 0.1–0.2 mg/day every 1–2 months while IGF-1 stays in range. The older weight-based cap of 0.08 mg/kg/week is about 2.4 IU/day for 70 kg. Physique doses of 4–10 IU/day are far outside the label.",
+ vials:[10,12,15,24,36,50],vialDefault:10,water:1,useDays:28,cycle:"Continuous in GH deficiency; off-label runs of 3–6 months are common",
+ notes:["1 mg = 3 IU. 10 IU + 1 mL = 10 IU/mL, so 1 IU = 10 units. Mix with BAC water, swirl, never shake; most label products keep 14–28 days refrigerated after mixing.","Side effects track dose: fluid retention and swelling, joint and muscle pain, carpal tunnel and tingling, insulin resistance and higher fasting glucose; headaches early on. Older adults get more of all of it.","Avoid with active cancer, diabetic retinopathy, acute critical illness, or untreated low thyroid or cortisol. Monitor IGF-1 (keep it in the age range), fasting glucose or A1c, and thyroid.","Legal: 21 USC 333(e) makes distributing HGH for anything but an approved use a crime in the US. WADA-prohibited.","Counterfeit and underdosed vials are common in the gray market; the 191-amino-acid claim is not something you can check at home."],
+ storage:"Fridge, 14–28 days after mixing (varies by brand). Never freeze.",evidence:"Full FDA labels and decades of data for GH deficiency; the anti-aging evidence is small and the side-effect profile is well documented.",
+ sources:["https://labeling.pfizer.com/ShowLabeling.aspx?id=577","https://www.novo-pi.com/norditropin.pdf","https://www.law.cornell.edu/uscode/text/21/333"]},
+
+/* ---- hormones, fertility & bone ---- */
+{id:"hcg",cat:"hormone",name:"hCG (chorionic gonadotropin)",aliases:["HCG","Pregnyl","Novarel","chorionic gonadotropin","LH mimic"],status:"approved",
+ for:"Acts like LH on the testes to keep them making testosterone and sperm. Approved for male hypogonadotropic hypogonadism and cryptorchidism; used off-label alongside testosterone therapy.",
+ unit:"IU",vialUnit:"IU",vialLabel:"Vial size (IU)",min:250,max:2000,common:500,freq:"Every other day or 2–3× weekly",interval:2,timing:"Any time; abdomen or thigh. Keep the schedule steady: the effect fades after 2–3 days.",
+ ladder:[],vials:[2000,5000,10000],vialDefault:5000,vialMl:10,water:5,waterPresets:[2,5,10],useDays:30,cycle:"Ongoing while on testosterone; label courses for hypogonadism run 3–12 months",
+ notes:["5000 IU + 5 mL = 1000 IU/mL, so 500 IU = 50 units and 250 IU = 25 units.","On testosterone therapy: 500 IU every other day kept semen parameters normal in men on TRT (n=26, J Urol 2013); 125–500 IU every other day preserved testicular testosterone in a dose study (JCEM 2005). This use is off-label but appears in urology guidance.","Label (hypogonadotropic hypogonadism): 500–1000 IU 3× weekly for 3 weeks then twice weekly for 3 weeks; or 1000–2000 IU 3× weekly; or 4000 IU 3× weekly for 6–9 months then 2000 IU 3× weekly. Fertility induction adds FSH/hMG later.","Estradiol rises with it: breast tenderness or gynecomastia, acne, water retention, mood swings, headache. Check testosterone and estradiol at 6–8 weeks.","hCG became a biologic in March 2020, which ended most pharmacy compounding; the brand products are prescription. WADA-prohibited for men."],
+ storage:"Fridge after mixing, 30 days (Novarel) to 60 days (Pregnyl) by label.",evidence:"Approved drug with a label; the TRT-adjunct use rests on small controlled studies.",
+ sources:["https://www.drugs.com/pro/pregnyl.html","https://pubmed.ncbi.nlm.nih.gov/?term=hCG+preserves+spermatogenesis+testosterone+replacement+Hsieh+2013","https://pubmed.ncbi.nlm.nih.gov/?term=low-dose+hCG+maintains+intratesticular+testosterone+Coviello+2005"]},
+
+{id:"hmg",cat:"hormone",name:"hMG (menotropins)",aliases:["HMG","Menopur","menotropins","FSH + LH","75 IU"],status:"approved",
+ for:"Human menopausal gonadotropin: FSH with LH activity, 75 IU of each per vial. Approved for IVF stimulation in women; in men it is added to hCG to start sperm production in hypogonadotropic hypogonadism.",
+ unit:"IU",vialUnit:"IU",vialLabel:"Vial size (IU of FSH)",min:75,max:150,common:75,freq:"2–3× weekly, with hCG (specialist-managed)",interval:null,timing:"Any time; abdomen. Only makes sense with hCG already on board and a semen analysis to track.",
+ ladder:[],vials:[75],vialDefault:75,water:1,useDays:1,cycle:"Men: 3–6 months of hCG alone first, then hMG added for 6–18 months until sperm appear",
+ notes:["75 IU + 1 mL = 75 IU/mL, so 75 IU is a full 100-unit syringe; use 0.5 mL (50 units) if you want room.","Male regimen (endocrine and urology guidance): hCG 1000–2000 IU 2–3× weekly, then add hMG 75–150 IU 2–3× weekly if no sperm after 3–6 months. Responses take months; counts stay low but pregnancies happen.","Label use in women is only under fertility-clinic monitoring: ovarian hyperstimulation can be dangerous and multiple pregnancy is common. Nothing here applies to self-use in women.","Men: breast tenderness, injection-site pain, acne. Needs LH, FSH, testosterone, estradiol and semen analysis to be worth doing.","The label says use immediately after mixing; multi-dose use of one vial is off-label, so the use-by here is 1 day."],
+ storage:"Label: use immediately after reconstitution.",evidence:"Approved drug (women); the male regimen is guideline-based from small series.",
+ sources:["https://www.drugs.com/pro/menopur.html","https://pubmed.ncbi.nlm.nih.gov/?term=gonadotropin+therapy+hypogonadotropic+hypogonadism+men+hMG+hCG+spermatogenesis"]},
+
+{id:"gonadorelin",cat:"hormone",name:"Gonadorelin (GnRH)",aliases:["GnRH","LHRH","Factrel","Lutrepulse","gonadorelin acetate"],status:"former",statusLabel:"Formerly approved (US)",
+ for:"Synthetic GnRH, the hypothalamic hormone that tells the pituitary to release LH and FSH. US products were a diagnostic test and a pulsatile pump; both are discontinued. Used off-label on testosterone therapy in place of hCG.",
+ unit:"mcg",min:100,max:200,common:100,freq:"2–3× weekly (convention); never daily or continuous",interval:null,timing:"Any time; the effect of a shot lasts minutes, which is the whole problem.",
+ ladder:[],vials:[2,5],vialDefault:2,water:2,useDays:3,cycle:"Ongoing while on TRT (convention); no trial defines a course",
+ notes:["Pulsatile vs continuous is everything: the body releases GnRH in pulses every 90–120 min. Pulses stimulate LH/FSH; constant or very frequent exposure shuts the pituitary down (that is how GnRH agonists castrate). Two or three shots a week is far from either pattern, so the response is unpredictable.","Label uses: 100 mcg once as a diagnostic; pump therapy 5–20 mcg per pulse every 90–120 min for men with hypogonadotropic hypogonadism (sperm appeared in 79% within about 6 months).","No controlled study of 100–200 mcg shots in men on TRT exists; the hCG data (500 IU every other day) does not transfer because hCG acts on the testes directly. On TRT the pituitary is already suppressed.","2 mg + 2 mL = 1 mg/mL, so 100 mcg = 10 units. The pump solution is stable only 3 days after mixing; the 2–4 week claims are convention.","Headache, nausea, flushing, site reactions; antibodies with prolonged use. FDA warning letters in 2026 named it. WADA-prohibited for men."],
+ storage:"Label: 3 days after mixing. Fridge.",evidence:"Label data for pump and diagnostic use; the TRT-adjunct use has no trial.",
+ sources:["https://db.cbg-meb.nl/smpc/h10919_smpc.pdf","https://tau.amegroups.org/article/view/141175/html","https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=018123"]},
+
+{id:"kisspeptin",cat:"hormone",name:"Kisspeptin-10",aliases:["KP-10","kisspeptin","metastin fragment","kiss1"],status:"limited",
+ for:"The hormone one step above GnRH: it triggers GnRH, then LH and testosterone. Studied intravenously as a diagnostic and fertility tool; the longer kisspeptin-54 is used as an IVF trigger in trials.",
+ unit:"mcg",min:50,max:200,common:100,freq:"2–3× weekly (convention); trials were single IV doses",interval:null,timing:"Any time. Spacing matters: continuous exposure switches the response off.",
+ ladder:[],vials:[5,10],vialDefault:5,water:2,cycle:"No trial course; convention is 4–8 weeks on, then off",
+ notes:["Human data is IV: boluses of about 0.3–1 nmol/kg (roughly 30–90 mcg for 70 kg) raise LH within minutes and testosterone over hours in healthy men. Continuous or twice-daily exposure for days causes tachyphylaxis (the response fades).","100–200 mcg SC 2–3× a week is convention, with no study behind it. 5 mg + 2 mL = 2.5 mg/mL, so 100 mcg = 4 units.","Side effects in trials were minimal (occasional flushing); the unknowns are repeated SC use, hormone swings and the effect on sperm with chronic use. Not for anyone on TRT expecting a restart, and not for women trying to time ovulation without monitoring (the kisspeptin-54 IVF trials run under hyperstimulation surveillance).","Not on FDA compounding lists. WADA-prohibited for men."],
+ storage:"Fridge, 2–4 weeks (convention).",evidence:"Good IV pharmacology in small studies; nothing on the SC convention.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/?term=kisspeptin-10+intravenous+bolus+healthy+men+LH+testosterone","https://pubmed.ncbi.nlm.nih.gov/?term=kisspeptin-54+tachyphylaxis+hypothalamic+amenorrhoea"]},
+
+{id:"teriparatide",cat:"hormone",name:"Teriparatide (PTH 1-34)",aliases:["Forteo","PTH","parathyroid hormone fragment","bone builder"],status:"approved",
+ for:"Daily injection that builds bone in severe osteoporosis. Approved since 2002; the 2-year lifetime limit was relaxed in 2020 but use beyond that is only for persistent high fracture risk.",
+ unit:"mcg",min:20,max:20,common:20,freq:"Once daily",interval:1,timing:"Any time; take the first few doses sitting or lying down (dizziness on standing in 5%). Thigh or abdomen.",
+ ladder:[],vials:[10],vialDefault:10,water:20,waterPresets:[2,5,10,20],useDays:28,cycle:"Label: usually up to 24 months total; then switch to an antiresorptive",
+ notes:["The vial math does not work. A 10 mg research vial is 500 daily doses, and 20 mcg in 2 mL is 0.4 units, which no syringe can measure. Even 20 mL of water (more than a vial holds) gives only 4 units, and the pen's in-use limit is 28 days, so you would use 5% of the vial before it should be discarded. The 40 mcg trial dose added side effects without benefit.","Mixing up mg and mcg here is a 1000× overdose with acute hypercalcemia; the app locks the dose at 20 mcg.","Fracture Prevention Trial (n=1,637, about 21 months): new spine fractures 5% vs 14% on placebo; other fractures 3% vs 6%.","Avoid with Paget's disease, unexplained high alkaline phosphatase, open growth plates, bone cancer or metastases, prior bone radiation, or high calcium. Draw calcium 16+ hours after a dose. Nausea 8.5%, dizziness 8%, joint pain 10%.","Pens keep 28 days in the fridge; nothing is known about reconstituted powder."],
+ storage:"Fridge at all times, 28 days in use (pen). Never freeze.",evidence:"Full FDA label and a large fracture trial; none of it was done with research vials.",
+ sources:["https://pi.lilly.com/us/forteo-pi.pdf","https://pubmed.ncbi.nlm.nih.gov/11346808/"]},
+
+{id:"oxytocin",cat:"hormone",name:"Oxytocin",aliases:["Pitocin","oxytocin acetate","love hormone","intranasal oxytocin"],status:"approved",statusLabel:"Rx for labor only",refOnly:true,
+ for:"Hormone approved only for inducing labor and controlling bleeding after birth, by IV drip in hospital. The 'bonding' and social use is intranasal research that has mostly come up empty.",
+ unit:"IU",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Units: 1 IU is about 1.67 mcg, so a 10 mg vial is roughly 6,000 IU; the hospital drip is 10–40 IU per litre of fluid.","Intranasal research doses are 24 IU (about 40 mcg) per use, sometimes 24–80 IU/day. The largest trial (n=290 autistic children, NEJM 2021) found no benefit; small studies in anxiety, social cognition and weight have been inconsistent. A reconstituted vial does not become a dosed nasal spray; the trial products were pharmacy-made sprays.","There is no injected dose for any non-obstetric use. Injected oxytocin causes uterine contraction (dangerous in pregnancy), blood-pressure drops and, with fluids, water retention and low sodium.","No published home dosing basis of any kind, so the calculator is off for this entry."],
+ storage:"The injectable product keeps refrigerated; nasal preparations are unstable and were made fresh in trials.",evidence:"Approved for obstetrics; the intranasal literature is large and largely negative.",
+ sources:["https://www.nejm.org/doi/full/10.1056/NEJMoa2103583","https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=oxytocin"]},
+
+{id:"triptorelin",cat:"hormone",name:"Triptorelin",aliases:["Trelstar","Triptodur","GnRH agonist","HPTA restart","PCT shot"],status:"approved",statusLabel:"Rx (depot for cancer)",refOnly:true,
+ for:"A GnRH agonist. Its approved job is the opposite of what it is sold for: monthly or quarterly depot shots that shut testosterone down to castrate levels for prostate cancer and precocious puberty.",
+ unit:"mcg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Approved doses: 3.75 mg monthly, 11.25 mg every 3 months or 22.5 mg every 6 months as depot (prostate cancer); 0.1–0.2 mg daily or once as an IVF trigger under fertility-clinic monitoring.","The 'one 100 mcg shot to restart the HPTA after steroids' idea rests on a single 2010 case report and forum lore; there is no trial, no dose-finding and no safety data. Repeat it, or get the dose wrong, and you get the drug's real effect: a testosterone surge for days, then suppression for weeks.","Even one dose can cause hot flashes, mood changes, headache and a transient testosterone spike (tumor flare in cancer patients).","No home dosing basis, so the calculator is off for this entry. A urologist or endocrinologist handles post-cycle recovery with hCG, clomiphene and labs."],
+ storage:"Lyophilized depot products are reconstituted and injected at once by a clinician.",evidence:"Approved drug; the restart use has one case report.",
+ sources:["https://www.drugs.com/pro/trelstar.html","https://pubmed.ncbi.nlm.nih.gov/?term=triptorelin+anabolic+steroid+induced+hypogonadism+case+report"]},
+
+/* ---- brain, mood & sleep ---- */
+{id:"selank",cat:"brain",name:"Selank",aliases:["TP-7","tuftsin analog","NA-Selank","selank amidate","anxiolytic peptide"],status:"abroad",statusLabel:"Approved in Russia (nasal)",route:"nasal",
+ for:"A Russian anti-anxiety peptide approved as 0.15% nasal drops for anxiety and 'neurasthenia'. Not approved anywhere else; injected use has no human data.",
+ unit:"mcg",min:200,max:600,common:300,freq:"2–3× daily by nose, 14-day course (label)",interval:1,timing:"Morning and early afternoon; it can be mildly activating. Split each dose between nostrils.",
+ ladder:[],vials:[5,10,30],vialDefault:5,water:5,waterLabel:"Water in the spray bottle (mL)",waterPresets:[2,5,10],useDays:21,cycle:"Label: 14 days, repeat after 1–3 weeks; convention runs 2–4 weeks on, 2 off",
+ notes:["Label: 2 drops (about 150 mcg) per nostril 3× a day for 14 days. An open-label trial used 2.7 mg/day. Community nasal doses are 200–600 mcg per dose; 5 mg in 5 mL is 1 mg/mL, so 300 mcg = 0.3 mL, about three 0.1 mL sprays.","Evidence: a handful of small Russian trials (n=20–70) showing effects comparable to benzodiazepines over 2–3 weeks; no independent replication, no blinded placebo trial published in English.","'N-acetyl Selank amidate' is a modified molecule sold as longer-acting; it has no published data at all.","Label side effects: allergic reactions, unpleasant taste. Avoid in pregnancy. Long-term and injected safety unknown.","FDA: nominated for compounding, then withdrawn (ex-Category 2); not compoundable."],
+ storage:"Label: 2–8 °C unopened; 15 days at room temperature once opened. Reconstituted research vials: fridge, 2–3 weeks (convention).",evidence:"Small Russian trials for the nasal drops; nothing for injection or the amidate.",
+ sources:["https://www.rlsnet.ru/drugs/selank-2638","https://pubmed.ncbi.nlm.nih.gov/18454096/","https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2016.00031/pdf"]},
+
+{id:"semax",cat:"brain",name:"Semax",aliases:["ACTH 4-7 Pro-Gly-Pro","NA-Semax","semax amidate","Adamax","nootropic peptide"],status:"abroad",statusLabel:"Approved in Russia (nasal)",route:"nasal",
+ for:"A Russian ACTH-fragment peptide approved as nasal drops: 0.1% for cognitive and attention complaints, 1% for stroke. No approval elsewhere; no injection data.",
+ unit:"mcg",min:200,max:600,common:300,freq:"2–3× daily by nose (0.1% label); 5–14 day courses",interval:1,timing:"Morning and midday; it is activating. Split between nostrils.",
+ ladder:[],vials:[5,10,30],vialDefault:5,water:5,waterLabel:"Water in the spray bottle (mL)",waterPresets:[2,5,10],useDays:21,cycle:"Label courses of 5–14 days; convention is 10–20 days on, 2+ weeks off",
+ notes:["0.1% label: 2–3 drops (about 50 mcg each) per nostril 2–3× a day, roughly 200–300 mcg per dose. The 1% stroke product is dosed by neurologists at milligram levels and is not a home product. 5 mg in 5 mL = 1 mg/mL, so 300 mcg = 0.3 mL.","Evidence is Russian, mostly small and not independently replicated; the FDA advisory panel voted 8–5 in July 2026 to allow compounding, which is a pharmacy question, not a verdict on efficacy.","'N-acetyl Semax amidate' and 'Adamax' (adamantane-modified) are modified molecules sold as stronger; neither has any published human or animal data. Semax + Selank blends are also unstudied.","Reported: nasal irritation, restlessness or insomnia if taken late, headache. Avoid in pregnancy and with acute psychosis or severe anxiety (label).","Community injects 200–600 mcg SC; there is no data for that route."],
+ storage:"Reconstituted: fridge, 2–3 weeks (convention). Nasal solutions lose potency; make small batches.",evidence:"Russian registration and small trials for the drops; nothing for the modified versions.",
+ sources:["https://en.wikipedia.org/wiki/Semax","https://www.raps.org/resource/fda-advisory-committee-backs-two-more-peptides-rejects-one-for-compounding-list.html"]},
+
+{id:"dsip",cat:"brain",name:"DSIP (delta sleep-inducing peptide)",aliases:["DSIP","emideltide","Deltaran","sleep peptide"],status:"limited",
+ for:"A nine-amino-acid peptide named for inducing deep sleep in 1970s rabbit studies. Human IV trials for insomnia were small and mostly negative; the FDA panel voted against compounding it in July 2026.",
+ unit:"mcg",min:100,max:300,common:200,freq:"Nightly, 30–60 min before bed (convention)",interval:1,timing:"Before bed; some run it every 2–3 nights instead.",
+ ladder:[],vials:[2,5,10,15],vialDefault:5,water:2,useDays:14,cycle:"10–30 nights (convention); Russian nasal courses are 5–10 days",
+ notes:["Human trials gave 25–35 nmol/kg IV (about 1.5–2 mg for 70 kg): one blinded study of 16 insomniacs found weak objective changes and no subjective benefit, and the FDA's 2026 review called the evidence inconclusive and preliminary. Uncontrolled opioid-withdrawal series reported relief with rebound insomnia and anxiety afterwards.","100–300 mcg SC at bedtime is convention and sits below the Russian nasal product's 0.3–0.9 mg/day. 5 mg + 2 mL = 2.5 mg/mL, so 200 mcg = 8 units.","It is degraded within minutes in blood, which is one reason the FDA doubted SC use; the free base also dissolves poorly.","Reported: grogginess the next day, headache, slight stimulation in the first hour. Not a substitute for supervised withdrawal care.","FDA: the compounding advisory panel voted 6–7–1 against adding it (July 2026); nomination withdrawn."],
+ storage:"Fridge; one community source says 24 hours after mixing, others 2 weeks. Mix small amounts.",evidence:"Small IV studies from the 1980s–90s, mostly negative.",
+ sources:["https://www.fda.gov/media/193344/download","https://karger.com/nps/article-abstract/26/4/193/231036","https://www.raps.org/resource/fda-advisory-committee-backs-two-more-peptides-rejects-one-for-compounding-list.html"]},
+
+{id:"cerebrolysin",cat:"brain",name:"Cerebrolysin",aliases:["cerebroprotein hydrolysate","porcine brain peptides","CBL"],status:"abroad",statusLabel:"Approved abroad (IV/IM liquid)",refOnly:true,
+ for:"A liquid mixture of small peptides and amino acids from pig brain, sold in Austria, Russia, China and elsewhere for stroke, dementia and head injury. It is dosed by the millilitre, not by milligrams of peptide.",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Label dosing (Austrian SmPC): dementia 10–30 mL/day for 4 weeks, 5 days a week; stroke 20–50 mL/day for 10–21 days; head injury 20–50 mL/day for 7–30 days. Routes: IV infusion over 15–60 min; IV push up to 10 mL; IM up to 5 mL. Not for under-18s.","Evidence: Cochrane (2023, 7 trials, n=1,773) found no effect on death after stroke and more non-fatal serious adverse events; the vascular-dementia Cochrane review rates the benefit as very low certainty. The big CASTA stroke trial missed its endpoint.","Freeze-dried '60 mg' vials have no documented relationship to the licensed product. The real product is 215 mg of concentrate per mL, so a mg-based reconstitution calculation has no meaning and the calculator is off for this entry.","Contraindicated in status epilepticus and severe kidney disease; caution with epilepsy and allergies. Fast injection causes dizziness and blood-pressure swings."],
+ storage:"Liquid product: room temperature, light-protected, not refrigerated.",evidence:"Many trials of mixed quality; the independent reviews are unconvinced.",
+ sources:["https://www.cochrane.org/CD007026/STROKE_cerebrolysin-acute-ischaemic-stroke","https://www.everpharma.com/aut/wp-content/uploads/sites/5/2023/01/Cere-SPC_v_ev1_AT_5.1_clean-1.pdf"]},
+
+/* ---- immune, mitochondria & repair ---- */
+{id:"ta1",cat:"immune",name:"Thymosin alpha-1",aliases:["Ta1","thymalfasin","Zadaxin","thymosin a1"],status:"abroad",statusLabel:"Approved abroad",
+ for:"A 28-amino-acid thymic peptide that nudges T cells and dendritic cells. Approved in Italy, China and about 30 other countries for hepatitis B/C and as a vaccine booster; never approved by the FDA.",
+ unit:"mg",min:0.8,max:1.6,common:1.6,freq:"Twice weekly, 3–4 days apart",interval:3,timing:"Any time; abdomen or thigh.",
+ ladder:[],vials:[2,5,10],vialDefault:5,water:2,useDays:7,cycle:"Label: 6 months (52 doses) for hepatitis B; 4-week cycles as a vaccine adjuvant",
+ notes:["Label: 1.6 mg SC twice weekly. 5 mg + 2 mL = 2.5 mg/mL, so 1.6 mg = 64 units. Trials ranged 0.8–16 mg; the big sepsis trial (TESTS, BMJ 2025, n=1,106) showed no clear mortality benefit.","Mostly well tolerated: injection-site redness, occasional liver-enzyme flares during hepatitis treatment, transient thyroid changes. Avoid in pregnancy, in transplant or immunosuppressed patients, and with active autoimmune disease.","FDA: the compounding advisory panel reviewed it in December 2024 and FDA advised against listing (poor characterization, immunogenicity by the SC route); the nomination was withdrawn in 2026. Not compoundable.","FDA data: the powder is only stable about 3 weeks at room temperature, and the mixed solution 2–7 days in the fridge, so mix small amounts."],
+ storage:"Fridge, 2–7 days after mixing (FDA review data). Powder is heat-sensitive.",evidence:"Approved abroad with a label; large trials in sepsis and hepatitis with mixed results.",
+ sources:["https://www.fda.gov/media/183820/download","https://pubmed.ncbi.nlm.nih.gov/39814420/"]},
+
+{id:"thymalin",cat:"immune",name:"Thymalin",aliases:["calf thymus peptides","Khavinson thymalin","thymus extract"],status:"abroad",statusLabel:"Approved in Russia",
+ for:"A Russian calf-thymus extract (a mixture, not one peptide) registered as an immune stimulant since the 1980s. The anti-aging claims come from one St Petersburg group.",
+ unit:"mg",min:5,max:20,common:10,freq:"Once daily for a 3–10 day course (Russian label, IM)",interval:1,timing:"Label route is intramuscular. Any time of day.",
+ ladder:[],vials:[10],vialDefault:10,water:1,useDays:1,cycle:"3–10 days, repeat after 1–6 months (label)",
+ notes:["Russian label: 5–20 mg IM daily for 3–10 days, dissolved in saline just before injection. 10 mg + 1 mL = 10 mg/mL, so 10 mg is a full 100-unit syringe; IM volumes are fine, SC use is convention.","Evidence: the Khavinson group's 6–8-year follow-ups in 266 elderly people (reported 2× lower mortality) and a non-randomized COVID-19 comparison; no blinded trial, no independent replication, and the abstracts do not report side effects.","As an extract its composition varies by batch; allergic reactions are the label's main warning. Avoid in pregnancy and with autoimmune disease (theoretical).","Not on any FDA list; not WADA-listed by name."],
+ storage:"Label: dissolve and use immediately.",evidence:"One research group, unblinded; the label dose is the only firm number.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/12577695/","https://pubmed.ncbi.nlm.nih.gov/36169363/"]},
+
+{id:"ll37",cat:"immune",name:"LL-37 (cathelicidin)",aliases:["LL37","cathelicidin","antimicrobial peptide","hCAP-18"],status:"none",statusLabel:"No injection data",refOnly:true,
+ for:"The body's own antimicrobial peptide, sold for 'infections' and gut problems. Human trials are topical (leg ulcers) and one 4-patient intratumoral study; nobody has injected it systemically in a study.",
+ unit:"mcg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Topical trial: 0.5–1.6 mg/mL twice weekly on venous leg ulcers sped healing in a 34-patient study; the 148-patient follow-up missed its endpoint.","The specific risk: LL-37 is an autoantigen. It forms complexes with self-DNA that fire up interferon responses, and it drives disease in psoriasis and lupus. Injecting it with no dose or safety data is a gamble on exactly that pathway.","FDA: nominated for compounding, then withdrawn; FDA flagged immunogenicity for certain routes and impurity problems. Not compoundable.","No published SC dose exists, so the calculator is off for this entry. Community doses circulate (tens of micrograms a day); they have no basis."],
+ storage:"n/a",evidence:"Topical trials only.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/25041740/","https://pubmed.ncbi.nlm.nih.gov/34687253/","https://clinicaltrials.gov/study/NCT02225366"]},
+
+{id:"vip",cat:"immune",name:"VIP (vasoactive intestinal peptide)",aliases:["VIP","aviptadil","CIRS nasal spray","Shoemaker VIP"],status:"limited",route:"nasal",
+ for:"A 28-amino-acid neuropeptide that dilates blood vessels and calms immune signalling. Used as a nasal spray in the Shoemaker mold-illness (CIRS) protocol; IV aviptadil failed its COVID-19 trials.",
+ unit:"mcg",min:50,max:50,common:50,freq:"4× daily by nose (Shoemaker protocol), tapered later",interval:1,timing:"One spray in one nostril, four times a day; the protocol requires prior steps and a nasal culture first.",
+ ladder:[],vials:[5,10],vialDefault:5,water:5,waterLabel:"Water in the spray bottle (mL)",waterPresets:[2,5,10],useDays:21,cycle:"The open-label series ran 18+ months, then tapered",
+ notes:["The only CIRS data is an open-label series of 20 patients on 50 mcg nasal 4× daily, with no control arm; it reported lab normalization, one transient lipase rise, and the authors themselves asked for a blinded trial.","IV aviptadil in COVID respiratory failure: no benefit in the 461-patient NIH trial (day-90 outcome OR 1.1, mortality 38% vs 36%).","5 mg in 5 mL = 1 mg/mL, so 50 mcg = 0.05 mL, one metered spray. Nasal sprays need a metered pump; a dropper will not give this dose.","Class effects: flushing, drop in blood pressure, diarrhea, fast pulse; the CIRS protocol checks lipase. Avoid with pancreatitis or low blood pressure. FDA 503A: Category 1 (under evaluation), so still not compoundable in bulk.","No SC dosing data at all."],
+ storage:"Fridge, 2–3 weeks (convention); make small batches.",evidence:"One open-label series for the nasal use; negative IV trials.",
+ sources:["https://www.scirp.org/journal/paperinformation?paperid=28586","https://pubmed.ncbi.nlm.nih.gov/37348524/","https://www.fda.gov/media/94155/download"]},
+
+{id:"ss31",cat:"immune",name:"SS-31 (elamipretide)",aliases:["elamipretide","Forzinity","Bendavia","mitochondrial peptide SS-31","cardiolipin"],status:"approved",statusLabel:"FDA-approved (Barth syndrome)",
+ for:"A four-amino-acid peptide that binds cardiolipin in mitochondria. FDA accelerated approval in September 2025 for Barth syndrome (muscle strength); it failed its Phase 3 trials in primary mitochondrial myopathy.",
+ unit:"mg",min:20,max:40,common:40,freq:"Once daily (label)",interval:1,timing:"Any time; rotate sites, since site reactions are near-universal.",
+ ladder:[],vials:[10,50],vialDefault:50,water:1,waterPresets:[0.6,1,2],useDays:8,cycle:"Continuous (label)",
+ notes:["Label: 40 mg SC daily for patients 30 kg and up (20 mg if eGFR under 30). The product is 80 mg/mL; 50 mg + 1 mL = 50 mg/mL, so 40 mg = 80 units. Community 'longevity' doses are a fraction of this and have no data.","Injection-site reactions in 100% of trial patients (redness 100%, pain 75%, induration 67%, hives 25%); eosinophils rise around day 90 and settle over 6–12 months; allergic reactions can appear months in.","Evidence for anything else is negative: MMPOWER-3 (mitochondrial myopathy) missed its endpoints; a dry-AMD Phase 3 reads out in 2027. The Barth approval itself rests on 12 patients and an open-label strength signal.","Missed dose: skip it. Opened vials last 8 days by label."],
+ storage:"Fridge; 8 days after first puncture (label). Research powder: unknown.",evidence:"FDA label for one ultra-rare disease; failed trials elsewhere.",
+ sources:["https://forzinity.com/wp-content/uploads/2026/01/US-Prescribing-Information.pdf","https://mightytx.com/mighty-therapeutics-provides-commercial-and-rd-pipeline-update-and-outlines-2026-strategic-priorities/"]},
+
+/* ---- skin, tanning & sexual ---- */
+{id:"pt141",cat:"skin",name:"PT-141 (bremelanotide)",aliases:["bremelanotide","Vyleesi","PT 141","libido peptide"],status:"approved",
+ for:"A melanocortin agonist approved (Vyleesi, 2019) for low desire in premenopausal women, as an as-needed injection. Men use it off-label for erections; the only male data is from an abandoned nasal spray.",
+ unit:"mg",min:0.5,max:1.75,common:1.75,start:1,freq:"As needed, 45+ min before; max 1 per 24 h and 8 per month",interval:null,timing:"Abdomen or thigh, at least 45 minutes before sex. Not within 24 h of the last dose.",
+ ladder:[],vials:[10],vialDefault:10,water:2,useDays:28,cycle:"As needed; the label says stop after 8 weeks if it has not helped",
+ notes:["Label dose is 1.75 mg (10 mg + 2 mL = 5 mg/mL, so 1.75 mg = 35 units). Starting at 0.5–1 mg to see how bad the nausea is, then going up, is convention.","Nausea in 40% (8% quit over it), flushing 20%, injection-site reactions 13%, headache 11%, vomiting 5%. Blood pressure rises up to 6/3 mmHg and heart rate falls for 2–4 h after each dose, so it is contraindicated with uncontrolled hypertension or heart disease.","Skin darkening (face, gums, breasts) in 1% at the label limit but 38% with daily use; it does not always fade, and is likelier with darker skin. That is why the 8-per-month limit exists.","Men: a 10 mg nasal spray got erections in 33% of sildenafil non-responders vs 9% on placebo; no injected dose was ever established. Avoid with oral naltrexone."],
+ storage:"Label product: room temperature, protect from light. Reconstituted vials: fridge, about 28 days (convention).",evidence:"Full FDA label from two Phase 3 trials (women); male use is off-label.",
+ sources:["https://www.accessdata.fda.gov/drugsatfda_docs/label/2020/210557s002lbl.pdf","https://pubmed.ncbi.nlm.nih.gov/18206919/"]},
+
+{id:"mt2",cat:"skin",name:"Melanotan II (MT-2)",aliases:["MT-2","MT2","melanotan 2","tanning peptide","barbie drug"],status:"limited",
+ for:"A non-selective melanocortin agonist: tans, kills appetite, causes erections and nausea, all at once. Three tiny 1990s trials; illegal to sell for use in Australia and the UK; never approved anywhere.",
+ unit:"mg",min:0.25,max:1,common:0.5,start:0.25,freq:"Daily to load (1–4 weeks), then 1–2× weekly (convention)",interval:null,timing:"Evening, before bed, so the nausea lands while you sleep; with UV exposure a few times a week.",
+ ladder:[{weeks:"1",dose:0.25,label:"test dose, then daily"},{weeks:"2–4",dose:0.5,label:"daily until the colour is where you want it"},{weeks:"5+",dose:0.5,label:"1–2× per week to hold"}],ladderNote:"Community convention. The trials used 0.01–0.03 mg/kg/day (0.7–2.1 mg) for two weeks and saw grade-2 drowsiness at the top dose.",
+ vials:[10],vialDefault:10,water:2,useDays:14,cycle:"Load 1–4 weeks, maintain through the season; the mole risk argues for the shortest course that works",
+ notes:["Skin cancer is the real worry: FDA cites melanoma case reports, and a Dutch review described four skin cancers arising in existing moles during or after use. Eruptive new moles after a 4-week course are documented. Anyone with many or odd moles, fair skin or a family melanoma history should not use it; everyone else should have a mole check.","Also reported: a brain syndrome (PRES), rhabdomyolysis, kidney infarction, priapism needing hospital treatment. Nausea, flushing, yawning and spontaneous erections are routine.","Illicit '10 mg' vials assayed at 4.3–8.8 mg with 4–6% impurities, so even the arithmetic is shaky. 10 mg + 2 mL = 5 mg/mL, so 0.25 mg = 5 units.","FDA: removed from Category 2 in April 2026 only because the nomination was withdrawn; the advisory panel is due to review it by February 2027. WADA-prohibited (non-approved substance)."],
+ storage:"Fridge, protect from light; use within about 2 weeks (no published data).",evidence:"Three small trials (n=3–10) from the 1990s; the harms are case reports.",
+ sources:["https://www.tga.gov.au/alert/melanotan-illegal-therapeutic-goods","https://pubmed.ncbi.nlm.nih.gov/9679884/","https://repub.eur.nl/pub/98589"]},
+
+{id:"mt1",cat:"skin",name:"Melanotan I (afamelanotide)",aliases:["MT-1","MT1","afamelanotide","Scenesse","melanotan 1"],status:"approved",statusLabel:"Rx implant only",refOnly:true,
+ for:"The MC1R-selective tanning peptide. Approved (Scenesse) as a 16 mg implant under the skin, inserted by a clinician every two months, for the light-sensitivity disease EPP. There is no approved injectable solution and no established self-injection dose.",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Label: 16 mg implant every 2 months (US), up to 3–4 a year (EU); twice-yearly full skin exams are on the label. Trials: pain-free sun time roughly doubled in EPP.","The only injection studies were 1990s dose-finding: 0.08–0.21 mg/kg/day (5–15 mg a day for 70 kg) for 10-day cycles, with GI upset and flushing. Those are not doses anyone uses from a 10 mg vial, and the implant's slow release does not translate to bolus shots.","Side effects on the label: nausea, headache, implant-site reactions, darkening of existing moles (4%), fatigue. Melanoma has been reported in an unregulated-product user. Avoid with melanoma history, many or atypical moles, liver or kidney impairment.","No self-injection dose exists, so the calculator is off for this entry."],
+ storage:"Implant: fridge, clinician-handled.",evidence:"Approved drug (implant); the injected form was abandoned decades ago.",
+ sources:["https://www.ema.europa.eu/en/medicines/human/EPAR/scenesse","https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/210797s000lbl.pdf"]},
+
+{id:"glutathione",cat:"skin",name:"Glutathione (injectable)",aliases:["GSH","IV glutathione","skin whitening drip","tripeptide"],status:"abroad",statusLabel:"Rx abroad (IV/IM)",
+ for:"The body's main antioxidant tripeptide. A prescription injection in Italy and Japan (chemo nerve damage, liver disease, poisoning); the skin-lightening use is unapproved everywhere and under regulator warnings.",
+ unit:"mg",min:100,max:1200,common:600,freq:"1–2× weekly (convention); labels are daily courses",interval:null,timing:"Deep IM or slow IV only; it is not a subcutaneous drug. The volumes involved need a 3–5 mL syringe, not an insulin syringe.",
+ ladder:[],vials:[600,1200,1500],vialDefault:1500,vialMl:10,water:10,waterPresets:[4,10,15],useDays:1,cycle:"The one placebo-controlled skin trial ran 12 sessions over 6 weeks and the effect was gone at 6 months",
+ notes:["Label doses: Italy 600 mg IM or slow IV (and 2.5 g IV before cisplatin); Japan 100–200 mg IM/IV daily. 1500 mg + 10 mL = 150 mg/mL, so 600 mg = 4 mL (400 units: an IM volume).","Skin lightening: one placebo-controlled trial (n=32, 1200 mg IV twice weekly for 6 weeks) found a modest, temporary change, side effects in everyone, liver-enzyme rises in 8 and one anaphylaxis. Oral 250–500 mg/day trials show small or no effect.","FDA alert, August 2026: at least 30 patients with fever, chills and septic shock after IV glutathione; two pharmacy recalls for endotoxin. Non-sterile 'research' powder is exactly the hazard they described.","Reported harms: liver-enzyme rises, kidney failure after years of weekly drips, Stevens-Johnson syndrome, anaphylaxis, patchy skin lightening. Avoid with asthma (inhaled form causes bronchospasm), G6PD deficiency if paired with high-dose vitamin C, kidney or liver disease, pregnancy.","Labels say use within 8 hours of mixing (Italy) or immediately (Japan)."],
+ storage:"Use within 8 hours of mixing; single use.",evidence:"Approved abroad for other things; the cosmetic use has one small trial and a string of warnings.",
+ sources:["https://www.fda.gov/drugs/human-drug-compounding/fda-reminds-compounders-not-use-dietary-supplement-grade-glutathione-injectables","https://www.jpad.com.pk/index.php/jpad/article/view/18","https://www.fda.gov.ph/?p=2129"]},
+
+{id:"topicals",cat:"skin",name:"Cosmetic peptides (topical only)",aliases:["Snap-8","Matrixyl","PTD-DBM","GHK basic","AHK-Cu","argireline","acetyl octapeptide-3","palmitoyl pentapeptide","hair peptide"],status:"none",statusLabel:"Topical use only",refOnly:true,
+ for:"Five peptides sold in vials that belong in creams and serums, not syringes: Snap-8, Matrixyl, PTD-DBM, copper-free GHK and AHK-Cu. None has any injection data.",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Snap-8 (acetyl octapeptide-3): a longer version of argireline, claimed to soften expression lines by damping nerve-to-muscle signalling. Only supplier data; argireline itself has two small trials at 10%. Used at about 3–10% in creams.","Matrixyl (palmitoyl pentapeptide-4, pal-KTTKS): a collagen-fragment signal peptide with the best evidence of the group: a 93-person split-face trial and a 12-week eye-area study (fold depth −18%) at parts-per-million concentrations (0.0003–0.005%).","PTD-DBM: a cell-penetrating peptide that releases a brake on the Wnt hair-growth pathway. Mouse data only (topical 10 mM); human follicle cells in a dish; no human trial. No concentration is established.","GHK (no copper, 'GHK basic'): the natural tripeptide binds copper so avidly it likely becomes GHK-Cu in the body; every human skin trial used GHK-Cu, none GHK alone. No injection data (rats only).","AHK-Cu: a GHK-Cu relative sold for hair; one 2007 lab study on cultured follicles, no human trial, no injection data.","Dissolving these for topical use is harmless; injecting them has no basis and the calculator is off for this entry."],
+ storage:"Topical solutions: fridge, 2–4 weeks.",evidence:"Small topical trials for Matrixyl; supplier or lab data for the rest.",
+ sources:["https://www.mdpi.com/2079-9284/4/2/16","https://www.mdpi.com/2079-9284/7/4/91","https://www.mdpi.com/2073-4409/12/4/555"]},
+
+/* ---- research-only: no human dose ---- */
+{id:"foxo4",cat:"research",name:"FOXO4-DRI",aliases:["FOXO4","senolytic peptide","FOXO4-DRI","proxofim"],status:"none",statusLabel:"No human data",refOnly:true,
+ for:"A mirror-image peptide that pries FOXO4 off p53 so senescent cells kill themselves. Reversed frailty signs in old mice (Cell, 2017). No human has been dosed in a study.",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Mouse regimen: 5 mg/kg IP every other day, three doses, repeated. There is no human dose, route, pharmacokinetics or safety data; the 'self-experiment' numbers online are surface-area extrapolations from mice by bloggers.","Why no one has tried it in people: it is a D-amino-acid peptide the body cannot break down, fused to an HIV-derived carrier tail that enters every cell, and the 2020 mouse paper flagged possible muscle and heart toxicity. Immune reactions are unstudied.","Theoretical appeal aside, killing senescent cells systemically has caused serious effects with other senolytics. Avoid with heart or muscle disease, pregnancy, or outside a monitored trial.","No dose exists, so the calculator is off for this entry."],
+ storage:"n/a",evidence:"Mouse and cell data only.",
+ sources:["https://repub.eur.nl/pub/98786","https://www.aging-us.com/article/102682/text","https://www.nature.com/articles/s41467-025-60844-9"]},
+
+{id:"ace031",cat:"research",name:"ACE-031 (ramatercept)",aliases:["ACE 031","ramatercept","ActRIIB","myostatin blocker"],status:"halted",statusLabel:"Halted (bleeding, 2011)",refOnly:true,
+ for:"A soluble activin-receptor fusion protein that soaks up myostatin and related signals, so muscle grows. Development stopped in 2011 after nosebleeds and dilated skin vessels in boys with Duchenne.",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Phase 1 in healthy postmenopausal women: single doses up to 3 mg/kg raised lean mass about 3% and bone-formation markers; the Duchenne trial (0.5–1 mg/kg every 2–4 weeks) was halted for nosebleeds, telangiectasias and gum bleeding. The company moved on; nothing has been published since.","It is a 50 kDa engineered protein, not a small peptide; the 1 mg research vials give no way to know what is in them, and even the trial doses were weight-based and monitored for bleeding.","Theoretical risks beyond bleeding: activin signalling is involved in blood-vessel growth, fertility hormones and cancer. Avoid with any bleeding tendency, blood thinners, or pregnancy.","No home dose exists, so the calculator is off for this entry."],
+ storage:"n/a",evidence:"Phase 1 and a halted Phase 2; no efficacy trial completed.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/?term=ACE-031+ramatercept+healthy+postmenopausal+women+phase+1","https://pubmed.ncbi.nlm.nih.gov/?term=ACE-031+Duchenne+muscular+dystrophy+halted"]},
+
+{id:"adipotide",cat:"research",name:"Adipotide (FTPP)",aliases:["adipotide","FTPP","prohibitin-TP01","fat-killing peptide"],status:"halted",statusLabel:"Halted (kidney toxicity)",refOnly:true,
+ for:"A peptide that targets the blood supply of white fat and triggers cell death there. Obese monkeys lost 11% of body weight in a month (2011) with kidney injury; a Phase 1 cancer trial was started and never reported.",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Monkey data: 0.43 mg/kg daily for 28 days; all treated animals showed dose-dependent kidney damage (tubular injury, raised creatinine) that was reversible in that study. Later lab-animal work confirmed the kidney is a target of the sequence, not a side effect.","Human data: one Phase 1 trial in prostate cancer was registered; no results were ever published, and the program disappeared. There is no human dose.","A drug that kills blood vessels in fat also hits kidney tubules by the same mechanism; no bloodwork at home catches that in time. Avoid entirely.","The calculator is off for this entry."],
+ storage:"n/a",evidence:"Animal data with a toxicity signal; no human results.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/22072638/","https://clinicaltrials.gov/search?term=adipotide"]},
+
+{id:"mgf",cat:"research",name:"MGF / PEG-MGF",aliases:["mechano growth factor","IGF-1Ec","PEG MGF","pegylated MGF"],status:"none",statusLabel:"No human data",refOnly:true,
+ for:"A 24-amino-acid piece of the IGF-1Ec splice variant that muscle makes after loading; PEG-MGF is the same peptide with a polymer tail for a longer half-life. Sold for local muscle growth.",
+ unit:"mcg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Evidence: rodent muscle injections and cell culture. Gene-delivered MGF grew mouse muscle 25% in three weeks; there is no study of injecting the synthetic peptide into people, and the native E-peptide is unstable in blood (minutes).","PEG-MGF has no published pharmacology anywhere; the 'long half-life' is an assumption.","Risks: unknown. It is an IGF-1-family signal, so the same theoretical growth-promotion concern applies to tumors; immune reactions to the PEG tail are documented with other pegylated drugs.","No human dose exists, so the calculator is off. Community protocols ('200 mcg bilateral post-workout') are invented."],
+ storage:"n/a",evidence:"Rodent and cell data only.",
+ sources:["https://en.wikipedia.org/wiki/Mechano_growth_factor","https://pubmed.ncbi.nlm.nih.gov/?term=mechano+growth+factor+E+peptide+review"]},
+
+{id:"tb500frag",cat:"research",name:"TB-500 fragment (Ac-LKKTETQ / Ac-SDKP)",aliases:["TB500 frag","thymosin beta-4 fragment 17-23","Ac-SDKP","LKKTETQ","TB-500 FRAG"],status:"none",statusLabel:"No human data",refOnly:true,
+ for:"Short pieces of thymosin beta-4 sold under the TB-500 name: usually the 7-amino-acid actin-binding site (Ac-LKKTETQ, residues 17–23) or the 4-amino-acid Ac-SDKP from its N-terminus.",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["TB-500 itself is already a fragment of the 43-amino-acid thymosin beta-4; these are fragments of the fragment. Ac-LKKTETQ keeps the actin-binding motif in test tubes; Ac-SDKP is a natural blood peptide that blocks scarring in animal models and is part of why ACE inhibitors reduce fibrosis.","No human study has injected either, so there is no dose, no half-life and no safety data. The full TB-500 entry has the community schedule people borrow.","Risks are the same theoretical ones as TB-500 (blood-vessel growth around tumors) plus the unknowns of an unstudied sequence. WADA prohibits thymosin beta-4 and its fragments.","The calculator is off for this entry."],
+ storage:"n/a",evidence:"Cell and animal data for the sequences; nothing in humans.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/?term=Ac-SDKP+fibrosis+review","https://pubmed.ncbi.nlm.nih.gov/?term=thymosin+beta-4+LKKTETQ+actin+binding+peptide"]},
+
+{id:"humanin",cat:"research",name:"Humanin",aliases:["HN","HNG","humanin-G","mitochondrial-derived peptide"],status:"none",statusLabel:"No human data",refOnly:true,
+ for:"A 24-amino-acid peptide encoded in mitochondrial DNA, discovered in surviving neurons of an Alzheimer's brain. Falls with age in blood; sold as a longevity peptide alongside MOTS-c.",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Human data is observational only: blood levels track age, insulin sensitivity and some diseases. Nobody has injected humanin or its potent analog HNG into people in a study.","Mouse work: HNG improves insulin action and protects neurons and the heart in disease models at microgram doses by injection. Doses do not translate.","Risks: unknown. It signals through the same receptor family as some cytokines and interacts with IGF-1 binding protein 3, so the growth and cancer questions are open.","No human dose exists, so the calculator is off. The MOTS-c entry covers the one mitochondrial peptide with at least an analog trial."],
+ storage:"n/a",evidence:"Observational human data; interventional data is mouse only.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/?term=humanin+mitochondrial+derived+peptide+review+2023","https://en.wikipedia.org/wiki/Humanin"]},
+
+{id:"pnc27",cat:"research",name:"PNC-27",aliases:["PNC 27","p53 peptide","penetratin peptide","cancer peptide"],status:"none",statusLabel:"No human data",refOnly:true,
+ for:"A p53-derived peptide joined to a cell-penetrating tail, reported to punch holes in cancer cells in culture. It is marketed online to cancer patients. There is no human trial of any kind.",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Evidence: cell-culture and a few mouse-xenograft papers from one group; selectivity for cancer cells depends on a membrane protein (HDM-2) and was never tested in people.","The harm is not mainly the peptide: it is the time lost. Patients have been sold PNC-27 as an alternative to treatment with no evidence it does anything in a human body.","Unknowns include dose, route, stability in blood, immune reactions to a foreign carrier sequence, and off-target membrane damage.","No dose exists, so the calculator is off. If cancer is the reason you are here, an oncologist can tell you what is actually in trials for your diagnosis."],
+ storage:"n/a",evidence:"Lab-bench data only.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/?term=PNC-27+p53+peptide+cancer+cell+membrane","https://en.wikipedia.org/wiki/PNC-27"]},
+
+{id:"b733",cat:"research",name:"B7-33",aliases:["B7 33","relaxin analog","single-chain relaxin","RXFP1 peptide"],status:"none",statusLabel:"No human data",refOnly:true,
+ for:"A single-chain mimic of the hormone relaxin-2 (its B-chain, residues 7–33) that activates the RXFP1 receptor and showed anti-fibrotic effects in rodent heart, lung and kidney models.",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Preclinical only: rodent studies at roughly 0.25–0.5 mg/kg/day reduced scarring; it was designed to avoid the cAMP-driven effects of full relaxin that were linked to tumor growth in cell models.","Full-length relaxin (serelaxin) went through large heart-failure trials (RELAX-AHF-2, n=6,545) and failed on mortality; B7-33 has never been given to a person.","Unknowns: human dose, half-life (short), blood-pressure effects (relaxin lowers it), bleeding and fertility effects. Avoid in pregnancy.","No human dose exists, so the calculator is off for this entry."],
+ storage:"n/a",evidence:"Rodent data; the parent hormone's trials were negative.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/?term=B7-33+relaxin+single+chain+peptide+fibrosis","https://pubmed.ncbi.nlm.nih.gov/?term=RELAX-AHF-2+serelaxin"]},
+
+{id:"pe2228",cat:"research",name:"PE-22-28",aliases:["PE 22-28","spadin analog","TREK-1 blocker","antidepressant peptide"],status:"none",statusLabel:"No human data",refOnly:true,
+ for:"A 7-amino-acid analog of spadin, a natural fragment that blocks the TREK-1 potassium channel. Acted as a fast antidepressant in mice within days. Sold as a nasal or injectable nootropic.",
+ unit:"mcg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Mouse data: intravenous and intranasal doses in the microgram-per-kilogram range reversed depression-like behaviour and boosted new neuron growth (2017). No human has received it in a study.","TREK-1 also sits in the heart and in pain and anesthesia pathways; blocking it in people is uncharted. No dose, route or safety data exists.","No human dose exists, so the calculator is off for this entry."],
+ storage:"n/a",evidence:"Mouse data only.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/?term=PE+22-28+spadin+analog+TREK-1+antidepressant","https://en.wikipedia.org/wiki/Spadin"]},
+
+{id:"p21",cat:"research",name:"P21 (P021)",aliases:["P-21","P021","CNTF peptide","neurogenesis peptide","P21 adamantane"],status:"none",statusLabel:"No human data",refOnly:true,
+ for:"A 4-amino-acid piece of ciliary neurotrophic factor capped with an adamantane group, from a New York Alzheimer's lab. Raised BDNF and new neurons in mouse models of Alzheimer's and Down syndrome.",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["Mouse data: months of oral or injected dosing improved memory and reduced tau and amyloid changes. No human has taken it in a study; a vendor 'P21 adamantane' is the same molecule renamed.","It is derived from a growth factor that failed its own human trials (CNTF for ALS, with weight loss and cough); the fragment's human behaviour is unknown.","No human dose exists, so the calculator is off for this entry."],
+ storage:"n/a",evidence:"Mouse data from one group.",
+ sources:["https://pubmed.ncbi.nlm.nih.gov/?term=P021+peptide+CNTF+adamantane+Alzheimer+mouse","https://pubmed.ncbi.nlm.nih.gov/?term=ciliary+neurotrophic+factor+ALS+trial"]},
+
+{id:"bioregulators",cat:"research",name:"Khavinson bioregulators (Vilon, Pinealon, etc.)",aliases:["Vilon","Pinealon","Testagen","Bronchogen","Cardiogen","Cortagen","Livagen","Pancragen","Prostamax","Cartalax","Chonluten","Crystagen","Ovagen","Vesugen","N-acetyl epitalon amidate","cytomax","cytogen","short peptides","bioregulator"],status:"none",statusLabel:"No human injection data",refOnly:true,
+ for:"Fourteen 2–4-amino-acid 'organ peptides' from one St Petersburg institute, each said to tune one tissue: Vilon (KE, thymus), Pinealon (EDR, brain), Testagen (KEDG, testes), Bronchogen (AEDL, airways), Cardiogen (AEDR, heart), Cortagen (AEDP, cortex), Livagen (KEDA, liver), Pancragen (KEDW, pancreas), Prostamax (KEDP, prostate), Cartalax (AED, cartilage), Chonluten (EDG, airways and stomach), Crystagen (EDP, immune), Ovagen (EDL, liver and gut), Vesugen (KED, blood vessels).",
+ unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
+ notes:["In Russia these are sold as oral supplement capsules, taken in 10–30 day courses; none is a registered injectable medicine, and no label dose for injecting any of them exists.","The evidence is almost entirely from the group that sells them: cell and rodent studies, plus uncontrolled human reports (e.g. 'improved memory in 59% of head-injury patients' with oral Pinealon). No randomized trial, no independent replication, and the central claim, that tiny peptides regulate genes by binding DNA, has not been confirmed by anyone else.","N-acetyl epitalon amidate is a chemically modified epithalon with no published data; an independent 2025 review says the modification has not been evaluated. See the Epithalon entry for the parent compound.","Unknowns: whether intact peptides survive swallowing, long-term toxicity, cancer signalling (telomerase claims), interactions. Injecting them adds sterility and immune risks on top.","No human injection dose exists, so the calculator is off for this entry."],
+ storage:"n/a",evidence:"One research group; animal and uncontrolled human data.",
+ sources:["https://www.mdpi.com/1420-3049/26/22/7053","https://www.mdpi.com/1422-0067/26/6/2691","https://en.wikipedia.org/wiki/Vladimir_Khavinson"]},
 
 {id:"custom",cat:"tool",name:"Any vial (custom)",aliases:["calculator","custom","other"],status:null,noAlerts:true,
  for:"Reconstitution math for anything not listed. Enter the vial size, the water you add and the dose you want.",
  unit:"mg",min:0.1,max:10,common:1,freq:"",interval:null,timing:"",ladder:[],vials:[2,5,10,20,50],vialDefault:5,water:2,cycle:"",notes:[],storage:"",evidence:"",sources:[],unitSwitch:true}
 ];
+const CATORDER=CATS.map(c=>c.id).concat(["tool"]);
+DATA.sort((a,b)=>CATORDER.indexOf(a.cat)-CATORDER.indexOf(b.cat));
 
 /* ---------- helpers ---------- */
 const $=(s,r)=> (r||document).querySelector(s);
@@ -416,6 +803,14 @@ function unitsFor(doseMg,vialMg,waterMl){ return doseMg/vialMg*waterMl*100; }
 function load(k,fb){ try{ const v=localStorage.getItem(k); return v==null?fb:JSON.parse(v); }catch(e){ return fb; } }
 function save(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
 function doseRange(p){ const u=p.unitLabel||p.unit; return (p.min===p.max? fmt(p.min) : fmt(p.min)+"–"+fmt(p.max))+" "+u; }
+const isOral=p=>p.route==="oral"||p.route==="nasal";
+const vu=p=>p.vialUnit||"mg";
+const takeWord=p=>p.route==="nasal"?"into the nose":"by mouth";
+const statusOf=p=>{ if(!p.status) return null; const s=STATUS[p.status]||STATUS.none; return p.statusLabel?{label:p.statusLabel,tone:s.tone}:s; };
+const term=p=>isOral(p)?"bottle":"vial";
+/* how much to draw for a dose at a given mix: units for injections, mL for oral liquids */
+function volTxt(p,doseMg,vialMg,waterMl){ const u=unitsFor(doseMg,vialMg,waterMl); return isOral(p)?fmt(u/100,2)+" mL":fmt(u,1)+"u"; }
+function mixTxt(p,vialMg,waterMl){ return fmt(vialMg)+" "+vu(p)+" "+(isOral(p)?"in ":"+ ")+fmt(waterMl)+" mL"; }
 function pad(n){ return String(n).padStart(2,"0"); }
 function todayISO(){ const d=new Date(); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
 function parts(iso){ const m=String(iso||"").match(/^(\d{4})-(\d{2})-(\d{2})/); return m?[+m[1],+m[2],+m[3]]:null; }
@@ -461,9 +856,11 @@ function compute(p,c){
   const conc=c.vial/c.water;
   const perVial=doseMg>0?Math.floor(c.vial/doseMg+1e-9):0;
   const flags=[];
-  if(units>100) flags.push({level:"warn",text:"More than one full syringe ("+fmt(units/100,1)+" mL). Use less water so one dose fits in 100 units."});
-  else if(units<5) flags.push({level:"warn",text:"Under 5 units is hard to measure accurately. Use more water for a bigger draw."});
-  if(c.water>3) flags.push({level:"warn",text:"Make sure the vial actually holds "+fmt(c.water)+" mL; most vendor vials are 3 mL (NAD+ is usually 10 mL)."});
+  if(!isOral(p)){
+    if(units>100) flags.push({level:"warn",text:"More than one full syringe ("+fmt(units/100,1)+" mL). Use less water so one dose fits in 100 units."});
+    else if(units<5) flags.push({level:"warn",text:"Under 5 units is hard to measure accurately. Use more water for a bigger draw."});
+    if(c.water>(p.vialMl||3)) flags.push({level:"warn",text:"Make sure the vial actually holds "+fmt(c.water)+" mL; most vendor vials are 3 mL (NAD+ is usually 10 mL)."});
+  }
   return {unit,doseMg,units,ml:units/100,conc,perVial,flags};
 }
 
@@ -526,15 +923,15 @@ function doseAlerts(p,v,dose){
 }
 function timingAlerts(p,t){
   const out=[];
-  if(t.expired) out.push({level:"bad",text:"Vial past its use-by date ("+fmtDate(t.useBy)+", mixed "+t.openDays+" days ago). Mix a fresh one."});
-  else if(daysBetween(t.today,t.useBy)<=3) out.push({level:"warn",text:"Vial use-by is "+fmtDate(t.useBy)+" ("+daysBetween(t.today,t.useBy)+" days). Plan the next one."});
+  if(t.expired) out.push({level:"bad",text:(isOral(p)?"Bottle":"Vial")+" past its use-by date ("+fmtDate(t.useBy)+", "+(isOral(p)?"opened ":"mixed ")+t.openDays+" days ago). "+(isOral(p)?"Open a fresh one.":"Mix a fresh one.")});
+  else if(daysBetween(t.today,t.useBy)<=3) out.push({level:"warn",text:(isOral(p)?"Bottle":"Vial")+" use-by is "+fmtDate(t.useBy)+" ("+daysBetween(t.today,t.useBy)+" days). Plan the next one."});
   if(t.last&&p.interval){
     if(t.dueIn>0&&t.sinceLast===0) out.push({level:"good",text:"Dose logged today. Next due "+fmtDate(addDays(t.last.d,p.interval))+"."});
     else if(t.dueIn>0) out.push({level:"good",text:"Next dose due "+fmtDate(addDays(t.last.d,p.interval))+" (in "+t.dueIn+" day"+(t.dueIn===1?"":"s")+")."});
     else if(t.dueIn===0) out.push({level:"warn",text:"Dose due today."});
     else out.push({level:"bad",text:"UNDER: dose overdue by "+(-t.dueIn)+" day"+(t.dueIn===-1?"":"s")+" (last one "+ago(t.sinceLast)+")."+(p.interval===7?" Check the missed-dose rule in the notes.":"")});
-  } else if(!t.last) out.push({level:"warn",text:"No doses logged yet. Tap Log dose after each injection to track what is left and when the next one is due."});
-  if(t.remainingMg<=0&&t.log.length) out.push({level:"bad",text:"Logged doses add up to the whole vial ("+fmt(t.remainingMg,2)+" "+(p.unitLabel?"mg of each":"mg")+" left). Mix a new one."});
+  } else if(!t.last) out.push({level:"warn",text:"No doses logged yet. Tap Log dose after each one to track what is left and when the next is due."});
+  if(t.remainingMg<=0&&t.log.length) out.push({level:"bad",text:"Logged doses add up to the whole vial ("+fmt(t.remainingMg,2)+" "+(p.unitLabel?p.unitLabel:vu(p))+" left). Mix a new one."});
   else if(t.dosesLeft<=1&&t.log.length&&t.remainingMg>0) out.push({level:"warn",text:"About "+t.dosesLeft+" dose left in this vial."});
   return out;
 }
@@ -568,7 +965,7 @@ function myVialsHtml(){
     const worst=alerts.some(a=>a.level==="bad")?"bad":alerts.length?"warn":"good";
     html+='<div class="vialcard" data-vial="'+v.id+'">'
       +'<div class="vrow"><button type="button" class="open" data-open="'+p.id+'">'+esc(p.name)+'</button><span class="badge tone-'+worst+'">'+(t.week>0?"Week "+t.week:"starts "+fmtDate(v.start))+'</span></div>'
-      +'<div class="meta">This week: <b>'+fmt(t.dose)+' '+esc(u)+'</b> = <b>'+fmt(t.units,1)+'u</b> · '+fmt(v.vial)+' mg + '+fmt(v.water)+' mL</div>'
+      +'<div class="meta">This week: <b>'+fmt(t.dose)+' '+esc(u)+'</b> = <b>'+volTxt(p,toMg(t.dose,p.unit),v.vial,v.water)+'</b> · '+mixTxt(p,v.vial,v.water)+'</div>'
       +'<div class="meta">'+(t.last?'Last dose '+ago(t.sinceLast)+(t.dueIn!=null?(t.dueIn>0?' · next in '+t.dueIn+'d':t.dueIn===0?' · <b>due today</b>':' · <b>overdue '+(-t.dueIn)+'d</b>'):''):'No doses logged')+' · use by '+fmtDate(t.useBy)+(t.expired?' <b>(expired)</b>':'')+'</div>'
       +(alerts.length?'<div class="meta">'+esc(alerts[0].text)+'</div>':'')
       +'<div class="btnrow"><button type="button" class="btn small primary" data-log="'+v.id+'">Log dose</button><button type="button" class="btn small" data-open="'+p.id+'">Open</button></div>'
@@ -583,11 +980,11 @@ function renderList(){
   let lastCat=null;
   for(const p of items){
     if(cat==="all"&&p.cat!==lastCat){ html+='<div class="cat-label">'+esc(CATNAME[p.cat])+'</div>'; lastCat=p.cat; }
-    const st=p.status?STATUS[p.status]:null;
+    const st=statusOf(p);
     html+='<button type="button" class="card" data-id="'+p.id+'" aria-current="'+(current===p.id)+'">'
       +'<div class="row1"><span class="name">'+esc(p.name)+'</span>'+(st?'<span class="badge tone-'+st.tone+'">'+esc(st.label)+'</span>':'')+'</div>'
       +'<div class="for">'+esc(p.for.split(". ")[0].replace(/\.$/,""))+'</div>'
-      +(p.freq?'<div class="dose"><span class="mono">'+esc(doseRange(p))+'</span> · '+esc(p.freq.split(";")[0].split(" (")[0])+'</div>':'')
+      +(p.freq?'<div class="dose"><span class="mono">'+esc(doseRange(p))+'</span> · '+esc(p.freq.split(";")[0].split(" (")[0])+'</div>':(p.refOnly?'<div class="dose">Reference only · no human dose for this route</div>':''))
       +'</button>';
   }
   listEl.innerHTML=html;
@@ -611,8 +1008,8 @@ function vialFormHtml(p,c,v){
   const draft=v||{mixed:todayISO(),start:todayISO(),target:(p.ladder.length?p.common:c.dose)};
   return '<div class="vform" id="vform">'
     +'<h3>'+(v?"Edit this vial":"Save this vial &amp; start counting weeks")+'</h3>'
-    +'<p class="hint">Uses the mix above: '+fmt(c.vial)+' mg + '+fmt(c.water)+' mL. Change those first if they are wrong.</p>'
-    +'<div class="field"><label for="vf-mixed">Date mixed (reconstituted)</label><input class="num" id="vf-mixed" type="date" value="'+esc(draft.mixed)+'"></div>'
+    +'<p class="hint">Uses the '+(isOral(p)?'bottle':'mix')+' above: '+mixTxt(p,c.vial,c.water)+'. Change those first if they are wrong.</p>'
+    +'<div class="field"><label for="vf-mixed">'+(isOral(p)?'Date opened':'Date mixed (reconstituted)')+'</label><input class="num" id="vf-mixed" type="date" value="'+esc(draft.mixed)+'"></div>'
     +'<div class="field"><label for="vf-start">Plan start date (week 1, day 1)</label><input class="num" id="vf-start" type="date" value="'+esc(draft.start)+'"></div>'
     +'<div class="field"><label for="vf-target">'+(p.ladder.length?"Target dose ("+esc(u)+")":"Dose per injection ("+esc(u)+")")+'</label><div class="inrow">'
     +(p.ladder.length?'<div class="chips">'+chipRow("target",targetPresets(p),draft.target,"")+'</div>':'')
@@ -626,19 +1023,19 @@ function trackerHtml(p,v){
   const alerts=timingAlerts(p,t);
   let html='<section class="block tracker" id="tracker" aria-label="My vial"><h3>My vial · week counter</h3>'
     +'<div class="trk-top"><div class="trk-week">'+(t.week>0?'Week '+t.week:'Starts '+fmtDate(v.start))+' <small>of plan · started '+fmtDate(v.start)+'</small></div>'
-    +'<span class="rev">'+fmt(v.vial)+' mg + '+fmt(v.water)+' mL = '+fmt(v.vial/v.water)+' mg/mL</span></div>'
+    +'<span class="rev">'+mixTxt(p,v.vial,v.water)+' = '+fmt(v.vial/v.water)+' '+vu(p)+'/mL</span></div>'
     +'<div class="trk-grid">'
-    +'<div><span class="k">This week\'s dose</span><span class="v mono">'+fmt(t.dose)+' '+esc(u)+' = '+fmt(t.units,1)+'u</span>'+(t.step.label?'<span class="hint">'+esc(t.step.label)+'</span>':'')+'</div>'
+    +'<div><span class="k">This week\'s dose</span><span class="v mono">'+fmt(t.dose)+' '+esc(u)+' = '+volTxt(p,toMg(t.dose,p.unit),v.vial,v.water)+'</span>'+(t.step.label?'<span class="hint">'+esc(t.step.label)+'</span>':'')+'</div>'
     +'<div><span class="k">Next change</span><span class="v">'+(t.next?fmt(t.next.dose)+' '+esc(u)+(t.next.label?' ('+esc(t.next.label)+')':'')+' from '+fmtDate(t.nextDate)+' (week '+t.next.from+')':'None, holding here')+'</span></div>'
-    +'<div><span class="k">Vial</span><span class="v">Mixed '+fmtDate(v.mixed)+' · open '+t.openDays+' day'+(t.openDays===1?'':'s')+' · use by '+fmtDate(t.useBy)+'</span></div>'
-    +'<div><span class="k">Left in vial</span><span class="v mono">'+(t.log.length?fmt(Math.max(0,t.remainingMg),2)+' mg · ~'+Math.max(0,t.dosesLeft)+' doses':'log doses to track')+'</span></div>'
+    +'<div><span class="k">'+(isOral(p)?'Bottle':'Vial')+'</span><span class="v">'+(isOral(p)?'Opened ':'Mixed ')+fmtDate(v.mixed)+' · open '+t.openDays+' day'+(t.openDays===1?'':'s')+' · use by '+fmtDate(t.useBy)+'</span></div>'
+    +'<div><span class="k">Left in '+term(p)+'</span><span class="v mono">'+(t.log.length?fmt(Math.max(0,t.remainingMg),2)+' '+vu(p)+' · ~'+Math.max(0,t.dosesLeft)+' doses':'log doses to track')+'</span></div>'
     +'</div>'
     +flagsHtml(alerts);
   html+=confirmHtml(v,u)
     +'<div class="btnrow"><button type="button" class="btn primary" data-log="'+v.id+'">Log dose today ('+fmt(t.dose)+' '+esc(u)+')</button>'
     +'<button type="button" class="btn" data-logcustom="'+v.id+'">Log other amount / date</button>'
     +(v.log.length?'<button type="button" class="btn" data-undo="'+v.id+'">Undo last</button>':'')
-    +'<button type="button" class="btn" data-newvial="'+v.id+'">New vial mixed</button>'
+    +'<button type="button" class="btn" data-newvial="'+v.id+'">'+(isOral(p)?'New bottle opened':'New vial mixed')+'</button>'
     +'<button type="button" class="btn" data-edit="'+v.id+'">Edit</button>'
     +'<button type="button" class="btn danger" data-remove="'+v.id+'">Remove</button></div>';
   if(uiFlags.logFor===v.id) html+=logFormHtml(p,v,t);
@@ -672,12 +1069,12 @@ function liveLogAlerts(root){
 
 /* ---------- My vials view ---------- */
 function addVialFormHtml(){
-  const opts=DATA.filter(p=>p.id!=="custom").map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join("")+'<option value="custom">Other / custom vial</option>';
+  const opts=DATA.filter(p=>p.id!=="custom"&&!p.refOnly).map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join("")+'<option value="custom">Other / custom vial</option>';
   return '<div class="vform" id="addform"><h3>Add a vial</h3>'
     +'<div class="field"><label for="av-pid">Peptide</label><select class="num" id="av-pid">'+opts+'</select></div>'
-    +'<div class="field"><label for="av-vial">Vial size (mg)</label><input class="num" id="av-vial" type="number" inputmode="decimal" step="any" min="0.01"></div>'
-    +'<div class="field"><label for="av-water">Bacteriostatic water added (mL)</label><input class="num" id="av-water" type="number" inputmode="decimal" step="any" min="0.1"></div>'
-    +'<div class="field"><label for="av-mixed">Date mixed</label><input class="num" id="av-mixed" type="date" value="'+todayISO()+'"></div>'
+    +'<div class="field"><label for="av-vial" id="av-vial-label">Vial size (mg)</label><input class="num" id="av-vial" type="number" inputmode="decimal" step="any" min="0.01"></div>'
+    +'<div class="field"><label for="av-water" id="av-water-label">Bacteriostatic water added (mL)</label><input class="num" id="av-water" type="number" inputmode="decimal" step="any" min="0.1"></div>'
+    +'<div class="field"><label for="av-mixed" id="av-mixed-label">Date mixed</label><input class="num" id="av-mixed" type="date" value="'+todayISO()+'"></div>'
     +'<div class="field"><label for="av-start">Plan start (week 1, day 1)</label><input class="num" id="av-start" type="date" value="'+todayISO()+'"></div>'
     +'<div class="field"><label for="av-target" id="av-target-label">Target dose</label><input class="num" id="av-target" type="number" inputmode="decimal" step="any" min="0.001"><span class="hint" id="av-hint"></span></div>'
     +'<div class="btnrow"><button type="button" class="btn primary" id="av-save">Save vial</button><button type="button" class="btn" id="av-cancel">Cancel</button></div></div>';
@@ -686,6 +1083,9 @@ function fillAddDefaults(){
   const sel=$("#av-pid",vialsEl); if(!sel) return;
   const p=DATA.find(x=>x.id===sel.value)||DATA[0]; const u=p.unitLabel||p.unit;
   $("#av-vial",vialsEl).value=p.vialDefault||p.vials[0]; $("#av-water",vialsEl).value=p.water;
+  $("#av-vial-label",vialsEl).textContent=p.vialLabel||"Vial size (mg)";
+  $("#av-water-label",vialsEl).textContent=p.waterLabel||"Bacteriostatic water added (mL)";
+  $("#av-mixed-label",vialsEl).textContent=isOral(p)?"Date opened":"Date mixed";
   $("#av-target",vialsEl).value=p.ladder.length?p.common:(p.start!=null?p.start:p.common);
   $("#av-target-label",vialsEl).textContent=(p.ladder.length?"Target dose (":"Dose per injection (")+u+")";
   $("#av-hint",vialsEl).textContent=p.id==="custom"?"":(p.ladder.length?"Ladder: "+p.ladder.map(s=>fmt(s.dose)).join(" → ")+" "+u+". The plan stops stepping up at your target.":"Typical "+doseRange(p)+". "+p.freq);
@@ -698,11 +1098,11 @@ function vialCardHtml(v){
   let html='<div class="vialcard" data-vial="'+v.id+'">'
     +'<div class="vrow"><button type="button" class="open" data-open="'+p.id+'">'+esc(p.name)+'</button><span class="badge tone-'+worst+'">'+(t.week>0?"Week "+t.week:"starts "+fmtDate(v.start))+'</span></div>'
     +'<div class="vstats">'
-    +'<div>This week<b>'+fmt(t.dose)+' '+esc(u)+' = '+fmt(t.units,1)+'u</b></div>'
-    +'<div>Mix<b>'+fmt(v.vial)+' mg + '+fmt(v.water)+' mL</b></div>'
+    +'<div>This week<b>'+fmt(t.dose)+' '+esc(u)+' = '+volTxt(p,toMg(t.dose,p.unit),v.vial,v.water)+'</b></div>'
+    +'<div>'+(isOral(p)?'Bottle':'Mix')+'<b>'+mixTxt(p,v.vial,v.water)+'</b></div>'
     +'<div>Last dose<b>'+(t.last?fmtDate(t.last.d)+' ('+ago(t.sinceLast)+')':'none yet')+'</b></div>'
     +'<div>Next due<b>'+(t.last&&p.interval?(t.dueIn>0?fmtDate(addDays(t.last.d,p.interval))+' (in '+t.dueIn+'d)':t.dueIn===0?'today':'overdue '+(-t.dueIn)+'d'):(p.interval?'log a dose':'see schedule'))+'</b></div>'
-    +'<div>Left in vial<b>'+(v.log.length?fmt(Math.max(0,t.remainingMg),2)+' mg · ~'+Math.max(0,t.dosesLeft)+' doses':'log to track')+'</b></div>'
+    +'<div>Left in '+term(p)+'<b>'+(v.log.length?fmt(Math.max(0,t.remainingMg),2)+' '+vu(p)+' · ~'+Math.max(0,t.dosesLeft)+' doses':'log to track')+'</b></div>'
     +'<div>Use by<b>'+fmtDate(t.useBy)+(t.expired?' · expired':' · '+daysBetween(t.today,t.useBy)+'d')+'</b></div>'
     +'</div>'
     +(bad.length?flagsHtml(bad.slice(0,2)):'')
@@ -710,7 +1110,7 @@ function vialCardHtml(v){
     +'<div class="btnrow"><button type="button" class="btn small primary" data-log="'+v.id+'">Log dose today ('+fmt(t.dose)+' '+esc(u)+')</button>'
     +'<button type="button" class="btn small" data-logcustom="'+v.id+'">Log other</button>'
     +'<button type="button" class="btn small" data-open="'+p.id+'">Open</button>'
-    +'<button type="button" class="btn small" data-newvial="'+v.id+'">New vial mixed</button>'
+    +'<button type="button" class="btn small" data-newvial="'+v.id+'">'+(isOral(p)?'New bottle':'New vial mixed')+'</button>'
     +'<button type="button" class="btn small danger" data-remove="'+v.id+'">Remove</button></div>'
     +(uiFlags.logFor===v.id?logFormHtml(p,v,t):'')
     +'</div>';
@@ -724,12 +1124,12 @@ function allEntries(){
 }
 function exportText(){
   const rows=allEntries().slice().reverse();
-  let s="date,peptide,dose,unit,units_drawn,vial_mg,water_ml\n";
+  let s="date,peptide,dose,unit,units_or_ml,vial_mg,water_ml\n";
   for(const r of rows) s+=[r.e.d,'"'+r.p.name+'"',r.e.dose,(r.p.unitLabel||r.p.unit),fmt(r.units,1),r.v.vial,r.v.water].join(",")+"\n";
   return s;
 }
 function renderVials(){
-  let html='<div class="vhead"><div><h2>My vials</h2><p class="hint">Saved on this device only. Log every injection and the app tracks weeks, what is left, and what is due.</p></div>'
+  let html='<div class="vhead"><div><h2>My vials</h2><p class="hint">Saved on this device only. Log every dose and the app tracks weeks, what is left, and what is due.</p></div>'
     +'<div class="btnrow"><button type="button" class="btn" id="vials-back">&larr; Peptides</button><button type="button" class="btn primary" id="add-vial">+ Add vial</button></div></div>';
   if(uiFlags.add) html+=addVialFormHtml();
   if(!vials.length&&!uiFlags.add) html+='<p class="empty">No vials yet. Tap + Add vial, or open any peptide and tap "Save this vial &amp; count weeks".</p>';
@@ -738,8 +1138,8 @@ function renderVials(){
   html+='<section class="block hist"><div class="vhead"><h3>Dose log · '+rows.length+' entr'+(rows.length===1?'y':'ies')+'</h3>'+(rows.length?'<button type="button" class="btn small" id="export-log">Copy as CSV</button>':'')+'</div>';
   if(uiFlags.exportOpen) html+='<textarea class="export" id="export-text" readonly>'+esc(exportText())+'</textarea><p class="hint">Select all and copy if the button did not work.</p>';
   if(rows.length){
-    html+='<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Peptide</th><th class="mono">Dose</th><th class="mono">Units</th><th></th></tr></thead><tbody>'
-      +rows.slice(0,100).map(r=>'<tr><td class="mono">'+fmtDate(r.e.d)+'</td><td>'+esc(r.p.name)+'</td><td class="mono">'+fmt(r.e.dose)+' '+esc(r.p.unitLabel||r.p.unit)+'</td><td class="mono">'+fmt(r.units,1)+'u</td><td><button type="button" class="x" data-delentry="'+r.e.id+'" data-delvial="'+r.v.id+'" aria-label="Delete entry">&times;</button></td></tr>').join("")
+    html+='<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Peptide</th><th class="mono">Dose</th><th class="mono">Amount</th><th></th></tr></thead><tbody>'
+      +rows.slice(0,100).map(r=>'<tr><td class="mono">'+fmtDate(r.e.d)+'</td><td>'+esc(r.p.name)+'</td><td class="mono">'+fmt(r.e.dose)+' '+esc(r.p.unitLabel||r.p.unit)+'</td><td class="mono">'+(isOral(r.p)?fmt(r.units/100,2)+' mL':fmt(r.units,1)+'u')+'</td><td><button type="button" class="x" data-delentry="'+r.e.id+'" data-delvial="'+r.v.id+'" aria-label="Delete entry">&times;</button></td></tr>').join("")
       +'</tbody></table></div>'+(rows.length>100?'<p class="hint">Showing the latest 100.</p>':'');
   } else html+='<p class="hint">Nothing logged yet.</p>';
   html+='</section>';
@@ -751,7 +1151,7 @@ function renderAll(){ renderList(); renderDetail(); renderVials(); updateVialsBt
 function renderDetail(){
   const p=DATA.find(x=>x.id===current);
   if(!p){ detailEl.innerHTML='<p class="empty">Pick a peptide from the list.</p>'; return; }
-  const st=p.status?STATUS[p.status]:null;
+  const st=statusOf(p);
   const c=getCalc(p); const v=vialFor(p.id);
   const unit=p.unitSwitch?c.unit:p.unit;
   const unitLabel=p.unitLabel||unit;
@@ -759,6 +1159,13 @@ function renderDetail(){
   html+='<div class="dhead"><div class="titlerow"><h2>'+esc(p.name)+'</h2>'+(st?'<span class="badge tone-'+st.tone+'">'+esc(st.label)+'</span>':'')+'</div>';
   if(p.aliases.length&&p.id!=="custom") html+='<p class="aliases">Also: '+esc(p.aliases.join(", "))+'</p>';
   html+='<p class="for-long">'+esc(p.for)+'</p></div>';
+  if(p.refOnly){
+    html+='<section class="block calc" aria-label="No dose"><h3>Dose</h3><p class="flag bad">No published human dose for this route, so the calculator is off for this entry.</p><p class="hint">Need the arithmetic for something else? <button type="button" class="btn small" data-open="custom">Open Any vial (custom)</button></p></section>';
+    if(p.notes.length) html+='<section class="block notes"><h3>What to know</h3><ul>'+p.notes.map(n=>'<li>'+esc(n)+'</li>').join("")+'</ul></section>';
+    if((p.storage&&p.storage!=="n/a")||p.evidence) html+='<section class="block kv">'+(p.storage&&p.storage!=="n/a"?'<div><span class="k">Storage: </span>'+esc(p.storage)+'</div>':'')+(p.evidence?'<div><span class="k">Evidence: </span>'+esc(p.evidence)+'</div>':'')+'</section>';
+    if(p.sources.length) html+='<details class="sources"><summary>Sources</summary><ul>'+p.sources.map(u=>'<li><a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(u.replace(/^https?:\/\//,"").slice(0,80))+'</a></li>').join("")+'</ul></details>';
+    detailEl.innerHTML=html; return;
+  }
   if(v&&!uiFlags.form) html+=trackerHtml(p,v);
   if(p.freq){
     html+='<div class="glance">'
@@ -770,10 +1177,10 @@ function renderDetail(){
   }
   /* calculator */
   html+='<section class="block calc" aria-label="Reconstitution calculator"><h3>Reconstitution calculator</h3>'
-    +'<div class="field"><label for="vial">Vial size (mg)</label><div class="inrow"><div class="chips">'+chipRow("vial",p.vials,c.vial,"mg")+'</div>'
+    +'<div class="field"><label for="vial">'+esc(p.vialLabel||"Vial size (mg)")+'</label><div class="inrow"><div class="chips">'+chipRow("vial",p.vials,c.vial,vu(p))+'</div>'
     +'<input class="num" id="vial" type="number" inputmode="decimal" min="0.01" step="any" value="'+c.vial+'"></div>'
     +(p.vialNote?'<span class="hint">'+esc(p.vialNote)+'</span>':'')+'</div>'
-    +'<div class="field"><label for="water">Bacteriostatic water added (mL)</label><div class="inrow"><div class="chips">'+chipRow("water",[1,2,3,5],c.water,"mL")+'</div>'
+    +'<div class="field"><label for="water">'+esc(p.waterLabel||"Bacteriostatic water added (mL)")+'</label><div class="inrow"><div class="chips">'+chipRow("water",p.waterPresets||[1,2,3,5],c.water,"mL")+'</div>'
     +'<input class="num" id="water" type="number" inputmode="decimal" min="0.1" step="any" value="'+c.water+'"></div></div>'
     +'<div class="field"><label for="dose">Dose ('+esc(unitLabel)+')</label><div class="inrow"><div class="chips">'+(p.id==="custom"?"":chipRow("dose",dosePresets(p),c.dose,""))+'</div>'
     +'<input class="num" id="dose" type="number" inputmode="decimal" min="0.001" step="any" value="'+c.dose+'">'
@@ -785,7 +1192,7 @@ function renderDetail(){
   if(p.ladder.length){
     html+='<section class="block ladder" aria-label="Dosing sequence"><h3>Dosing sequence'+(v?' · your plan':'')+'</h3>'
       +(p.ladderNote?'<p class="hint">'+esc(p.ladderNote)+'</p>':'')
-      +'<div class="tbl-wrap"><table><thead><tr><th>Weeks</th><th>Dose</th><th class="mono">Units</th><th>Note</th></tr></thead><tbody id="ladder-body"></tbody></table></div></section>';
+      +'<div class="tbl-wrap"><table><thead><tr><th>Weeks</th><th>Dose</th><th class="mono">'+(isOral(p)?'Amount':'Units')+'</th><th>Note</th></tr></thead><tbody id="ladder-body"></tbody></table></div></section>';
   }
   if(p.notes.length){
     html+='<section class="block notes"><h3>What to know</h3><ul>'+p.notes.map(n=>'<li>'+esc(n)+'</li>').join("")+'</ul></section>';
@@ -803,13 +1210,20 @@ function renderCalcOut(p){
   const c=getCalc(p); const r=compute(p,c); const v=vialFor(p.id);
   const unitLabel=p.unitLabel||r.unit;
   const out=$("#calc-out",detailEl); if(!out) return;
-  const concTxt=r.unit==="mcg"? fmt(r.conc*1000,0)+" mcg/mL ("+fmt(r.conc)+" mg/mL)" : fmt(r.conc)+" mg/mL";
+  const concTxt=r.unit==="mcg"? fmt(r.conc*1000,0)+" mcg/mL ("+fmt(r.conc)+" mg/mL)" : fmt(r.conc)+" "+vu(p)+"/mL";
   const alerts=(p.unitSwitch?[]:doseAlerts(p,v,c.dose)).concat(r.flags);
-  out.innerHTML='<div class="big"><span class="units">'+fmt(r.units,1)+'</span><span class="lbl">units on a U-100 syringe for '+fmt(c.dose)+' '+esc(unitLabel)+'</span></div>'
-    +'<div class="facts"><span>= <b>'+fmt(r.ml,3)+' mL</b></span><span>concentration <b>'+concTxt+'</b></span><span><b>'+(r.perVial||"–")+'</b> doses per vial</span></div>'
-    +'<div class="syringe" aria-hidden="true"><div class="fill" style="width:'+Math.max(0,Math.min(100,r.units))+'%"></div>'+(r.units>100?'<div class="cap"></div>':'')+'</div>'
-    +flagsHtml(alerts)
-    +'<p class="formula">'+fmt(c.dose)+' ÷ '+fmt(c.vial*(r.unit==="mcg"?1000:1))+' × '+fmt(c.water)+' × 100 = '+fmt(r.units,1)+' units</p>';
+  if(isOral(p)){
+    out.innerHTML='<div class="big"><span class="units">'+fmt(r.ml,2)+'</span><span class="lbl">mL '+takeWord(p)+' for '+fmt(c.dose)+' '+esc(unitLabel)+' ('+(p.route==="nasal"?"metered spray":"oral syringe")+')</span></div>'
+      +'<div class="facts"><span>concentration <b>'+concTxt+'</b></span><span><b>'+(r.perVial||"–")+'</b> doses per bottle</span><span>= <b>'+fmt(r.units,0)+' units</b> if you measure with an insulin syringe</span></div>'
+      +flagsHtml(alerts)
+      +'<p class="formula">'+fmt(c.dose)+' ÷ '+fmt(c.vial)+' × '+fmt(c.water)+' = '+fmt(r.ml,2)+' mL</p>';
+  } else {
+    out.innerHTML='<div class="big"><span class="units">'+fmt(r.units,1)+'</span><span class="lbl">units on a U-100 syringe for '+fmt(c.dose)+' '+esc(unitLabel)+'</span></div>'
+      +'<div class="facts"><span>= <b>'+fmt(r.ml,3)+' mL</b></span><span>concentration <b>'+concTxt+'</b></span><span><b>'+(r.perVial||"–")+'</b> doses per vial</span></div>'
+      +'<div class="syringe" aria-hidden="true"><div class="fill" style="width:'+Math.max(0,Math.min(100,r.units))+'%"></div>'+(r.units>100?'<div class="cap"></div>':'')+'</div>'
+      +flagsHtml(alerts)
+      +'<p class="formula">'+fmt(c.dose)+' ÷ '+fmt(c.vial*(r.unit==="mcg"?1000:1))+' × '+fmt(c.water)+' × 100 = '+fmt(r.units,1)+' units</p>';
+  }
   const lb=$("#ladder-body",detailEl);
   if(lb){
     const u=p.unitLabel||p.unit;
@@ -817,13 +1231,13 @@ function renderCalcOut(p){
       const t=trackerState(p,v);
       lb.innerHTML=t.plan.map(s=>{
         const un=unitsFor(toMg(s.dose,p.unit),v.vial,v.water); const now=t.week>=s.from&&t.week<=s.to;
-        return '<tr'+(now?' class="now"':'')+'><td class="mono">'+(isFinite(s.to)?(s.from===s.to?s.from:s.from+'–'+s.to):s.from+'+')+'</td><td class="mono">'+fmt(s.dose)+' '+esc(u)+'</td><td class="mono">'+fmt(un,1)+'u'+(un>100?' *':'')+'</td><td>'+esc(s.label||"")+(now?' ← you are here':'')+'</td></tr>';
-      }).join("")+(t.plan.some(s=>unitsFor(toMg(s.dose,p.unit),v.vial,v.water)>100)?'<tr><td colspan="4" class="hint">* over 100 units at this mix: use less water or a bigger vial.</td></tr>':'');
+        return '<tr'+(now?' class="now"':'')+'><td class="mono">'+(isFinite(s.to)?(s.from===s.to?s.from:s.from+'–'+s.to):s.from+'+')+'</td><td class="mono">'+fmt(s.dose)+' '+esc(u)+'</td><td class="mono">'+volTxt(p,toMg(s.dose,p.unit),v.vial,v.water)+(!isOral(p)&&un>100?' *':'')+'</td><td>'+esc(s.label||"")+(now?' ← you are here':'')+'</td></tr>';
+      }).join("")+(!isOral(p)&&t.plan.some(s=>unitsFor(toMg(s.dose,p.unit),v.vial,v.water)>100)?'<tr><td colspan="4" class="hint">* over 100 units at this mix: use less water or a bigger vial.</td></tr>':'');
     } else {
       lb.innerHTML=p.ladder.map(s=>{
         const un=unitsFor(toMg(s.dose,p.unit),c.vial,c.water);
-        return '<tr><td class="mono">'+esc(s.weeks)+'</td><td class="mono">'+fmt(s.dose)+' '+esc(u)+'</td><td class="mono">'+fmt(un,1)+'u'+(un>100?' *':'')+'</td><td>'+esc(s.label||"")+'</td></tr>';
-      }).join("")+(p.ladder.some(s=>unitsFor(toMg(s.dose,p.unit),c.vial,c.water)>100)?'<tr><td colspan="4" class="hint">* over 100 units at this mix: use less water or a bigger vial.</td></tr>':'');
+        return '<tr><td class="mono">'+esc(s.weeks)+'</td><td class="mono">'+fmt(s.dose)+' '+esc(u)+'</td><td class="mono">'+volTxt(p,toMg(s.dose,p.unit),c.vial,c.water)+(!isOral(p)&&un>100?' *':'')+'</td><td>'+esc(s.label||"")+'</td></tr>';
+      }).join("")+(!isOral(p)&&p.ladder.some(s=>unitsFor(toMg(s.dose,p.unit),c.vial,c.water)>100)?'<tr><td colspan="4" class="hint">* over 100 units at this mix: use less water or a bigger vial.</td></tr>':'');
     }
   }
   detailEl.querySelectorAll('.chip[data-set]').forEach(b=>{ if(b.dataset.set!=="target") b.setAttribute("aria-pressed", String(Number(b.dataset.val)===Number(c[b.dataset.set]))); });
@@ -947,6 +1361,5 @@ app.dataset.view="list";
 })();
 </script>
 
-<script>if('serviceWorker' in navigator&&location.protocol==='https:'){addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
 </body>
 </html>
