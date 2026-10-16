@@ -79,6 +79,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 
 /* my vials (list pane) */
 .vialcard{background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius);padding:10px 12px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 3px 0 0 var(--accent)}
+.vialcard.clash{border-color:var(--bad);box-shadow:inset 4px 0 0 var(--bad);background:color-mix(in srgb,var(--bad) 9%,var(--surface))}
 .vialcard .vrow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .vialcard .open{border:0;background:transparent;text-align:left;padding:0;font-weight:600;font-size:1rem;color:var(--ink);flex:1;min-width:0}
 .vialcard .meta{font-size:.82rem;color:var(--muted)}
@@ -503,12 +504,20 @@ const DATA=[
  storage:"Fridge, protect from light, about 28 days.",evidence:"Rodent data for each component; nothing for the combination.",
  sources:["https://pmc.ncbi.nlm.nih.gov/articles/PMC12313605/","https://www.mcdermottlaw.com/insights/bulk-list-bound-pcac-backs-majority-of-peptides-in-two-day-public-meeting/"]},
 
-{id:"glow",cat:"heal",name:"GLOW blend (BPC-157 / TB-500 / GHK-Cu)",aliases:["GLOW","glow 70","BBG","KLOW","skin stack","BPC GHK TB blend"],status:"none",
- for:"A 'skin and recovery' premix. The common 70 mg vial is 10 mg BPC-157 + 50 mg GHK-Cu + 10 mg TB-500; the 80 mg 'KLOW' adds 10 mg KPV; a 50 mg version is 35 mg GHK-Cu + 10 TB-500 + 5 BPC.",
+{id:"glow",cat:"heal",name:"GLOW blend (BPC-157 / TB-500 / GHK-Cu)",aliases:["GLOW","glow 70","BBG","skin stack","BPC GHK TB blend"],status:"none",
+ for:"A 'skin and recovery' premix. The common 70 mg vial is 10 mg BPC-157 + 50 mg GHK-Cu + 10 mg TB-500; the 80 mg version that adds 10 mg KPV is listed separately as KLOW; a 50 mg version is 35 mg GHK-Cu + 10 TB-500 + 5 BPC.",
  unit:"mg",unitLabel:"mg total",min:1.4,max:2.8,common:2.8,freq:"Once daily (convention)",interval:1,timing:"Abdomen or thigh. GHK-Cu stings, so inject slowly and dilute well.",
- ladder:[],vials:[50,70,80],vialDefault:70,vialLabel:"Vial total (mg)",water:3,waterPresets:[2,3,5],useDays:28,cycle:"4–8 weeks on, 4 off (convention)",
- notes:["Dose by the GHK-Cu, which is 5/7 of the 70 mg vial: 2.8 mg total = 2 mg GHK-Cu + 0.4 mg BPC-157 + 0.4 mg TB-500 (the GHK-Cu convention is 1–2 mg/day). 70 mg + 3 mL = 23 mg/mL, so 2.8 mg = 12 units.","The 80 mg vial is 10/50/10/10, so 2.8 mg total gives 1.75 mg GHK-Cu and 0.35 mg of each other component. The 50 mg (35/10/5) version is 70% GHK-Cu.","Nobody has studied any of these together; the ratio is a vendor's choice, not a trial's. TB-500 ends up at roughly 2.8 mg a week, which is inside its convention.","GHK-Cu dominates the side effects: stinging, blue-tinted bruising, headache; about 0.3 mg of copper per 2 mg of GHK-Cu. A nurse practitioner reported raised liver enzymes and copper levels in heavy users (Sept 2026) and said the cause (copper peptides or undisclosed impurities) is unclear.","Theoretical cancer concern for BPC-157 and TB-500 (blood-vessel growth); BPC-157 and TB-500 are WADA-prohibited."],
+ ladder:[],vials:[50,70],vialDefault:70,vialLabel:"Vial total (mg)",water:3,waterPresets:[2,3,5],useDays:28,cycle:"4–8 weeks on, 4 off (convention)",
+ notes:["Dose by the GHK-Cu, which is 5/7 of the 70 mg vial: 2.8 mg total = 2 mg GHK-Cu + 0.4 mg BPC-157 + 0.4 mg TB-500 (the GHK-Cu convention is 1–2 mg/day). 70 mg + 3 mL = 23 mg/mL, so 2.8 mg = 12 units.","The 50 mg (35/10/5) version is 70% GHK-Cu. The 80 mg version that adds KPV is listed separately as KLOW.","Nobody has studied any of these together; the ratio is a vendor's choice, not a trial's. TB-500 ends up at roughly 2.8 mg a week, which is inside its convention.","GHK-Cu dominates the side effects: stinging, blue-tinted bruising, headache; about 0.3 mg of copper per 2 mg of GHK-Cu. A nurse practitioner reported raised liver enzymes and copper levels in heavy users (Sept 2026) and said the cause (copper peptides or undisclosed impurities) is unclear.","Theoretical cancer concern for BPC-157 and TB-500 (blood-vessel growth); BPC-157 and TB-500 are WADA-prohibited."],
  storage:"Fridge, upright, protect from light, about 28 days.",evidence:"None for the combination; each component is rodent or topical data only.",
+ sources:["https://www.wypr.org/2026-09-07/the-copper-peptide-trend-has-gone-from-creams-to-injections-ahead-of-the-science"]},
+
+{id:"klow",cat:"heal",name:"KLOW blend (GHK-Cu / TB-500 / BPC-157 / KPV)",aliases:["KLOW","klow 80","GLOW plus KPV","GLOW + KPV","skin stack with KPV"],status:"none",
+ for:"GLOW with KPV added. The common 80 mg vial is 50 mg GHK-Cu + 10 mg TB-500 + 10 mg BPC-157 + 10 mg KPV. Sold as a 'skin, recovery and inflammation' premix.",
+ unit:"mg",unitLabel:"mg total",min:1.6,max:3.2,common:3.2,freq:"Once daily (convention)",interval:1,timing:"Abdomen or thigh. GHK-Cu stings, so inject slowly and dilute well.",
+ ladder:[],vials:[80],vialDefault:80,vialLabel:"Vial total (mg)",water:3,waterPresets:[2,3,5],useDays:28,cycle:"4–8 weeks on, 4 off (convention)",
+ notes:["Dose by the GHK-Cu, which is 5/8 of the 80 mg vial: 3.2 mg total = 2 mg GHK-Cu + 0.4 mg TB-500 + 0.4 mg BPC-157 + 0.4 mg KPV (the GHK-Cu convention is 1–2 mg/day). 80 mg + 3 mL = 26.7 mg/mL, so 3.2 mg = 12 units.","Check your vial's label: some sellers use a different split. If it is not 50/10/10/10, enter the real total and work out the GHK-Cu share yourself.","Nobody has studied these four together; the ratio is a vendor's choice, not a trial's. At 3.2 mg a day, TB-500 ends up near 2.8 mg a week and KPV near 400 mcg a day, both inside their usual conventions.","GHK-Cu dominates the side effects: stinging, blue-tinted bruising, headache; about 0.3 mg of copper per 2 mg of GHK-Cu. A nurse practitioner reported raised liver enzymes and copper levels in heavy users (Sept 2026) and said the cause (copper peptides or undisclosed impurities) is unclear.","Do not run this next to a separate BPC-157, TB-500, GHK-Cu or KPV vial: you would double an ingredient. The app flags that in red under My vials.","Theoretical cancer concern for BPC-157 and TB-500 (blood-vessel growth); BPC-157 and TB-500 are WADA-prohibited."],
+ storage:"Fridge, upright, protect from light, about 28 days.",evidence:"None for the combination; each component is rodent, cell or topical data only.",
  sources:["https://www.wypr.org/2026-09-07/the-copper-peptide-trend-has-gone-from-creams-to-injections-ahead-of-the-science"]},
 
 {id:"ara290",cat:"heal",name:"ARA-290 (cibinetide)",aliases:["ARA 290","cibinetide","innate repair receptor","EPO-derived peptide"],status:"limited",
@@ -1055,19 +1064,62 @@ function matches(p){
   return q.split(/\s+/).every(w=>hay.indexOf(w)>=0);
 }
 function flagsHtml(list){ return list.map(f=>'<p class="flag '+(f.level==="bad"?"bad":f.level==="good"?"good":"")+'">'+esc(f.text)+'</p>').join(""); }
+/* ---------- Interaction flags (red) ----------
+   Red means a known overlap: the same ingredient twice, or two drugs of the same class doing the same job.
+   It is rule-based from pharmacology and approved labels, not from interaction trials: almost none of these have been studied together.
+   No red does NOT mean safe. Expired vials and two vials of the same peptide are not compared. */
+const ING={bpc157:["BPC-157"],tb500:["TB-500"],ghkcu:["GHK-Cu"],kpv:["KPV"],bpctb:["BPC-157","TB-500"],
+ glow:["BPC-157","TB-500","GHK-Cu"],klow:["BPC-157","TB-500","GHK-Cu","KPV"],
+ cjc:["CJC-1295"],cjcdac:["CJC-1295"],blend:["CJC-1295","Ipamorelin"],ipamorelin:["Ipamorelin"],
+ semaglutide:["Semaglutide"],cagrilintide:["Cagrilintide"],cagrisema:["Cagrilintide","Semaglutide"]};
+const GLP1=["semaglutide","tirzepatide","retatrutide","liraglutide","dulaglutide","survodutide","mazdutide","cagrisema"];
+const GHRH=["cjc","cjcdac","blend","tesamorelin","sermorelin"];
+const GHRP=["ipamorelin","blend","ghrp2","ghrp6","hexarelin","mk677"];
+const MELANO=["mt2","mt1","pt141"];
+const GHAXIS=GHRH.concat(GHRP,["igf1lr3","igf1des"]);
+const IGF=["igf1lr3","igf1des"];
+const CLASH_RULES=[
+ {a:GLP1,b:GLP1,why:"two GLP-1 type drugs at once. Approved labels for this class say not to combine them: nausea, vomiting and low blood sugar add up."},
+ {a:GHRH,b:GHRH,why:"two GHRH analogs act on the same receptor, so the second adds load instead of a new effect."},
+ {a:GHRP,b:GHRP,why:"two ghrelin-receptor drugs overlap. GHRP-2, GHRP-6 and hexarelin also raise cortisol and prolactin, and stacking adds to that."},
+ {a:MELANO,b:MELANO,why:"both act on melanocortin receptors, so nausea, flushing and blood-pressure rise can add up."},
+ {a:IGF,b:IGF,why:"both raise IGF-1 activity and can lower blood sugar, so they overlap."},
+ {a:["hgh"],b:GHAXIS,why:"adds to the GH you already inject, pushing IGF-1 and blood sugar higher than either alone."}
+];
+function clashBetween(x,y){
+  const out=[]; const ix=ING[x]||[], iy=ING[y]||[];
+  const shared=ix.filter(n=>iy.indexOf(n)>=0);
+  if(shared.length) return "both contain "+shared.join(" and ")+", so you would be taking it twice.";
+  for(const r of CLASH_RULES){
+    if((r.a.indexOf(x)>=0&&r.b.indexOf(y)>=0)||(r.a.indexOf(y)>=0&&r.b.indexOf(x)>=0)) return r.why;
+  }
+  return null;
+}
+function clashesFor(v){
+  const out=[];
+  for(const o of vials){
+    if(o.id===v.id||o.pid===v.pid) continue;
+    const po=peptideOf(o), pv=peptideOf(v); if(!po||!pv) continue;
+    if(trackerState(po,o).expired||trackerState(pv,v).expired) continue;
+    const why=clashBetween(v.pid,o.pid);
+    if(why) out.push({level:"bad",text:"Known overlap with "+po.name+": "+why});
+  }
+  return out;
+}
 function myVialsHtml(){
   if(!vials.length) return "";
   let html='<div class="cat-label">My vials</div>';
   for(const v of vials){
     const p=DATA.find(x=>x.id===v.pid); if(!p) continue;
     const t=trackerState(p,v); const u=p.unitLabel||p.unit;
-    const alerts=timingAlerts(p,t).filter(a=>a.level!=="good");
+    const clash=clashesFor(v);
+    const alerts=clash.concat(timingAlerts(p,t).filter(a=>a.level!=="good"));
     const worst=alerts.some(a=>a.level==="bad")?"bad":alerts.length?"warn":"good";
-    html+='<div class="vialcard" data-vial="'+v.id+'">'
+    html+='<div class="vialcard'+(clash.length?' clash':'')+'" data-vial="'+v.id+'">'
       +'<div class="vrow"><button type="button" class="open" data-open="'+p.id+'">'+esc(p.name)+'</button><span class="badge tone-'+worst+'">'+(t.week>0?"Week "+t.week:"starts "+fmtDate(v.start))+'</span></div>'
       +'<div class="meta">This week: <b>'+fmt(t.dose)+' '+esc(u)+'</b> = <b>'+volTxt(p,toMg(t.dose,p.unit),v.vial,v.water)+'</b> · '+mixTxt(p,v.vial,v.water)+'</div>'
       +'<div class="meta">'+(t.last?'Last dose '+ago(t.sinceLast)+(t.dueIn!=null?(t.dueIn>0?' · next in '+t.dueIn+'d':t.dueIn===0?' · <b>due today</b>':' · <b>overdue '+(-t.dueIn)+'d</b>'):''):'No doses logged')+' · use by '+fmtDate(t.useBy)+(t.expired?' <b>(expired)</b>':'')+'</div>'
-      +(alerts.length?'<div class="meta">'+esc(alerts[0].text)+'</div>':'')
+      +(clash.length?clash.map(c=>'<div class="meta"><b style="color:var(--bad)">RED:</b> '+esc(c.text)+'</div>').join(""):(alerts.length?'<div class="meta">'+esc(alerts[0].text)+'</div>':''))
       +'<div class="btnrow"><button type="button" class="btn small primary" data-log="'+v.id+'">Log dose</button><button type="button" class="btn small" data-open="'+p.id+'">Open</button></div>'
       +'</div>';
   }
@@ -1120,7 +1172,7 @@ function vialFormHtml(p,c,v){
 }
 function trackerHtml(p,v){
   const t=trackerState(p,v); const u=p.unitLabel||p.unit;
-  const alerts=timingAlerts(p,t);
+  const alerts=clashesFor(v).concat(timingAlerts(p,t));
   let html='<section class="block tracker" id="tracker" aria-label="My vial"><h3>My vial · week counter</h3>'
     +'<div class="trk-top"><div class="trk-week">'+(t.week>0?'Week '+t.week:'Starts '+fmtDate(v.start))+' <small>of plan · started '+fmtDate(v.start)+'</small></div>'
     +'<span class="rev">'+mixTxt(p,v.vial,v.water)+' = '+fmt(v.vial/v.water)+' '+vu(p)+'/mL</span></div>'
@@ -1193,9 +1245,10 @@ function fillAddDefaults(){
 function vialCardHtml(v){
   const p=peptideOf(v); if(!p) return "";
   const t=trackerState(p,v); const u=p.unitLabel||p.unit;
-  const alerts=timingAlerts(p,t); const bad=alerts.filter(a=>a.level!=="good");
+  const clash=clashesFor(v);
+  const alerts=clash.concat(timingAlerts(p,t)); const bad=alerts.filter(a=>a.level!=="good");
   const worst=bad.some(a=>a.level==="bad")?"bad":bad.length?"warn":"good";
-  let html='<div class="vialcard" data-vial="'+v.id+'">'
+  let html='<div class="vialcard'+(clash.length?' clash':'')+'" data-vial="'+v.id+'">'
     +'<div class="vrow"><button type="button" class="open" data-open="'+p.id+'">'+esc(p.name)+'</button><span class="badge tone-'+worst+'">'+(t.week>0?"Week "+t.week:"starts "+fmtDate(v.start))+'</span></div>'
     +'<div class="vstats">'
     +'<div>This week<b>'+fmt(t.dose)+' '+esc(u)+' = '+volTxt(p,toMg(t.dose,p.unit),v.vial,v.water)+'</b></div>'
@@ -1205,7 +1258,7 @@ function vialCardHtml(v){
     +'<div>Left in '+term(p)+'<b>'+(v.log.length?fmt(Math.max(0,t.remainingMg),2)+' '+vu(p)+' · ~'+Math.max(0,t.dosesLeft)+' doses':'log to track')+'</b></div>'
     +'<div>Use by<b>'+fmtDate(t.useBy)+(t.expired?' · expired':' · '+daysBetween(t.today,t.useBy)+'d')+'</b></div>'
     +'</div>'
-    +(bad.length?flagsHtml(bad.slice(0,2)):'')
+    +(bad.length?flagsHtml(clash.concat(bad.filter(a=>clash.indexOf(a)<0)).slice(0,3)):'')
     +confirmHtml(v,u)
     +'<div class="btnrow"><button type="button" class="btn small primary" data-log="'+v.id+'">Log dose today ('+fmt(t.dose)+' '+esc(u)+')</button>'
     +'<button type="button" class="btn small" data-logcustom="'+v.id+'">Log other</button>'
@@ -1229,7 +1282,7 @@ function exportText(){
   return s;
 }
 function renderVials(){
-  let html='<div class="vhead"><div><h2>My vials</h2><p class="hint">Saved on this device only. Log every dose and the app tracks weeks, what is left, and what is due.</p></div>'
+  let html='<div class="vhead"><div><h2>My vials</h2><p class="hint">Saved on this device only. Log every dose and the app tracks weeks, what is left, and what is due. A vial turns red when it shares an ingredient or drug class with another active vial. No red does not mean safe: most of these have never been studied together.</p></div>'
     +'<div class="btnrow"><button type="button" class="btn" id="vials-back">&larr; Peptides</button><button type="button" class="btn primary" id="add-vial">+ Add vial</button></div></div>';
   if(uiFlags.add) html+=addVialFormHtml();
   if(!vials.length&&!uiFlags.add) html+='<p class="empty">No vials yet. Tap + Add vial, or open any peptide and tap "Save this vial &amp; count weeks".</p>';
