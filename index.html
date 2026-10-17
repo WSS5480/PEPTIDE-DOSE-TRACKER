@@ -225,6 +225,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: in July 2026 the FDA's compounding advisory committee voted to recommend adding BPC-157, TB-500, KPV, MOTS-c, epithalon and Semax to the compounding list and rejected DSIP, but the votes are advisory and FDA rulemaking could run into 2027 or later; melanotan II and injectable GHK-Cu are due for committee review before the end of February 2027; CagriSema's FDA application, filed in December 2025, was still under review at the last check. Approved drugs are described from their current labels.</p>
+    <p class="hint" id="appver">App version 2026-10-16 · KLOW, red interaction flags, evidence notes</p>
   </footer>
 </div>
 
@@ -1317,7 +1318,12 @@ detailEl.addEventListener("input",e=>{
   const btn=$("#install-btn"), sheet=$("#install-sheet");
   const web=/^https?:$/.test(location.protocol);
   if(web&&"serviceWorker" in navigator){
-    window.addEventListener("load",()=>{ try{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }catch(e){} });
+    window.addEventListener("load",()=>{ try{
+      const hadCtl=!!navigator.serviceWorker.controller; let reloaded=false;
+      /* a new version took over: reload once so the phone shows it. Saved vials live in localStorage and are not touched. */
+      navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadCtl&&!reloaded){ reloaded=true; location.reload(); } });
+      navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{ try{ r.update(); }catch(e){} }).catch(()=>{});
+    }catch(e){} });
   }
   if(!btn||!sheet) return;
   const ua=navigator.userAgent||"";
