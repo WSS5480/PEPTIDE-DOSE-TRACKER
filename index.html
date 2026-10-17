@@ -247,7 +247,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 <script>
 (function(){
 "use strict";
-const CATS=[{id:"all",label:"All"},{id:"wl",label:"Weight loss"},{id:"heal",label:"Healing"},{id:"gh",label:"GH & anti-aging"},{id:"hormone",label:"Hormones"},{id:"brain",label:"Brain & sleep"},{id:"immune",label:"Immune & mito"},{id:"skin",label:"Skin & sexual"},{id:"research",label:"No human dose"}];
+const CATS=[{id:"all",label:"All"},{id:"wl",label:"Weight loss"},{id:"heal",label:"Healing"},{id:"gh",label:"GH & anti-aging"},{id:"hormone",label:"Hormones"},{id:"brain",label:"Brain & sleep"},{id:"immune",label:"Immune & mito"},{id:"skin",label:"Skin & sexual"}];
 const CATNAME={wl:"Weight loss / GLP-1 class",heal:"Healing & recovery",gh:"GH & anti-aging",hormone:"Hormones, fertility & bone",brain:"Brain, mood & sleep",immune:"Immune, mitochondria & repair",skin:"Skin, tanning & sexual",research:"Research-only · no human dose",tool:"Tools"};
 const STATUS={
   approved:{label:"FDA-approved",tone:"good"},
@@ -405,33 +405,6 @@ const DATA=[
  storage:"Fridge, 14–30 days (sources disagree).",evidence:"Pediatric approval history; adult use rests on small older studies.",
  sources:["https://public-inspection.federalregister.gov/2013-04827.pdf","https://www.peptideprotocolwiki.com/peptides/sermorelin"]},
 
-{id:"motsc",cat:"gh",name:"MOTS-c",aliases:["mitochondrial peptide","MOTS"],status:"none",
- for:"Mitochondrial peptide and AMPK activator sold for insulin sensitivity, fat loss and exercise capacity.",
- unit:"mg",min:5,max:10,common:5,freq:"2–3× per week (range 1–3×)",interval:null,timing:"Morning; 30–60 min before or within an hour after exercise. Fasting not required.",
- ladder:[{weeks:"1–2",dose:5,label:"once a week (tolerance check)"},{weeks:"3+",dose:5,label:"2–3× per week"}],ladderNote:"Community convention.",
- vials:[10,40],vialDefault:10,water:1,useDays:21,cycle:"4–8 weeks on, 4–8 weeks off; 2–4 cycles a year",
- notes:["Mouse data only. The one human trial was an analog (CB4211, 25 mg/day for 4 weeks, 2021) that was safe, shifted biomarkers and was shelved.","Site redness and swelling are common; also flushing, headache, fatigue, nausea, palpitations, possible blood-sugar swings.","Less stable than most peptides once mixed: use within 2–3 weeks.","FDA: Category 2, then listed as nominated-but-withdrawn (April 2026); the advisory panel voted narrowly in July 2026 to recommend allowing compounding (reported tallies differ); decision pending. WADA-prohibited."],
- storage:"Fridge, protect from light, 2–3 weeks.",evidence:"Rodent data; no human dosing study of MOTS-c itself.",
- sources:["https://www.peptideprotocolwiki.com/peptides/mots-c/dosing","https://longevity.technology/news/cohbar-announces-positive-human-data-from-obesity-study/"]},
-
-{id:"epithalon",cat:"gh",name:"Epithalon",aliases:["epitalon","AEDG","pineal peptide"],status:"none",
- for:"Pineal tetrapeptide sold for telomerase activation, sleep and circadian rhythm.",
- unit:"mg",min:5,max:10,common:10,freq:"Once daily for 10–20 days per course",interval:1,timing:"Evening or bedtime. Fasting not required.",
- ladder:[],vials:[10,50],vialDefault:10,water:1,useDays:21,cycle:"10–20 day course, 1–2× per year, spaced 4–6 months apart",
- notes:["The Russian human data (15-year follow-up, n=79) used the pineal extract Epithalamin, not synthetic epitalon, and nothing has been independently replicated.","Common courses: 5 mg × 20 days or 10 mg × 10 days (100 mg total). A 50 mg vial is 10 days at 5 mg.","The 5–10 mg/day convention has no dose-finding study behind it; a low-dose camp runs 100–250 mcg daily.","Reported: site redness, drowsiness or vivid dreams, transient fatigue. Theoretical telomerase/cancer concern, so avoid with any cancer history.","FDA: Category 2, then listed as nominated-but-withdrawn (April 2026); the advisory panel voted in favor in July 2026 (reported tallies differ, 7–4 to 7–5); decision pending."],
- storage:"Fridge, about 3 weeks. Do not shake.",evidence:"Weakest in the set: one research group, animal and lab-dish data.",
- sources:["https://www.peptideprotocolwiki.com/peptides/epitalon/dosing","https://outliyr.com/reports/epitalon"]},
-
-{id:"mk677",cat:"gh",name:"MK-677 (ibutamoren)",aliases:["MK677","MK 677","ibutamoren","MK-0677","oral GH secretagogue"],status:"halted",route:"oral",
- for:"Oral ghrelin mimetic (a pill or liquid, not an injection) that raises GH and IGF-1 around the clock. Merck ran Phase 2 trials and dropped it.",
- unit:"mg",min:10,max:25,common:25,start:10,freq:"Once daily",interval:1,timing:"30–60 min before bed on an empty stomach, so the hunger and drowsiness land at night.",
- ladder:[{weeks:"1–2",dose:10,label:"tolerance check"},{weeks:"3+",dose:25,label:"15–25 mg; many hold at 15 if hunger or water retention is bad"}],ladderNote:"Community convention. The trials used a flat 25 mg/day.",
- vials:[300,750,1500],vialDefault:750,vialLabel:"Bottle total (mg)",water:30,waterLabel:"Bottle volume (mL)",waterPresets:[30,50,60],vialNote:"Liquid is usually 25 mg/mL in a 30 mL bottle (750 mg). Capsules are 10 or 25 mg each, so no math needed.",useDays:180,
- cycle:"8–16 weeks on, 4–8 weeks off; some run 10 mg long-term with bloodwork",
- notes:["At 25 mg/mL: 10 mg = 0.4 mL, 15 mg = 0.6 mL, 25 mg = 1 mL. Measure with an oral syringe.","Nass 2008 (Annals of Internal Medicine): 25 mg/day for a year in 65 healthy 60–81-year-olds raised IGF-1 about 40–60% and added roughly 1.1 kg of fat-free mass; early weight gain was mostly water and strength gains were modest.","A hip-fracture trial was stopped early for congestive heart failure (6.5% vs 1.7% on placebo). The 563-person Alzheimer's trial raised IGF-1 but did nothing for cognition.","Expect a big appetite increase, water retention and puffiness, tingling hands, lethargy, and higher fasting glucose with lower insulin sensitivity. Check fasting glucose or A1c and IGF-1.","Not approved anywhere; FDA warning letters and safety alerts in 2025–2026 over the heart-failure risk. WADA-prohibited. Skip it with any heart-failure history, diabetes, or active cancer."],
- storage:"Room temperature, away from light. No mixing; liquid bottles keep for months.",evidence:"Several Phase 2 RCTs in hundreds of people, then development was abandoned; the heart-failure signal is real.",
- sources:["https://pubmed.ncbi.nlm.nih.gov/?term=Nass+2008+MK-677+growth+hormone+secretagogue+annals","https://peptibase.dev/peptides/mk-677","https://www.peptideschedule.com/peptides/mk-677-ibutamoren"]},
-
 {id:"nad",cat:"gh",name:"NAD+",aliases:["nicotinamide adenine dinucleotide","NAD"],status:"limited",
  for:"Coenzyme injected for energy and 'longevity'. No approved injectable dosing; the numbers are clinic practice.",
  unit:"mg",min:50,max:200,common:100,start:50,freq:"2–3× per week (some daily for a 1–2 week loading phase)",interval:null,timing:"Any time you can sit still for 20 minutes. Inject slowly (10+ seconds) and rotate sites.",
@@ -472,14 +445,6 @@ const DATA=[
  notes:["A '5 mg / 5 mg' vial holds 5 mg of each (10 mg total). With 2 mL, 2.4 mg of each is 96 units, so 1 mL (48 units) fits better at the top dose.","REDEFINE 1 (68 wk): CagriSema −20.4% vs −3.0% on placebo; semaglutide alone about −15% and cagrilintide alone about −12%.","GI effects in 80% vs 40% on placebo.","A premixed vial locks the ratio at 1:1. If one component needs holding back, use separate vials.","Retatrutide + cagrilintide blends also exist; no trial has ever combined those two, so there is no dose basis at all."],
  storage:"Fridge after mixing, about 28 days.",evidence:"Strong Phase 3 data for the combination (NEJM 2025); no label yet.",
  sources:["https://www.acc.org/Latest-in-Cardiology/Journal-Scans/2025/07/02/14/43/REDEFINE-1-and-REDEFINE-2","https://www.drugs.com/history/cagrisema.html"]},
-
-{id:"frag176",cat:"wl",name:"HGH Fragment 176-191",aliases:["frag","176-191","fragment 176","lipolytic fragment"],status:"none",
- for:"The last 16 amino acids of growth hormone, sold for fat loss. This is the unmodified fragment; AOD-9604 is the modified version that was actually tested in people.",
- unit:"mcg",min:250,max:500,common:250,freq:"1–2× daily",interval:1,timing:"Fasted on waking and/or before bed; 30+ min before food (convention).",
- ladder:[],vials:[2,5],vialDefault:5,water:2,cycle:"4–8 weeks on, 2–4 off (convention)",
- notes:["No human study of this fragment exists. The AOD-9604 trials (about 900 people) were oral or single IV doses; the 24-week trial (n=502) found safety similar to placebo, and a weight-loss benefit was never shown, so even that data does not transfer to injections.","Dosing is pure community convention: 250–500 mcg once or twice a day. 5 mg + 2 mL = 2.5 mg/mL, so 250 mcg = 10 units.","No human safety data. Expect the usual injection-site reactions; immunogenicity and impurities are the unknowns with research-grade peptide.","WADA-prohibited (named). I could not find it on FDA's compounding lists, so it has no category."],
- storage:"Fridge, 2–3 weeks (convention).",evidence:"None in humans.",
- sources:["https://www.jofem.org/index.php/jofem/article/view/157/194","https://en.wikipedia.org/wiki/HGH_Fragment_176%E2%80%93191"]},
 
 {id:"dulaglutide",cat:"wl",name:"Dulaglutide",aliases:["Trulicity","dula","weekly GLP-1 pen","GLP-1 Fc fusion"],status:"approved",statusLabel:"FDA-approved (diabetes, pens only)",refOnly:true,refTone:"warn",refShort:"Reference only · sealed pens, nothing to mix",refMsg:"Dulaglutide is sold only as sealed single-dose pens, so there is nothing to reconstitute and the calculator is off for this entry. The label titration is in the notes below.",
  for:"Once-weekly GLP-1 agonist: a GLP-1 analog fused to part of a human antibody (IgG4 Fc) so it lasts about 5 days in the body. Approved for type 2 diabetes and for lowering heart-attack and stroke risk in diabetes. It is not approved for weight loss.",
@@ -552,22 +517,6 @@ const DATA=[
  notes:["Human trial: 1.5 mcg/kg SC twice daily (about 100 mcg) for 16 weeks in healthy volunteers; the GH response was reported to fade within weeks and partly recover after a break (figures not re-checked). Single IV doses of about 2 mcg/kg give a large GH peak.","5 mg + 2 mL = 2.5 mg/mL, so 100 mcg = 4 units.","Cortisol and prolactin rise clearly at useful doses; also flushing, water retention, hunger, tingling. Small studies showed direct heart effects (a rise in stroke volume) that were never followed up.","Never nominated to FDA's compounding lists; the Category 2 concerns for the other GHRPs apply. WADA-prohibited. Avoid with cancer or pituitary disease; check IGF-1 and fasting glucose."],
  storage:"Fridge, 2–4 weeks (convention).",evidence:"Short human trials in volunteers and patients; the desensitization is the best-documented fact.",
  sources:["https://pubmed.ncbi.nlm.nih.gov/?term=hexarelin+long-term+therapy+growth+hormone+status+Rahim","https://pubmed.ncbi.nlm.nih.gov/?term=hexarelin+GH+releasing+activity+humans+Arvat"]},
-
-{id:"igf1lr3",cat:"gh",name:"IGF-1 LR3",aliases:["Long R3 IGF-1","LR3","IGF-1 long","insulin-like growth factor"],status:"none",
- for:"A lab-modified IGF-1 that barely binds its carrier proteins, so it is far more potent than the natural hormone. It is a cell-culture reagent; I found no study of it in people.",
- unit:"mcg",min:20,max:80,common:40,freq:"Once daily, with food (convention)",interval:1,timing:"After a meal or post-workout, never fasted or at bedtime: hypoglycemia is the acute risk.",
- ladder:[],vials:[0.1,1],vialDefault:1,water:2,cycle:"4–6 weeks on, 4–6 off (convention)",
- notes:["Hypoglycemia first: with no binding-protein buffer, blood sugar can crash within an hour. Keep fast carbs nearby and never dose before sleep or a fast.","Cancer: IGF-1 signalling is mitogenic. Higher natural IGF-1 raises prostate and premenopausal breast cancer odds about 1.5× in pooled studies; nobody knows what an unbuffered analog does. Avoid with any cancer history.","No human data for LR3. The approved native IGF-1 (mecasermin, for children) caused hypoglycemia in 42% of patients, plus intracranial hypertension, tonsil enlargement and thickening of facial soft tissue; adult ALS trials of native IGF-1 showed no benefit, with numerically higher mortality in the European and Japanese trials.","20–50 mcg daily is convention; 80–100 mcg is the high end. 1 mg + 2 mL = 0.5 mg/mL, so 40 mcg = 8 units.","Not on any FDA compounding list. WADA-prohibited."],
- storage:"Fridge, about 28 days (convention; the native drug keeps 30 days).",evidence:"None in humans; the native IGF-1 label and trials are the closest thing.",
- sources:["https://www.accessdata.fda.gov/drugsatfda_docs/label/2025/021839s033lbl.pdf","https://www.fda.gov/files/drugs/published/FDA-Summary-of-Controlled-Clinical-Data-for-Human-IGF-1-in-Treatment-of-Patients-with-Amyotrophic-Lateral-Sclerosis.pdf","https://en.wikipedia.org/wiki/IGF-1_LR3"]},
-
-{id:"igf1des",cat:"gh",name:"IGF-1 DES (1-3)",aliases:["DES IGF-1","IGF-DES","des(1-3)IGF-1"],status:"none",
- for:"IGF-1 missing its first three amino acids, which weakens carrier-protein binding. Short-acting; sold for local muscle use. No human study exists.",
- unit:"mcg",min:50,max:200,common:100,freq:"1–2× daily, around training (convention)",interval:1,timing:"Right before or after training, with food. Not within 2 hours of sleep (hypoglycemia).",
- ladder:[],vials:[1,2],vialDefault:1,water:2,cycle:"4–6 weeks on, equal time off (convention)",
- notes:["Same two risks as IGF-1 LR3, with a shorter window: hypoglycemia soon after the shot, and tumor promotion with repeated use. Avoid with any cancer history or diabetes drugs.","50–100 mcg per shot is convention; the claimed 20–30 minute half-life is also unverified. 1 mg + 2 mL = 0.5 mg/mL, so 100 mcg = 20 units.","The 'local growth' idea comes from rodent and cell data; the native IGF-1 label (mecasermin) is the only human safety reference.","Not on any FDA compounding list. WADA-prohibited."],
- storage:"Fridge, 2–4 weeks (unverified).",evidence:"None in humans.",
- sources:["https://en.wikipedia.org/wiki/Des(1-3)IGF-1","https://www.accessdata.fda.gov/drugsatfda_docs/label/2025/021839s033lbl.pdf"]},
 
 {id:"hgh",cat:"gh",name:"HGH (somatropin, 191 aa)",aliases:["growth hormone","somatropin","GH","191AA","rhGH"],status:"approved",
  for:"Recombinant human growth hormone. Approved for GH deficiency and a few other conditions; anti-aging and physique use is off-label and, in the US, distributing it for that is a federal crime.",
@@ -704,13 +653,6 @@ const DATA=[
  storage:"Label: dissolve and use immediately.",evidence:"One research group, unblinded; the label dose is the only firm number.",
  sources:["https://pubmed.ncbi.nlm.nih.gov/12577695/","https://pubmed.ncbi.nlm.nih.gov/36169363/"]},
 
-{id:"ll37",cat:"immune",name:"LL-37 (cathelicidin)",aliases:["LL37","cathelicidin","antimicrobial peptide","hCAP-18"],status:"none",statusLabel:"No injection data",refOnly:true,
- for:"The body's own antimicrobial peptide, sold for 'infections' and gut problems. Human trials are topical (leg ulcers) and one 4-patient intratumoral study; nobody has injected it systemically in a study.",
- unit:"mcg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Topical trial: 0.5–1.6 mg/mL twice weekly on venous leg ulcers sped healing in a 34-patient study; the 148-patient follow-up missed its endpoint.","The specific risk: LL-37 is an autoantigen. It forms complexes with self-DNA that fire up interferon responses, and it drives disease in psoriasis and lupus. Injecting it with no dose or safety data is a gamble on exactly that pathway.","FDA: nominated for compounding, then withdrawn; FDA flagged a risk of immunogenicity for certain routes. Not compoundable.","No published SC dose exists, so the calculator is off for this entry. Community doses circulate (tens of micrograms a day); they have no basis."],
- storage:"n/a",evidence:"Topical trials only.",
- sources:["https://pubmed.ncbi.nlm.nih.gov/25041740/","https://pubmed.ncbi.nlm.nih.gov/34687253/","https://clinicaltrials.gov/study/NCT02225366"]},
-
 {id:"vip",cat:"immune",name:"VIP (vasoactive intestinal peptide)",aliases:["VIP","aviptadil","CIRS nasal spray","Shoemaker VIP"],status:"limited",route:"nasal",
  for:"A 28-amino-acid neuropeptide that dilates blood vessels and calms immune signalling. Used as a nasal spray in the Shoemaker mold-illness (CIRS) protocol; IV aviptadil failed its COVID-19 trials.",
  unit:"mcg",min:50,max:50,common:50,freq:"4× daily by nose (Shoemaker protocol), tapered later",interval:1,timing:"One spray in one nostril, four times a day; the protocol requires prior steps and a nasal culture first.",
@@ -759,140 +701,6 @@ const DATA=[
  notes:["Label doses (not re-checked here): Italy 600 mg IM or slow IV (and 2.5 g IV before cisplatin); Japan 100–200 mg IM/IV daily. 1500 mg + 10 mL = 150 mg/mL, so 600 mg = 4 mL (400 units: an IM volume).","Skin lightening: one placebo-controlled IV trial (50 enrolled, 32 completed; 1200 mg twice weekly for 6 weeks, given with vitamin C and collagen) found a small, temporary change (6 of 16 improved vs 3 of 16 on placebo). Oral 250–500 mg/day trials show small or no effect.","FDA alert, August 2026: at least 30 patients with signs of shock and sepsis-like symptoms after IV glutathione; two pharmacy recalls for endotoxin. Non-sterile 'research' powder is exactly the hazard they described.","Reported harms: liver-enzyme rises, kidney toxicity, Stevens-Johnson syndrome, anaphylaxis, patchy skin lightening. Avoid with asthma (inhaled form causes bronchospasm), G6PD deficiency if paired with high-dose vitamin C, kidney or liver disease, pregnancy.","Labels reportedly say use within 8 hours of mixing (Italy) or immediately (Japan); not re-checked."],
  storage:"Use within 8 hours of mixing; single use.",evidence:"Approved abroad for other things; the cosmetic use has one small trial and a string of warnings.",
  sources:["https://www.fda.gov/drugs/human-drug-compounding/fda-reminds-compounders-not-use-dietary-supplement-grade-glutathione-injectables","https://www.jpad.com.pk/index.php/jpad/article/view/18","https://www.fda.gov.ph/?p=2129"]},
-
-{id:"topicals",cat:"skin",name:"Cosmetic peptides (topical only)",aliases:["Snap-8","Matrixyl","PTD-DBM","GHK basic","AHK-Cu","argireline","acetyl octapeptide-3","palmitoyl pentapeptide","hair peptide"],status:"none",statusLabel:"Topical use only",refOnly:true,
- for:"Five peptides sold in vials that belong in creams and serums, not syringes: Snap-8, Matrixyl, PTD-DBM, copper-free GHK and AHK-Cu. None has any injection data.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Snap-8 (acetyl octapeptide-3): a longer version of argireline, claimed to soften expression lines by damping nerve-to-muscle signalling. Only supplier data; argireline itself has two small trials at 10%. Used at about 3–10% in creams.","Matrixyl (palmitoyl pentapeptide-4, pal-KTTKS): a collagen-fragment signal peptide with the best evidence of the group: a 93-person split-face trial and a separate 28-day eye-area study (fold depth −18%) at parts-per-million concentrations (0.0003–0.005%).","PTD-DBM: a cell-penetrating peptide that releases a brake on the Wnt hair-growth pathway. Mouse data only (topical 10 mM); human follicle cells in a dish; no human trial. No concentration is established.","GHK (no copper, 'GHK basic'): the natural tripeptide binds copper so avidly it likely becomes GHK-Cu in the body; every human skin trial used GHK-Cu, none GHK alone. No injection data (rats only).","AHK-Cu: a GHK-Cu relative sold for hair; one 2007 lab study on cultured follicles, no human trial, no injection data.","Dissolving these for topical use is harmless; injecting them has no basis and the calculator is off for this entry."],
- storage:"Topical solutions: fridge, 2–4 weeks.",evidence:"Small topical trials for Matrixyl; supplier or lab data for the rest.",
- sources:["https://www.mdpi.com/2079-9284/4/2/16","https://www.mdpi.com/2079-9284/7/4/91","https://www.mdpi.com/2073-4409/12/4/555"]},
-
-/* ---- research-only: no human dose ---- */
-{id:"foxo4",cat:"research",name:"FOXO4-DRI",aliases:["FOXO4","senolytic peptide","FOXO4-DRI","proxofim"],status:"none",statusLabel:"No human data",refOnly:true,
- for:"A mirror-image peptide that pries FOXO4 off p53 so senescent cells kill themselves. Reversed frailty signs in old mice (Cell, 2017). No human has been dosed in a study.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Mouse regimen: 5 mg/kg IP every other day, three doses, repeated. There is no human dose, route, pharmacokinetics or safety data; the 'self-experiment' numbers online are surface-area extrapolations from mice by bloggers.","Why no one has tried it in people: it is a D-amino-acid peptide the body cannot break down, fused to an HIV-derived carrier tail that enters every cell, and the 2020 mouse paper flagged possible muscle and heart toxicity. Immune reactions are unstudied.","Theoretical appeal aside, killing senescent cells systemically has caused serious effects with other senolytics. Avoid with heart or muscle disease, pregnancy, or outside a monitored trial.","No dose exists, so the calculator is off for this entry."],
- storage:"n/a",evidence:"Mouse and cell data only.",
- sources:["https://repub.eur.nl/pub/98786","https://www.aging-us.com/article/102682/text","https://www.nature.com/articles/s41467-025-60844-9"]},
-
-{id:"ace031",cat:"research",name:"ACE-031 (ramatercept)",aliases:["ACE 031","ramatercept","ActRIIB","myostatin blocker"],status:"halted",statusLabel:"Halted (bleeding, 2011)",refOnly:true,
- for:"A soluble activin-receptor fusion protein that soaks up myostatin and related signals, so muscle grows. Development stopped in 2011 after nosebleeds and dilated skin vessels in boys with Duchenne.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Phase 1 in healthy postmenopausal women: single doses up to 3 mg/kg raised lean mass about 3% and bone-formation markers; the Duchenne trial (0.5–1 mg/kg every 2–4 weeks) was halted for nosebleeds, telangiectasias and gum bleeding. The Duchenne trial was published in Muscle & Nerve in 2016.","It is a 50 kDa engineered protein, not a small peptide; the 1 mg research vials give no way to know what is in them, and even the trial doses were weight-based and monitored for bleeding.","Theoretical risks beyond bleeding: activin signalling is involved in blood-vessel growth, fertility hormones and cancer. Avoid with any bleeding tendency, blood thinners, or pregnancy.","No home dose exists, so the calculator is off for this entry."],
- storage:"n/a",evidence:"Phase 1 and a halted Phase 2; no efficacy trial completed.",
- sources:["https://www.institut-myologie.org/en/?p=12016","https://pubmed.ncbi.nlm.nih.gov/?term=ACE-031+ramatercept+healthy+postmenopausal+women+phase+1","https://pubmed.ncbi.nlm.nih.gov/?term=ACE-031+Duchenne+muscular+dystrophy+halted"]},
-
-{id:"adipotide",cat:"research",name:"Adipotide (FTPP)",aliases:["adipotide","FTPP","prohibitin-TP01","fat-killing peptide"],status:"halted",statusLabel:"Halted (kidney toxicity)",refOnly:true,
- for:"A peptide that targets the blood supply of white fat and triggers cell death there. Obese monkeys lost 11% of body weight in a month (2011) with kidney injury; a Phase 1 cancer trial was started and never reported.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Monkey data: 0.43 mg/kg daily for 28 days; all treated animals showed dose-dependent kidney damage (tubular injury, raised creatinine) that was reversible in that study. Later lab-animal work confirmed the kidney is a target of the sequence, not a side effect.","Human data: one Phase 1 trial in prostate cancer was registered; no results were ever published, and the program disappeared. There is no human dose.","A drug that kills blood vessels in fat also hits kidney tubules by the same mechanism; no bloodwork at home catches that in time. Avoid entirely.","The calculator is off for this entry."],
- storage:"n/a",evidence:"Animal data with a toxicity signal; no human results.",
- sources:["https://pubmed.ncbi.nlm.nih.gov/22072638/","https://clinicaltrials.gov/search?term=adipotide"]},
-
-{id:"mgf",cat:"research",name:"MGF / PEG-MGF",aliases:["mechano growth factor","IGF-1Ec","PEG MGF","pegylated MGF"],status:"none",statusLabel:"No human data",refOnly:true,
- for:"A 24-amino-acid piece of the IGF-1Ec splice variant that muscle makes after loading; PEG-MGF is the same peptide with a polymer tail for a longer half-life. Sold for local muscle growth.",
- unit:"mcg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Evidence: rodent muscle injections and cell culture. Gene-delivered MGF grew mouse muscle 25% in three weeks; there is no study of injecting the synthetic peptide into people, and the native E-peptide is unstable in blood (minutes).","PEG-MGF has no published pharmacology anywhere; the 'long half-life' is an assumption.","Risks: unknown. It is an IGF-1-family signal, so the same theoretical growth-promotion concern applies to tumors; immune reactions to the PEG tail are documented with other pegylated drugs.","No human dose exists, so the calculator is off. Community protocols ('200 mcg bilateral post-workout') are invented."],
- storage:"n/a",evidence:"Rodent and cell data only.",
- sources:["https://en.wikipedia.org/wiki/Mechano_growth_factor","https://pubmed.ncbi.nlm.nih.gov/?term=mechano+growth+factor+E+peptide+review"]},
-
-{id:"tb500frag",cat:"research",name:"TB-500 fragment (Ac-LKKTETQ / Ac-SDKP)",aliases:["TB500 frag","thymosin beta-4 fragment 17-23","Ac-SDKP","LKKTETQ","TB-500 FRAG"],status:"none",statusLabel:"No human data",refOnly:true,
- for:"Short pieces of thymosin beta-4 sold under the TB-500 name: usually the 7-amino-acid actin-binding site (Ac-LKKTETQ, residues 17–23) or the 4-amino-acid Ac-SDKP from its N-terminus.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Thymosin beta-4 is 43 amino acids; these are short pieces of it, and the TB-500 name is used loosely for several of them. Ac-LKKTETQ keeps the actin-binding motif in test tubes; Ac-SDKP is a natural blood peptide that blocks scarring in animal models and is part of why ACE inhibitors reduce fibrosis.","I found no human dosing study of either, so there is no dose, no half-life and no safety data. The full TB-500 entry has the community schedule people borrow.","Risks are the same theoretical ones as TB-500 (blood-vessel growth around tumors) plus the unknowns of an unstudied sequence. WADA prohibits thymosin beta-4 and its fragments.","The calculator is off for this entry."],
- storage:"n/a",evidence:"Cell and animal data for the sequences; nothing in humans.",
- sources:["https://pubmed.ncbi.nlm.nih.gov/?term=Ac-SDKP+fibrosis+review","https://pubmed.ncbi.nlm.nih.gov/?term=thymosin+beta-4+LKKTETQ+actin+binding+peptide"]},
-
-{id:"humanin",cat:"research",name:"Humanin",aliases:["HN","HNG","humanin-G","mitochondrial-derived peptide"],status:"none",statusLabel:"No human data",refOnly:true,
- for:"A 24-amino-acid peptide encoded in mitochondrial DNA, discovered in surviving neurons of an Alzheimer's brain. Falls with age in blood; sold as a longevity peptide alongside MOTS-c.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Human data is observational only: blood levels track age, insulin sensitivity and some diseases. Nobody has injected humanin or its potent analog HNG into people in a study.","Mouse work: HNG improves insulin action and protects neurons and the heart in disease models at microgram doses by injection. Doses do not translate.","Risks: unknown. It signals through the same receptor family as some cytokines and interacts with IGF-1 binding protein 3, so the growth and cancer questions are open.","No human dose exists, so the calculator is off. The MOTS-c entry covers the one mitochondrial peptide with at least an analog trial."],
- storage:"n/a",evidence:"Observational human data; interventional data is mouse only.",
- sources:["https://pubmed.ncbi.nlm.nih.gov/?term=humanin+mitochondrial+derived+peptide+review+2023","https://en.wikipedia.org/wiki/Humanin"]},
-
-{id:"pnc27",cat:"research",name:"PNC-27",aliases:["PNC 27","p53 peptide","penetratin peptide","cancer peptide"],status:"none",statusLabel:"No human data",refOnly:true,
- for:"A p53-derived peptide joined to a cell-penetrating tail, reported to punch holes in cancer cells in culture. It is marketed online to cancer patients. There is no human trial of any kind.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Evidence: cell-culture and a few mouse-xenograft papers from one group; selectivity for cancer cells depends on a membrane protein (HDM-2) and was never tested in people.","The harm is not mainly the peptide: it is the time lost. Patients have been sold PNC-27 as an alternative to treatment with no evidence it does anything in a human body.","Unknowns include dose, route, stability in blood, immune reactions to a foreign carrier sequence, and off-target membrane damage.","No dose exists, so the calculator is off. If cancer is the reason you are here, an oncologist can tell you what is actually in trials for your diagnosis."],
- storage:"n/a",evidence:"Lab-bench data only.",
- sources:["https://pubmed.ncbi.nlm.nih.gov/?term=PNC-27+p53+peptide+cancer+cell+membrane","https://en.wikipedia.org/wiki/PNC-27"]},
-
-{id:"b733",cat:"research",name:"B7-33",aliases:["B7 33","relaxin analog","single-chain relaxin","RXFP1 peptide"],status:"none",statusLabel:"No human data",refOnly:true,
- for:"A single-chain mimic of the hormone relaxin-2 (its B-chain, residues 7–33) that activates the RXFP1 receptor and showed anti-fibrotic effects in rodent heart, lung and kidney models.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Preclinical only: rodent studies at roughly 0.25–0.5 mg/kg/day reduced scarring; it was designed to avoid the cAMP-driven effects of full relaxin that were linked to tumor growth in cell models.","Full-length relaxin (serelaxin) went through large heart-failure trials (RELAX-AHF-2, n=6,545) and failed on mortality; B7-33 has never been given to a person.","Unknowns: human dose, half-life (short), blood-pressure effects (relaxin lowers it), bleeding and fertility effects. Avoid in pregnancy.","No human dose exists, so the calculator is off for this entry."],
- storage:"n/a",evidence:"Rodent data; the parent hormone's trials were negative.",
- sources:["https://pubmed.ncbi.nlm.nih.gov/?term=B7-33+relaxin+single+chain+peptide+fibrosis","https://pubmed.ncbi.nlm.nih.gov/?term=RELAX-AHF-2+serelaxin"]},
-
-{id:"pe2228",cat:"research",name:"PE-22-28",aliases:["PE 22-28","spadin analog","TREK-1 blocker","antidepressant peptide"],status:"none",statusLabel:"No human data",refOnly:true,
- for:"A 7-amino-acid analog of spadin, a natural fragment that blocks the TREK-1 potassium channel. Acted as a fast antidepressant in mice within days. Sold as a nasal or injectable nootropic.",
- unit:"mcg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Mouse data: intravenous and intranasal doses in the microgram-per-kilogram range reversed depression-like behaviour and boosted new neuron growth (2017). No human has received it in a study.","TREK-1 also sits in the heart and in pain and anesthesia pathways; blocking it in people is uncharted. No dose, route or safety data exists.","No human dose exists, so the calculator is off for this entry."],
- storage:"n/a",evidence:"Mouse data only.",
- sources:["https://pubmed.ncbi.nlm.nih.gov/?term=PE+22-28+spadin+analog+TREK-1+antidepressant","https://en.wikipedia.org/wiki/Spadin"]},
-
-{id:"p21",cat:"research",name:"P21 (P021)",aliases:["P-21","P021","CNTF peptide","neurogenesis peptide","P21 adamantane"],status:"none",statusLabel:"No human data",refOnly:true,
- for:"A 4-amino-acid piece of ciliary neurotrophic factor capped with an adamantane group, from a New York Alzheimer's lab. Raised BDNF and new neurons in mouse models of Alzheimer's and Down syndrome.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Mouse data: months of oral or injected dosing improved memory and reduced tau and amyloid changes. No human has taken it in a study; a vendor 'P21 adamantane' is the same molecule renamed.","It is derived from a growth factor that failed its own human trials (CNTF for ALS, with weight loss and cough); the fragment's human behaviour is unknown.","No human dose exists, so the calculator is off for this entry."],
- storage:"n/a",evidence:"Mouse data from one group.",
- sources:["https://pubmed.ncbi.nlm.nih.gov/?term=P021+peptide+CNTF+adamantane+Alzheimer+mouse","https://pubmed.ncbi.nlm.nih.gov/?term=ciliary+neurotrophic+factor+ALS+trial"]},
-
-{id:"bioregulators",cat:"research",name:"Khavinson bioregulators (Vilon, Pinealon, etc.)",aliases:["Vilon","Pinealon","Testagen","Bronchogen","Cardiogen","Cortagen","Livagen","Pancragen","Prostamax","Cartalax","Chonluten","Crystagen","Ovagen","Vesugen","N-acetyl epitalon amidate","cytomax","cytogen","short peptides","bioregulator"],status:"none",statusLabel:"No human injection data",refOnly:true,
- for:"Fourteen 2–4-amino-acid 'organ peptides' from one St Petersburg institute, each said to tune one tissue: Vilon (KE, thymus), Pinealon (EDR, brain), Testagen (KEDG, testes), Bronchogen (AEDL, airways), Cardiogen (AEDR, heart), Cortagen (AEDP, cortex), Livagen (KEDA, liver), Pancragen (KEDW, pancreas), Prostamax (KEDP, prostate), Cartalax (AED, cartilage), Chonluten (EDG, airways and stomach), Crystagen (EDP, immune), Ovagen (EDL, liver and gut), Vesugen (KED, blood vessels).",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["In Russia these are sold as oral supplement capsules, taken in 10–30 day courses; none is a registered injectable medicine, and no label dose for injecting any of them exists.","The evidence is almost entirely from the group that sells them: cell and rodent studies, plus uncontrolled human reports (e.g. 'improved memory in 59% of head-injury patients' with oral Pinealon). No randomized trial, no independent replication, and the central claim, that tiny peptides regulate genes by binding DNA, has not been confirmed by anyone else.","N-acetyl epitalon amidate is a chemically modified epithalon with no published data; an independent 2025 review says the modification has not been evaluated. See the Epithalon entry for the parent compound.","Unknowns: whether intact peptides survive swallowing, long-term toxicity, cancer signalling (telomerase claims), interactions. Injecting them adds sterility and immune risks on top.","No human injection dose exists, so the calculator is off for this entry."],
- storage:"n/a",evidence:"One research group; animal and uncontrolled human data.",
- sources:["https://www.mdpi.com/1420-3049/26/22/7053","https://www.mdpi.com/1422-0067/26/6/2691","https://en.wikipedia.org/wiki/Vladimir_Khavinson"]},
-
-{id:"dihexa",cat:"research",name:"Dihexa",aliases:["N-hexanoic-Tyr-Ile-(6) aminohexanoic amide","angiotensin IV analog","HGF mimetic","c-Met activator","cognitive peptide"],status:"none",statusLabel:"No human data",refOnly:true,
- for:"A small peptide-like molecule from Washington State University, built from angiotensin IV, that helped memory and grew new synaptic connections in rats by boosting hepatocyte growth factor (HGF) signalling at its receptor c-Met. It has not been tested in people on its own.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["The work came from Joseph Harding's group. In rats given the memory-impairing drug scopolamine, and in aged rats, it improved water-maze performance, whether given by mouth or injected into the brain. In the 2014 JPET study, blocking HGF cancelled the effect, so it seems to bind HGF and amplify its signal at c-Met rather than act alone.","In lab assays it was reported to act at picomolar concentrations and to be more potent than BDNF at promoting new synaptic spines. Lab potency says nothing about what a person would get.","The nearest human data come from fosgonimeton (ATH-1017), a subcutaneous prodrug that its developer says turns into dihexa in the body. It did not beat placebo in its Phase 2 trial in Parkinson's disease dementia and dementia with Lewy bodies (SHAPE, December 2023) or in the Phase 2/3 LIFT-AD trial in mild-to-moderate Alzheimer's (315 people, 40 mg a day for 26 weeks; results September 2024).","Theoretical risk: HGF/c-Met signalling drives cell growth and spread in many cancers, so anything that amplifies it raises a tumor-promotion question nobody has answered.","No human dose, strength or safety data exist for dihexa itself, so the calculator is off for this entry."],
- storage:"n/a",evidence:"Rat and lab studies from one research group; the related prodrug failed its human trials.",
- sources:["https://jpet.aspetjournals.org/content/351/2/390","https://www.genengnews.com/news/brain-connections-in-alzheimers-rebuilt-with-new-peptide","https://practicalneurology.com/news/fosgonimeton-small-molecule-therapy-for-alzheimers-fails-to-meet-study-endpoints/2470570/","https://www.fiercebiotech.com/biotech/athiras-losing-streak-continues-phase-2-failure-dementia"]},
-
-{id:"klothopep",cat:"research",name:"Klotho-derived peptide (KP1)",aliases:["KP1","Klotho peptide","Klotho-derived peptide 1","klotho fragment","kidney longevity peptide"],status:"none",statusLabel:"No human data",refOnly:true,
- for:"A 30-amino-acid piece copied from the human Klotho protein, the 'longevity' protein the kidney makes. In mice with kidney injury it protected the kidney about as well as full-length Klotho. Nobody has tested it in people.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Klotho is a large protein made mostly in the kidney and brain; blood levels fall with age and kidney disease, which is why it is called an anti-aging protein. KP1 is a short synthetic fragment built to copy its kidney-protective effect.","Mouse work (Frontiers in Pharmacology, 2023): 1 mg/kg a day into a tail vein for 4 days, starting 2 days before an induced kidney injury, lessened kidney damage and cell death and lowered injury markers such as KIM-1 and NGAL. In cultured human kidney cells it matched full-length Klotho. A second model gave Klotho-deficient mice a SARS-CoV-2 N-protein plasmid to mimic COVID-associated kidney injury.","Those are intravenous mouse doses given to prevent injury before it happened; they do not translate to a human amount, route or timing. There is no human trial, no half-life data and no long-term safety data.","No human dose exists, so the calculator is off for this entry."],
- storage:"n/a",evidence:"Cell and mouse data from one group of studies; nothing in people.",
- sources:["https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2023.1333389/full","https://pubmed.ncbi.nlm.nih.gov/?term=Klotho-derived+peptide+KP1+kidney+injury"]},
-
-{id:"fst344",cat:"research",name:"Follistatin-344 (FST-344)",aliases:["FST 344","FST344","FS344","FS-344","follistatin","myostatin-binding protein"],status:"none",statusLabel:"No injection data",refOnly:true,
- for:"A natural protein that binds and neutralizes myostatin and activin, two brakes on muscle growth. The human data are gene-therapy trials that make the body produce it and a follistatin-fusion drug injected into single muscles. Nobody has tested injecting the plain protein.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Follistatin is a large glycoprotein, not a small peptide. The 344 is the length of the full precursor; once its first 29 amino acids are clipped off, the main circulating form is 315 amino acids. It was first found in ovarian fluid as an FSH-suppressing protein, so effects on fertility hormones are plausible and unstudied for the plain protein.","Becker muscular dystrophy, Phase 1/2a: 6 patients got an AAV1 gene-therapy vector carrying the FS344 gene, injected directly into both thigh (quadriceps) muscles. Four of six improved their 6-minute walk by 29–125 m, two did not, and the report listed no adverse effects. It shows the idea can work when the body makes the protein; it is not the protein injection people buy.","ACE-083, a follistatin-based fusion protein injected into one muscle every 4–8 weeks, grew treated muscles (more than 15% at 200–240 mg per muscle in FSHD) but did not improve strength or function. Acceleron stopped the FSHD trial in 2019 and later ended its Charcot-Marie-Tooth program.","The related decoy ACE-031 was halted for nosebleeds and dilated skin vessels (see its entry). WADA prohibits follistatin and other agents that modify myostatin.","No human dose exists for injected follistatin protein, so the calculator is off for this entry."],
- storage:"n/a",evidence:"Small gene-therapy trials and a failed fusion-protein program; nothing on the injected protein.",
- sources:["https://pubmed.ncbi.nlm.nih.gov/25322757/","https://www.institut-myologie.org/en/?p=35366","https://en.wikipedia.org/wiki/Follistatin"]},
-
-{id:"gdf8",cat:"research",name:"Myostatin (GDF-8)",aliases:["GDF-8","GDF8","MSTN","myostatin","growth differentiation factor 8","muscle brake"],status:"none",statusLabel:"Lab protein, not a drug",refOnly:true,
- for:"The protein muscle makes to limit its own growth. Recombinant myostatin is a standard lab reagent. It is what ACE-031, follistatin and similar drugs are built to block, so there is no use case for taking it and no human dose.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Myostatin is two identical 109-amino-acid chains (about 25 kDa), released by muscle cells to slow muscle growth. Animals and people born without working myostatin carry far more muscle: Belgian Blue cattle, and a German boy reported in 2004 who was unusually strong.","Blocking it has been tried in people: the ACE-031 decoy receptor (see its entry), the antibody stamulumab (no longer in development) and a follistatin fusion protein (see Follistatin-344). Muscles got bigger in some trials, but gains in strength and function have been hard to show (ACE-083 in FSHD is an example).","WADA bans myostatin inhibitors; myostatin itself has no performance use.","There is no human data on giving myostatin, so the calculator is off for this entry."],
- storage:"n/a",evidence:"The biology is solid (animals, a rare human mutation, drug trials); there is no use of the protein itself in people.",
- sources:["https://en.wikipedia.org/wiki/Myostatin","https://pubmed.ncbi.nlm.nih.gov/?term=myostatin+mutation+child+muscle+hypertrophy+Schuelke+2004"]},
-
-{id:"a1mq",cat:"research",name:"5-Amino-1MQ",aliases:["5-amino-1MQ","5Amino/MQ","5A1MQ","5-amino-1-methylquinolinium","NNMT inhibitor","fat loss research chemical"],status:"none",statusLabel:"Mouse data only",refOnly:true,
- for:"Not a peptide: a small molecule that blocks NNMT, an enzyme in fat cells, sold alongside peptides for fat loss. In obese mice it limited weight and fat gain. There is no human trial.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["NNMT (nicotinamide N-methyltransferase) uses up nicotinamide and methyl groups. In a 2014 Nature study, mice with less NNMT in fat and liver resisted diet-induced obesity, which is the idea 5-amino-1MQ was made to test with a drug.","In a diet-induced obesity study in mice, 5-amino-1MQ given once a day for 28 days limited weight and fat gain in a dose-dependent way, with better glucose tolerance and insulin sensitivity and less fatty liver.","No human trial exists, so there is no dose and no safety data; any human amount is an extrapolation from mice. Blocking NNMT changes methyl-group and NAD+ metabolism, so effects beyond fat are plausible and untested in people.","No human dose exists, so the calculator is off for this entry."],
- storage:"n/a",evidence:"Cell and mouse studies; no human data.",
- sources:["https://researchexperts.utmb.edu/en/publications/nicotinamide-n-methyltransferase-inhibition-mitigates-obesity-rel/","https://pubmed.ncbi.nlm.nih.gov/?term=nicotinamide+N-methyltransferase+knockdown+protects+against+diet-induced+obesity+Nature+2014"]},
-
-{id:"aicar",cat:"research",name:"AICAR (acadesine)",aliases:["Aicar","acadesine","AICA riboside","AMPK activator","exercise mimetic"],status:"halted",statusLabel:"Heart-surgery trial stopped",refOnly:true,
- for:"Not a peptide: a nucleoside the body converts into an AMP look-alike that switches on AMPK, the cell's energy sensor. Tested in hospital IV trials; in mice it raised running endurance. Banned in sport since 2009.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Mouse study (Cell, 2008): 4 weeks of AICAR at 500 mg/kg/day by injection made sedentary mice run 23% longer and 44% further than vehicle-treated mice. That is a very large dose and a mouse result.","Human data are IV hospital trials. In RED-CABG, 3,080 high-risk bypass-surgery patients got acadesine 0.1 mg/kg/min for 7 hours or placebo; death, stroke or need for mechanical heart support at 28 days was 5.1% vs 5.0% (no benefit), and the trial was stopped early for futility.","No study has tested AICAR as a repeated self-injected product, so there is no human dose and no safety data for that use.","WADA has prohibited acadesine since 2009, after evidence of use by cyclists.","No human dose exists for this use, so the calculator is off for this entry."],
- storage:"n/a",evidence:"Mouse data plus one large failed IV trial; nothing on self-injection.",
- sources:["https://www.acc.org/Latest-in-Cardiology/Clinical-Trials/2012/07/18/16/20/RED-CABG","https://pubmed.ncbi.nlm.nih.gov/18674809/","https://en.wikipedia.org/wiki/Acadesine"]},
-
-{id:"dermorphin",cat:"research",name:"Dermorphin",aliases:["Dermorphin(dp)","Demorphin","frog opioid peptide","Tyr-D-Ala-Phe-Gly-Tyr-Pro-Ser-NH2","mu-opioid peptide"],status:"none",statusLabel:"Opioid · no human trials",refOnly:true,
- for:"An opioid. A 7-amino-acid peptide first isolated from the skin of South American Phyllomedusa frogs that acts on the same mu receptor as morphine, tens of times more strongly. It has no approved use and no registered human trial.",
- unit:"mg",freq:"",interval:null,timing:"",ladder:[],vials:[],water:0,cycle:"",
- notes:["Sequence Tyr-D-Ala-Phe-Gly-Tyr-Pro-Ser-NH2. The D-alanine is rare in nature: it turns up in amphibian, bacterial and mollusc peptides, not in mammals. It is a highly selective mu-opioid agonist, reported as about 30–40 times as potent as morphine, and far more in some animal spinal tests.","Animal potency does not tell you a safe human amount, and there is no human toxicology data at all. Expect the full opioid risks: slowed or stopped breathing, sedation, constipation, tolerance and dependence, all worse with alcohol, benzodiazepines or other opioids. Slow or shallow breathing, blue lips, or being unable to wake someone is an emergency: call emergency services.","It became known as an illegal horse-racing drug that blunts pain and fatigue; racing regulators treat it as a prohibited substance with zero tolerance. It has also been sold online as a research chemical. No regulator has approved it.","No human dose exists, so the calculator is off for this entry."],
- storage:"n/a",evidence:"Animal pharmacology only; no human trials.",
- sources:["https://en.wikipedia.org/wiki/Dermorphin","https://equimed.com/news/products/nhbpa-zero-tolerance-for-dermorphin-use-in-horses"]},
 
 {id:"custom",cat:"tool",name:"Any vial (custom)",aliases:["calculator","custom","other"],status:null,noAlerts:true,
  for:"Reconstitution math for anything not listed. Enter the vial size, the water you add and the dose you want.",
@@ -1074,16 +882,14 @@ const ING={bpc157:["BPC-157"],tb500:["TB-500"],ghkcu:["GHK-Cu"],kpv:["KPV"],bpct
  semaglutide:["Semaglutide"],cagrilintide:["Cagrilintide"],cagrisema:["Cagrilintide","Semaglutide"]};
 const GLP1=["semaglutide","tirzepatide","retatrutide","liraglutide","dulaglutide","survodutide","mazdutide","cagrisema"];
 const GHRH=["cjc","cjcdac","blend","tesamorelin","sermorelin"];
-const GHRP=["ipamorelin","blend","ghrp2","ghrp6","hexarelin","mk677"];
+const GHRP=["ipamorelin","blend","ghrp2","ghrp6","hexarelin"];
 const MELANO=["mt2","mt1","pt141"];
-const GHAXIS=GHRH.concat(GHRP,["igf1lr3","igf1des"]);
-const IGF=["igf1lr3","igf1des"];
+const GHAXIS=GHRH.concat(GHRP);
 const CLASH_RULES=[
  {a:GLP1,b:GLP1,why:"two GLP-1 type drugs at once. Approved labels for this class say not to combine them: nausea, vomiting and low blood sugar add up."},
  {a:GHRH,b:GHRH,why:"two GHRH analogs act on the same receptor, so the second adds load instead of a new effect."},
  {a:GHRP,b:GHRP,why:"two ghrelin-receptor drugs overlap. GHRP-2, GHRP-6 and hexarelin also raise cortisol and prolactin, and stacking adds to that."},
  {a:MELANO,b:MELANO,why:"both act on melanocortin receptors, so nausea, flushing and blood-pressure rise can add up."},
- {a:IGF,b:IGF,why:"both raise IGF-1 activity and can lower blood sugar, so they overlap."},
  {a:["hgh"],b:GHAXIS,why:"adds to the GH you already inject, pushing IGF-1 and blood sugar higher than either alone."}
 ];
 function clashBetween(x,y){
