@@ -225,7 +225,8 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: in July 2026 the FDA's compounding advisory committee voted to recommend adding BPC-157, TB-500, KPV, MOTS-c, epithalon and Semax to the compounding list and rejected DSIP, but the votes are advisory and FDA rulemaking could run into 2027 or later; melanotan II and injectable GHK-Cu are due for committee review before the end of February 2027; CagriSema's FDA application, filed in December 2025, was still under review at the last check. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-10-22 · HHB, SHB, KLOW, red interaction flags, evidence notes</p>
+    <p class="hint" id="appver">App version 2026-10-22b · HHB, SHB, KLOW, red interaction flags, evidence notes</p>
+    <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
 
@@ -1382,6 +1383,16 @@ if(current&&!DATA.some(p=>p.id===current)) current=null;
 renderCats(); renderAll();
 if(window.matchMedia("(min-width:880px)").matches && !current){ current=vials.length?vials[vials.length-1].pid:"retatrutide"; renderList(); renderDetail(); }
 app.dataset.view="list";
+})();
+
+/* Refresh app: drop the service worker and its cache, then reload. localStorage (vials, dose log) is not touched. */
+(function(){ const b=document.getElementById("refresh-app"); if(!b) return;
+  b.addEventListener("click",async()=>{
+    b.disabled=true; b.textContent="Refreshing…";
+    try{ if("serviceWorker" in navigator){ const rs=await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(r=>r.unregister())); } }catch(e){}
+    try{ if(window.caches){ const ks=await caches.keys(); await Promise.all(ks.map(k=>caches.delete(k))); } }catch(e){}
+    location.replace(location.pathname+"?r="+Date.now());
+  });
 })();
 </script>
 
