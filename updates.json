@@ -1,74 +1,1933 @@
 {
-  "version": 1,
-  "updated": "2026-11-01",
-  "notice": "",
-  "news": [
-    {
-      "date": "2026-11-01",
-      "kind": "new",
-      "title": "Update feed and live study lookups added",
-      "summary": "This app now reads a small updates file for news, status changes and new peptides, and each peptide page can run a live check of PubMed, ClinicalTrials.gov and the FDA's drug database. Nothing here changes your saved vials.",
-      "url": "",
-      "tags": []
-    },
-    {
-      "date": "2026-10-22",
-      "kind": "new",
-      "title": "HHB and SHB pre-mixed blends added",
-      "summary": "HHB is a B-vitamin and biotin mix; SHB is an amino-acid mix. Neither is a peptide and neither has a published dose, so the app shows the strength per mL and lets you pick the amount.",
-      "url": "",
-      "tags": ["hhb", "shb"]
-    },
-    {
-      "date": "2026-10-16",
-      "kind": "new",
-      "title": "KLOW added; vials turn red when two overlap",
-      "summary": "KLOW is the GLOW blend plus KPV. A saved vial now turns red if it shares an ingredient or drug class with another active vial. No red does not mean safe: most of these have never been studied together.",
-      "url": "",
-      "tags": ["klow", "glow", "bpc157", "tb500", "ghkcu", "kpv"]
-    },
-    {
-      "date": "2026-08-24",
-      "kind": "fda",
-      "title": "FDA warning letters reject 'research use only' labels on peptides",
-      "summary": "FDA sent warning letters to five online peptide sellers (products named include semaglutide, tirzepatide, retatrutide and tesamorelin). It said a 'research use only' label does not change a product's intended use when the website shows human use: dosing guidance, mixing tools, disease claims, or bacteriostatic water sold with the peptides.",
-      "url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/txp-innovations-llc-dba-tex-peptides-735067-08242026",
-      "tags": ["semaglutide", "tirzepatide", "retatrutide", "tesamorelin"]
-    },
-    {
-      "date": "2026-07-24",
-      "kind": "fda",
-      "title": "Panel also recommended Epitalon and Semax; DSIP was not recommended",
-      "summary": "A trade-group summary says the FDA advisory committee recommended six of the seven peptides it reviewed for the compounding list, and that DSIP was the one it did not. Still advice only.",
-      "url": "https://www.americanmedspa.org/news/fda-advisory-committee-recommends-adding-six-of-seven-peptides-to-compounding-list/",
-      "tags": ["semax", "dsip"]
-    },
-    {
-      "date": "2026-07-23",
-      "kind": "fda",
-      "title": "FDA advisory panel votes on four peptides for compounding",
-      "summary": "The Pharmacy Compounding Advisory Committee voted 8-6 (one abstention) to recommend BPC-157, KPV and TB-500 for the compounding list, and 7-5 (two abstentions) for MOTS-c. This is advice, not approval: FDA rulemaking is still needed, which one attorney estimates at 8-12 months.",
-      "url": "https://www.pharmexec.com/view/fda-votes-loosen-restrictions-four-peptides",
-      "tags": ["bpc157", "kpv", "tb500"]
-    },
-    {
-      "date": "2026-04-22",
-      "kind": "fda",
-      "title": "FDA takes 12 peptides off its Category 2 'safety concerns' list",
-      "summary": "The 12 were BPC-157, TB-500, MOTS-c, GHK-Cu (injectable), Epitalon, Semax, KPV, DSIP, melanotan II, LL-37, Dihexa and PEG-MGF. Leaving Category 2 does not make a peptide approved or compoundable by itself. Seven were reviewed in July; GHK-Cu, melanotan II, LL-37, Dihexa and PEG-MGF are due for committee review by the end of February 2027.",
-      "url": "https://www.peppal.app/news/fda-category-2-removal-april-2026",
-      "tags": ["bpc157", "tb500", "ghkcu", "kpv", "semax", "dsip", "mt2"]
-    },
-    {
-      "date": "2025-12-01",
-      "kind": "fda",
-      "title": "CagriSema: FDA application filed, still under review",
-      "summary": "Novo's application was filed in December 2025 (date approximate). At the last check in October 2026 it was still under review and no decision date had been found.",
-      "url": "",
-      "tags": ["cagrisema", "cagrilintide", "semaglutide"]
-    }
-  ],
-  "status": {},
-  "append": {},
-  "peptides": []
+ "version": 1,
+ "updated": "2026-11-01",
+ "notice": "",
+ "news": [
+  {
+   "date": "2026-11-01",
+   "kind": "new",
+   "title": "47 more peptides added from your price list, with FDA status and sources",
+   "summary": "Reference cards for the rest of the Xint list: growth and muscle peptides, bioregulators, immune and repair peptides, blends and supplement-type injectables. None has a calculator. Each card lists FDA status, the human evidence found, risks, and source links, and anything that could not be verified is marked 'not verified'.",
+   "url": "",
+   "tags": []
+  },
+  {
+   "date": "2026-10-28",
+   "kind": "fda",
+   "title": "HHS says it won't enforce against compounding of six peptides (interim policy)",
+   "summary": "HHS announced an interim policy not to take enforcement action against state-licensed pharmacies and physicians compounding with BPC-157, Epitalon, KPV, MOTS-c, Semax and TB-500, while FDA finishes rulemaking. Conditions: a patient-specific prescription, an FDA-registered cGMP source with a certificate of analysis, one active ingredient per product, and adverse-event reporting. It is not an approval, it is a draft open for comment, and it does not cover sales labeled for research or supplements.",
+   "url": "https://www.beckershospitalreview.com/glp-1s/hhs-allows-compounding-of-6-unapproved-peptides/",
+   "tags": [
+    "bpc157",
+    "tb500",
+    "kpv",
+    "semax",
+    "epithalon",
+    "motsc"
+   ]
+  },
+  {
+   "date": "2026-11-01",
+   "kind": "new",
+   "title": "Update feed and live study lookups added",
+   "summary": "This app now reads a small updates file for news, status changes and new peptides, and each peptide page can run a live check of PubMed, ClinicalTrials.gov and the FDA's drug database. Nothing here changes your saved vials.",
+   "url": "",
+   "tags": []
+  },
+  {
+   "date": "2026-10-22",
+   "kind": "new",
+   "title": "HHB and SHB pre-mixed blends added",
+   "summary": "HHB is a B-vitamin and biotin mix; SHB is an amino-acid mix. Neither is a peptide and neither has a published dose, so the app shows the strength per mL and lets you pick the amount.",
+   "url": "",
+   "tags": [
+    "hhb",
+    "shb"
+   ]
+  },
+  {
+   "date": "2026-10-16",
+   "kind": "new",
+   "title": "KLOW added; vials turn red when two overlap",
+   "summary": "KLOW is the GLOW blend plus KPV. A saved vial now turns red if it shares an ingredient or drug class with another active vial. No red does not mean safe: most of these have never been studied together.",
+   "url": "",
+   "tags": [
+    "klow",
+    "glow",
+    "bpc157",
+    "tb500",
+    "ghkcu",
+    "kpv"
+   ]
+  },
+  {
+   "date": "2026-08-24",
+   "kind": "fda",
+   "title": "FDA warning letters reject 'research use only' labels on peptides",
+   "summary": "FDA sent warning letters to five online peptide sellers (products named include semaglutide, tirzepatide, retatrutide and tesamorelin). It said a 'research use only' label does not change a product's intended use when the website shows human use: dosing guidance, mixing tools, disease claims, or bacteriostatic water sold with the peptides.",
+   "url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/txp-innovations-llc-dba-tex-peptides-735067-08242026",
+   "tags": [
+    "semaglutide",
+    "tirzepatide",
+    "retatrutide",
+    "tesamorelin"
+   ]
+  },
+  {
+   "date": "2026-07-24",
+   "kind": "fda",
+   "title": "Panel also recommended Epitalon and Semax; DSIP was not recommended",
+   "summary": "A trade-group summary says the FDA advisory committee recommended six of the seven peptides it reviewed for the compounding list, and that DSIP was the one it did not. Still advice only.",
+   "url": "https://www.americanmedspa.org/news/fda-advisory-committee-recommends-adding-six-of-seven-peptides-to-compounding-list/",
+   "tags": [
+    "semax",
+    "dsip"
+   ]
+  },
+  {
+   "date": "2026-07-23",
+   "kind": "fda",
+   "title": "FDA advisory panel votes on four peptides for compounding",
+   "summary": "The Pharmacy Compounding Advisory Committee voted 8-6 (one abstention) to recommend BPC-157, KPV and TB-500 for the compounding list, and 7-5 (two abstentions) for MOTS-c. This is advice, not approval: FDA rulemaking is still needed, which one attorney estimates at 8-12 months.",
+   "url": "https://www.pharmexec.com/view/fda-votes-loosen-restrictions-four-peptides",
+   "tags": [
+    "bpc157",
+    "kpv",
+    "tb500"
+   ]
+  },
+  {
+   "date": "2026-04-22",
+   "kind": "fda",
+   "title": "FDA takes 12 peptides off its Category 2 'safety concerns' list",
+   "summary": "In April 2026 FDA moved these 12 off Category 2 (sources date the notice Apr 15 and the list Apr 22):  BPC-157, TB-500, MOTS-c, GHK-Cu (injectable), Epitalon, Semax, KPV, DSIP, melanotan II, LL-37, Dihexa and PEG-MGF. Leaving Category 2 does not make a peptide approved or compoundable by itself. Seven were reviewed in July; GHK-Cu, melanotan II, LL-37, Dihexa and PEG-MGF are due for committee review by the end of February 2027.",
+   "url": "https://www.peppal.app/news/fda-category-2-removal-april-2026",
+   "tags": [
+    "bpc157",
+    "tb500",
+    "ghkcu",
+    "kpv",
+    "semax",
+    "dsip",
+    "mt2"
+   ]
+  },
+  {
+   "date": "2025-12-01",
+   "kind": "fda",
+   "title": "CagriSema: FDA application filed, still under review",
+   "summary": "Novo's application was filed in December 2025 (date approximate). At the last check in October 2026 it was still under review and no decision date had been found.",
+   "url": "",
+   "tags": [
+    "cagrisema",
+    "cagrilintide",
+    "semaglutide"
+   ]
+  }
+ ],
+ "status": {},
+ "append": {
+  "bpc157": {
+   "notes": [
+    "HHS interim policy (Oct 28 2026): will not enforce against 503A compounding of this peptide with a patient prescription, an FDA-registered cGMP source and a certificate of analysis. Not an approval; research-labeled and supplement sales are not covered."
+   ],
+   "evidence": "",
+   "sources": [
+    "https://www.beckershospitalreview.com/glp-1s/hhs-allows-compounding-of-6-unapproved-peptides/"
+   ]
+  },
+  "tb500": {
+   "notes": [
+    "HHS interim policy (Oct 28 2026): will not enforce against 503A compounding of this peptide with a patient prescription, an FDA-registered cGMP source and a certificate of analysis. Not an approval; research-labeled and supplement sales are not covered."
+   ],
+   "evidence": "",
+   "sources": [
+    "https://www.beckershospitalreview.com/glp-1s/hhs-allows-compounding-of-6-unapproved-peptides/"
+   ]
+  },
+  "kpv": {
+   "notes": [
+    "HHS interim policy (Oct 28 2026): will not enforce against 503A compounding of this peptide with a patient prescription, an FDA-registered cGMP source and a certificate of analysis. Not an approval; research-labeled and supplement sales are not covered."
+   ],
+   "evidence": "",
+   "sources": [
+    "https://www.beckershospitalreview.com/glp-1s/hhs-allows-compounding-of-6-unapproved-peptides/"
+   ]
+  },
+  "semax": {
+   "notes": [
+    "HHS interim policy (Oct 28 2026): will not enforce against 503A compounding of this peptide with a patient prescription, an FDA-registered cGMP source and a certificate of analysis. Not an approval; research-labeled and supplement sales are not covered."
+   ],
+   "evidence": "",
+   "sources": [
+    "https://www.beckershospitalreview.com/glp-1s/hhs-allows-compounding-of-6-unapproved-peptides/"
+   ]
+  }
+ },
+ "peptides": [
+  {
+   "id": "igf1lr3",
+   "cat": "gh",
+   "name": "IGF-1 LR3 (also IGF-1 DES)",
+   "aliases": [
+    "IGF-1 LR3",
+    "Long R3 IGF-1",
+    "LR3-IGF-1",
+    "IGF-1 DES",
+    "Des(1-3) IGF-1",
+    "IGF1 LR3"
+   ],
+   "status": "none",
+   "for": "A lab-made analog of IGF-1 (insulin-like growth factor 1) with a longer chain and one swapped amino acid, so it binds IGF-binding proteins poorly. Sold for muscle growth and recovery claims. IGF-1 itself is an approved drug (mecasermin) for a rare growth disorder. The LR3 and DES forms are not.",
+   "refShort": "Reference only · no human trials of LR3/DES found",
+   "refMsg": "No human dose exists for IGF-1 LR3 or IGF-1 DES, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: IGF-1 LR3 is a recombinant analog of human IGF-1. A supplier datasheet describes 13 extra amino acids at the N-terminus and arginine in place of glutamate at position 3. This lowers binding to IGF-binding proteins, which the supplier says extends half-life. IGF-1 DES (des 1-3 IGF-1) is a different, shortened IGF-1 variant.",
+    "US status: Not FDA-approved. Not found on FDA's 503A bulk-substances categories page (content current as of 2026-04-22). The only approved IGF-1 drug found is mecasermin (Increlex), for severe primary IGF-1 deficiency in children 2 and older; label revised 07/2025. Increlex is a different molecule from LR3 and DES.",
+    "Abroad: No approval of IGF-1 LR3 or IGF-1 DES in any country was found. Not verified country by country.",
+    "Human evidence: No human trials of IGF-1 LR3 or IGF-1 DES found in the sources opened. A secondary site states no human trials, pharmacokinetic studies or formal toxicology exist for DES. The only human data are for mecasermin.",
+    "Animal and lab evidence: A supplier datasheet cites a diabetic rat study (more muscle protein synthesis) and an ApoE-knockout mouse study (smaller plaques), plus cell tests where LR3 was more potent than IGF-1. Cited by the supplier; original papers not opened.",
+    "Known harms (from the mecasermin label, a related drug): severe hypoglycemia with seizures; cancers reported in children and use is contraindicated with any cancer history; raised pressure inside the skull; tonsil and adenoid swelling; anaphylaxis; hip and bone problems; scoliosis progression. How LR3 or DES behave in people is unknown.",
+    "Quality and identity: Vendor vials have not been verified against their labels. USADA warns that products claiming to contain IGF-1 may not contain it, may be diluted, or may contain other harmful substances.",
+    "Anti-doping: WADA lists IGF-1 and its analogues as prohibited at all times (S2.3, growth factors). USADA says there is no urine test; authorities track blood markers through the athlete biological passport.",
+    "To check: whether the vendor's sequence matches LR3 or DES; not verified here. Search PubMed for each name separately."
+   ],
+   "evidence": "Weak: no human trials of LR3 or DES found; only cell and animal data. Related approved drug (mecasermin) has serious labeled risks.",
+   "sources": [
+    "https://www.caymanchem.com/product/45532/igf-1-lr3",
+    "https://www.accessdata.fda.gov/drugsatfda_docs/label/2025/021839s033lbl.pdf",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm",
+    "https://www.wada-ama.org/en/prohibited-list",
+    "https://www.usada.org/spirit-of-sport/igf-1-and-the-world-anti-doping-agency-prohibited-list/",
+    "https://www.peptideprotocolwiki.com/peptides/igf-1-des/risks"
+   ],
+   "lookup": [
+    "IGF-1 LR3",
+    "long R3 IGF-I",
+    "des(1-3)IGF-1"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "fst344",
+   "cat": "gh",
+   "name": "Follistatin 344 (FST 344)",
+   "aliases": [
+    "FST 344",
+    "FS344",
+    "Follistatin-344",
+    "FST-344",
+    "Follistatin"
+   ],
+   "status": "limited",
+   "for": "Follistatin is a natural protein that binds myostatin and activin, two signals that limit muscle growth. FST 344 is the 344-amino-acid form. Sold for muscle building. In people, only gene therapy that makes follistatin in muscle has been tested, in a very small trial. Injected protein has not been shown in trials.",
+   "refShort": "Reference only · human data are gene therapy, n=6",
+   "refMsg": "No human dose exists for injected follistatin 344, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: Follistatin is a natural glycoprotein that blocks myostatin and activin. FS344 is an alternatively spliced form chosen in gene-therapy work to reduce off-target binding. Vendors sell it as a synthetic or recombinant protein.",
+    "US status: No FDA-approved follistatin product exists (Poison Control article). Not found on FDA's 503A bulk-substances categories page (content current as of 2026-04-22).",
+    "Human evidence: One small phase 1/2a trial in Becker muscular dystrophy (Mendell et al., Molecular Therapy, published online Oct 2014) used an AAV1 gene-therapy vector to make FS344 in the quadriceps. n=6. Six-minute walk distance rose in 4 of 6 patients; no adverse effects were reported. ClinicalTrials.gov also lists NCT02354781 (Duchenne, same vector family); its status was not verified.",
+    "Injected protein: No human trial of injected follistatin 344 protein was found. The gene-therapy result does not show that injected protein works or is safe.",
+    "Animal and lab evidence: Follistatin and myostatin blockade increase muscle mass in animal studies. Details not opened here.",
+    "Reported harms: A case series cited by Poison Control describes 11 male bodybuilders who injected high-dose follistatin-344 and developed central serous chorioretinopathy (fluid under the retina); it improved after one injection and recurred with repeated use. The same source says myostatin-pathway inhibitors as a class may cause nosebleeds and bleeding gums, vascular damage, tendon weakening, bone loss and heart changes.",
+    "Quality and identity: Vendor product content and purity not verified. Poison Control advises against buying follistatin online because safety and effectiveness are uncertain.",
+    "Anti-doping: Prohibited. Follistatin is named as an example of a myostatin-binding protein under WADA S4 (metabolic modulators / myostatin inhibitors).",
+    "To check: whether the vendor product is a peptide fragment, full protein or a different isoform (FST 315 vs 344); not verified here."
+   ],
+   "evidence": "Weak: one 6-patient gene-therapy trial; no trials of injected protein; bodybuilder case series reports eye harm.",
+   "sources": [
+    "https://musculardystrophynews.com/news/new-follistatin-gene-therapy-improves-function-in-becker-muscular-dystrophy/",
+    "https://insight.jci.org/references/scholar/50/B24",
+    "https://www.poison.org/articles/what-are-myostatin-inhibitors",
+    "https://www.dshs-koeln.de/en/universitaet/organisation/institute-einrichtungen/department-of-biochemistry/doping-substances/prohibited-classes-of-substances-and-methods/s4-hormones-and-metabolic-modulators",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm"
+   ],
+   "lookup": [
+    "follistatin 344",
+    "AAV1 follistatin Becker muscular dystrophy"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "gdf8",
+   "cat": "research",
+   "name": "GDF-8 (myostatin)",
+   "aliases": [
+    "Myostatin",
+    "GDF8",
+    "Growth differentiation factor 8",
+    "MSTN"
+   ],
+   "status": "none",
+   "for": "Myostatin (GDF-8) is a natural protein that limits muscle growth. Drug research aims to block it, not add it. A vendor listing of the protein itself is unusual, and what a buyer expects it to do is not verified. No human use of myostatin as a drug was found.",
+   "refShort": "Reference only · the target of muscle drugs, no human use",
+   "refMsg": "No human dose exists for myostatin, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: GDF-8 (myostatin) is a TGF-beta family protein made mostly in skeletal muscle. It holds back muscle growth. Most drug work (antibodies, decoy receptors, follistatin) aims to block it.",
+    "US status: Not an FDA-approved drug. Myostatin inhibitors in general are investigational and not FDA-approved (Poison Control). Myostatin itself was not found on FDA's 503A bulk-substances categories page (content current as of 2026-04-22).",
+    "Identity ambiguity: The vendor lists the protein itself. Giving myostatin would be the opposite of the muscle-building goal usually claimed for this category. Whether the product is the full protein, a fragment or a mislabeled inhibitor is not verified.",
+    "Human evidence: No human trial of giving myostatin was found. Inhibitor trials exist: Pfizer stopped its anti-myostatin antibody domagrozumab in Duchenne on 31 Aug 2018 after no stair-climb benefit versus placebo in a phase 2 trial; not for safety reasons.",
+    "Animal and lab evidence: Not opened for this entry. Myostatin loss increases muscle mass in animals, but this was not checked against a primary source here.",
+    "Harms: No data on giving myostatin to people were found. Poison Control lists effects reported with myostatin blockers (nosebleeds, vascular damage, tendon and bone effects). These are about blockers, not about myostatin itself.",
+    "Anti-doping: WADA lists myostatin inhibitors. Adding myostatin itself is not named on the pages opened. Whether it is covered by S0 (non-approved substances) was not verified.",
+    "To check: the exact product (protein length, source) and any certificate of analysis. Search PubMed for myostatin inhibition clinical trials."
+   ],
+   "evidence": "None for use: no human use of myostatin found. Inhibitor trials had mixed or negative results.",
+   "sources": [
+    "https://www.poison.org/articles/what-are-myostatin-inhibitors",
+    "https://pmlive.com/pharma_news/pfizer_abandons_antibody_for_duchenne_1250854/",
+    "https://www.dshs-koeln.de/en/universitaet/organisation/institute-einrichtungen/department-of-biochemistry/doping-substances/prohibited-classes-of-substances-and-methods/s4-hormones-and-metabolic-modulators",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm"
+   ],
+   "lookup": [
+    "myostatin GDF-8",
+    "myostatin inhibitor clinical trial"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "ace031",
+   "cat": "gh",
+   "name": "ACE-031",
+   "aliases": [
+    "ACE031",
+    "ActRIIB-Fc",
+    "Activin receptor IIB fusion"
+   ],
+   "status": "halted",
+   "for": "A lab-made fusion protein that acts as a decoy for myostatin and related signals, to build muscle. It was tested in boys with Duchenne muscular dystrophy. The study was halted for safety concerns (nosebleeds and small dilated blood vessels). It was never approved.",
+   "refShort": "Reference only · human trial halted for safety",
+   "refMsg": "No approved or safe human dose exists for ACE-031, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: ACE-031 is a fusion protein that binds myostatin and related ligands (PubMed abstract). It acts as a decoy for the activin receptor IIB.",
+    "US status: Not FDA-approved. Not found on FDA's 503A bulk-substances categories page (content current as of 2026-04-22). Myostatin inhibitors as a class are investigational (Poison Control).",
+    "Human evidence: One randomized, double-blind, placebo-controlled, ascending-dose study in boys with Duchenne muscular dystrophy, given by injection every 2 to 4 weeks (Muscle Nerve, 2016, PMID 27462804). Number of participants not verified. No serious adverse events were linked to the drug.",
+    "Results: Six-minute walk distance was maintained in drug groups while placebo declined; the difference was not statistically significant. Lean mass and bone density trended up and fat mass trended down, also not clearly significant.",
+    "Why stopped: The study was halted after the second dosing regimen because of nosebleeds (epistaxis) and telangiectasias (small dilated blood vessels). Non-muscle adverse events contributed to the decision.",
+    "Harms: Bleeding events and vascular changes were the main signal. Poison Control lists similar effects for the myostatin-blocker class, plus tendon weakening, bone loss and heart changes. Long-term safety is unknown.",
+    "Quality and identity: ACE-031 is a large engineered protein. A vendor vial sold as a peptide is unlikely to be the same product; identity and purity not verified.",
+    "Anti-doping: Prohibited. ACE-031 is named as an example of a decoy activin receptor under WADA S4 (myostatin inhibitors).",
+    "To check: whether the sponsor's program was formally ended and any related ActRIIB drugs; not verified here."
+   ],
+   "evidence": "Weak: one halted pediatric trial with safety concerns and no clear benefit. Not approved.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/27462804/",
+    "https://www.dshs-koeln.de/en/universitaet/organisation/institute-einrichtungen/department-of-biochemistry/doping-substances/prohibited-classes-of-substances-and-methods/s4-hormones-and-metabolic-modulators",
+    "https://www.poison.org/articles/what-are-myostatin-inhibitors",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm"
+   ],
+   "lookup": [
+    "ACE-031 Duchenne",
+    "ActRIIB-Fc myostatin"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "mgf",
+   "cat": "gh",
+   "name": "MGF (mechano growth factor)",
+   "aliases": [
+    "Mechano growth factor",
+    "IGF-1Ec",
+    "MGF E peptide",
+    "IGF-1 Ec",
+    "MGF C-terminal peptide"
+   ],
+   "status": "none",
+   "for": "MGF is a splice form of IGF-1 made in muscle after stretch or damage. Vendors sell a short synthetic piece of it for muscle growth claims. Human trials of the synthetic peptide were not found.",
+   "refShort": "Reference only · no human trials found",
+   "refMsg": "No human dose exists for MGF, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: MGF (IGF-1Ec) is a splice variant of the IGF-1 gene expressed locally after mechanical damage. Vendor MGF is a short synthetic peptide based on the E domain. Whether it matches the natural product is unclear.",
+    "US status: Not FDA-approved. The FDA 503A categories page (current as of 2026-04-22) lists only the pegylated form (PEG-MGF), not plain MGF.",
+    "Human evidence: No human clinical trials of MGF were found in sources opened. A secondary review site lists only limited cohort data for native MGF and in-vitro work on human muscle progenitor cells (Kandalla 2011).",
+    "Animal and lab evidence: Mixed. A secondary site cites a mouse heart-attack study (Carpenter 2008) and aging mice with MGF overexpression (Tang 2017). It also cites Fornaro 2014, which found no effect of synthetic MGF on myoblasts or muscle stem cells, contradicting earlier work. Primary papers not opened.",
+    "Harms: No human safety data found. Because MGF is an IGF-1 variant, an investigator should check IGF-1 class concerns (low blood sugar, tumor growth); these were not verified for the MGF peptide.",
+    "Quality and identity: Product sold under this name is a vendor-made peptide; sequence, purity and whether it is the E-domain fragment are not verified.",
+    "Anti-doping: Prohibited. WADA lists mechano growth factors (MGFs) under S2.3, prohibited at all times.",
+    "To check: the E-domain peptide sequence the vendor uses and the primary papers from Goldspink and colleagues."
+   ],
+   "evidence": "Weak: cell and animal data, some conflicting; no human trials found.",
+   "sources": [
+    "https://www.peptideprotocolwiki.com/peptides/peg-mgf/research",
+    "https://www.wada-ama.org/en/prohibited-list",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm"
+   ],
+   "lookup": [
+    "mechano growth factor",
+    "IGF-1Ec E peptide muscle"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "pegmgf",
+   "cat": "gh",
+   "name": "PEG-MGF",
+   "aliases": [
+    "Pegylated MGF",
+    "PEG MGF",
+    "Pegylated mechano growth factor",
+    "MGF pegylated"
+   ],
+   "status": "none",
+   "for": "MGF with a PEG chain attached to make it last longer in the body. Sold for muscle growth claims. No published tests of the pegylated form were found, in people or animals.",
+   "refShort": "Reference only · no published studies found",
+   "refMsg": "No human dose exists for PEG-MGF, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: PEG-MGF is the MGF peptide chemically linked to polyethylene glycol (PEGylation) to extend its short half-life.",
+    "US status: Not FDA-approved. FDA's 503A page (current as of 2026-04-22) lists 'Mechano growth factor pegylated (PEG-MGF)' among substances nominated for compounding whose nominations were withdrawn. It was removed from Category 2 in April 2026 (notice Apr 15, 2026).",
+    "Compounding context: Removal from Category 2 does not make a substance eligible for 503A compounding (Frier Levitt). PEG-MGF was not among the seven peptides the advisory committee voted on Jul 23-24, 2026 (BPC-157, KPV, TB-500, MOTS-c, epitalon, semax, emideltide).",
+    "Human evidence: No human trials found.",
+    "Animal and lab evidence: A secondary site states no published studies test PEG-MGF in any biological system; its activity and safety are inferred from native MGF and general PEGylation. Rated 'very low' evidence there.",
+    "Harms: Unknown. Possible concerns are inferred from IGF-1-class and PEG concerns, not verified for this product.",
+    "Quality and identity: Vendor product content, PEG size and purity not verified.",
+    "Anti-doping: Prohibited. WADA lists mechano growth factors (MGFs) under S2.3; the pegylated form would be an MGF analogue (inference).",
+    "To check: what the PEG attachment is (size, site) on the vendor's certificate of analysis."
+   ],
+   "evidence": "Very weak: no studies of the pegylated form found; plain MGF data are cell and animal only.",
+   "sources": [
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm",
+    "https://www.frierlevitt.com/articles/fda-peptides-do-not-compound-list-update-2026/",
+    "https://www.dlapiper.com/en/insights/publications/2026/07/fda-adcomm-recommends-adding-six-peptides-to-bulk-list",
+    "https://www.peptideprotocolwiki.com/peptides/peg-mgf/research",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "pegylated mechano growth factor",
+    "MGF E domain peptide"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "frag1723",
+   "cat": "heal",
+   "name": "Frag 17-23",
+   "aliases": [
+    "Frag 17-23",
+    "TB-500",
+    "Thymosin beta-4 fragment",
+    "Ac-LKKTETQ",
+    "LKKTETQ"
+   ],
+   "status": "none",
+   "for": "Vendor name. Most likely the 7-amino-acid piece (LKKTETQ, residues 17-23) of thymosin beta-4, the sequence sold as TB-500. Sold for healing and recovery claims. Identity is not confirmed for this vendor's vial.",
+   "refShort": "Reference only · likely TB-500 sequence, no human trials found",
+   "refMsg": "No human dose exists for this peptide, so the calculator is off. Facts and links below.",
+   "notes": [
+    "Identity ambiguity: 'Frag 17-23' most likely means thymosin beta-4 residues 17-23 (Ac-LKKTETQ), which is the sequence a supplier lists as TB-500. Some vendors sell TB-500 as longer or full-length thymosin beta-4. Which one this vendor ships is not verified.",
+    "What it is: A supplier describes TB-500 as an N-acetylated seven-residue fragment, Ac-LKKTETQ-OH, from actin-binding thymosin beta-4. FDA's list calls it 'Thymosin beta-4, fragment (LKKTETQ), also known as TB-500'.",
+    "US status: Not FDA-approved. Nominated for the 503A bulks list; the nomination was withdrawn and FDA removed it from Category 2 in April 2026 (notice Apr 15, 2026). Removal does not make it eligible for compounding (Frier Levitt).",
+    "Advisory committee: On Jul 23, 2026 FDA's Pharmacy Compounding Advisory Committee voted 8-6 (1 abstain) to recommend adding TB-500 to the 503A bulks list. FDA staff had recommended against. The vote is non-binding; rulemaking is still required.",
+    "Human evidence: No human trials of the 7-amino-acid fragment were found in sources opened. Trials of full-length thymosin beta-4 exist but were not verified here.",
+    "Animal and lab evidence: A supplier cites cell tests (hepatic stellate cells) and topical use in mice that shortened skin wound closure. Primary papers not opened.",
+    "Harms: No human safety data found for the fragment.",
+    "Anti-doping: Prohibited. WADA S2.3 lists 'Thymosin-beta4 and its derivatives, e.g. TB-500' at all times.",
+    "To check: the vendor's certificate of analysis (mass spec should match a 7-residue acetylated peptide)."
+   ],
+   "evidence": "Weak: cell and mouse data only for this fragment; no human trials found. Advisory vote was non-binding.",
+   "sources": [
+    "https://www.caymanchem.com/product/45081/tb-500-acetate",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm",
+    "https://www.frierlevitt.com/articles/fda-peptides-do-not-compound-list-update-2026/",
+    "https://www.dlapiper.com/en/insights/publications/2026/07/fda-adcomm-recommends-adding-six-peptides-to-bulk-list",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "thymosin beta-4 fragment 17-23",
+    "TB-500 LKKTETQ"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "tbfrag",
+   "cat": "heal",
+   "name": "TB Frag",
+   "aliases": [
+    "TB Frag",
+    "TB-Frag",
+    "Thymosin beta-4 fragment",
+    "TB4 fragment",
+    "Ac-SDKP"
+   ],
+   "status": "none",
+   "for": "Vendor name for a fragment of thymosin beta-4. It is not clear which one. It may be the same 7-amino-acid piece as TB-500 (LKKTETQ), or the 4-amino-acid piece Ac-SDKP. Sold for healing and recovery claims.",
+   "refShort": "Reference only · identity unclear, no human trials found",
+   "refMsg": "No human dose exists, and the product identity is unclear, so the calculator is off. Facts and links below.",
+   "notes": [
+    "Identity ambiguity: 'TB Frag' is not a standard name. Two thymosin beta-4 pieces fit: (a) LKKTETQ, residues 17-23, sold as TB-500; (b) Ac-SDKP, the acetylated N-terminal tetrapeptide. Which one this vendor sells is not verified. Check the label sequence and mass.",
+    "If it is LKKTETQ: this is the TB-500 sequence. FDA removed it from Category 2 in April 2026 after the nomination was withdrawn; the advisory committee voted 8-6 (1 abstain) on Jul 23, 2026 to recommend adding TB-500 to the 503A bulks list. The vote is non-binding. See the 'Frag 17-23' card.",
+    "If it is Ac-SDKP: it is a natural tetrapeptide, an ACE substrate, first found in bone marrow and studied as an anti-fibrotic and stem-cell regulator. It is not an approved drug and its clinical use and safety still need to be established.",
+    "Human evidence for Ac-SDKP: limited. A review cites a 46-patient crossover study in kidney disease where a low-salt diet raised plasma Ac-SDKP; no treatment trial of the peptide as a drug was found. Most data are cell and animal. ACE inhibitors raise Ac-SDKP levels, a possible interaction to check.",
+    "Human evidence for LKKTETQ: no human trials found.",
+    "US status: Neither piece is FDA-approved. Ac-SDKP was not found on FDA's 503A categories page (current as of 2026-04-22).",
+    "Anti-doping: WADA S2.3 lists thymosin-beta4 and its derivatives, e.g. TB-500. Whether Ac-SDKP counts as a derivative was not verified.",
+    "To check: the vendor's mass spec and sequence. Search PubMed for Ac-SDKP separately from TB-500."
+   ],
+   "evidence": "Weak: identity unclear; Ac-SDKP has mostly cell and animal data; LKKTETQ has no human trials found.",
+   "sources": [
+    "https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2014.00070/full",
+    "https://www.caymanchem.com/product/45081/tb-500-acetate",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm",
+    "https://www.dlapiper.com/en/insights/publications/2026/07/fda-adcomm-recommends-adding-six-peptides-to-bulk-list",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "Ac-SDKP",
+    "thymosin beta-4 fragment"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "adipotide",
+   "cat": "wl",
+   "name": "Adipotide / FTPP (also listed FTTP)",
+   "aliases": [
+    "Adipotide",
+    "FTPP",
+    "FTTP",
+    "Prohibitin-TP01",
+    "Prohibitin targeting peptide 1",
+    "Fat-targeted proapoptotic peptide"
+   ],
+   "status": "halted",
+   "for": "An engineered molecule meant to destroy the blood vessels that feed fat tissue. It caused weight loss in obese monkeys and kidney changes. One first-in-human phase 1 trial was registered and was terminated in 2019. No human results were found.",
+   "refShort": "Reference only · monkey data, human trial terminated 2019",
+   "refMsg": "No human dose exists for adipotide, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: Adipotide (CKGGRAKDC-GG-D(KLAKLAK)2) is a peptidomimetic. One part targets prohibitin on vessels that supply white fat; the D(KLAKLAK)2 part damages mitochondria and triggers cell death in those vessels.",
+    "US status: Not FDA-approved. Not found on FDA's 503A bulk-substances categories page (content current as of 2026-04-22).",
+    "Primate evidence: A Science Translational Medicine paper tested it in obese rhesus macaques (also baboons and cynomolgus macaques). In the main rhesus study (10 treated, 5 control) 28 days of dosing led to 7.4 to 14.7% body weight loss, lower body fat on DEXA and lower insulin response. Lean animals did not lose weight.",
+    "Kidney toxicity: The main side effect. Creatinine rose with dose, with urine protein and glucose, and low phosphorus and potassium, consistent with proximal tubule injury. Lesions largely resolved after recovery but one treated animal per study had slight residual creatinine elevation. Weight returned after stopping when animals overate again (NBC News).",
+    "Human trial status: ClinicalTrials.gov NCT01262664 is a first-in-man phase 1 in patients with metastatic prostate cancer and obesity (title per search listing; record page did not load). AdisInsight reports sponsor Ablaris Therapeutics terminated it on 2 Jan 2019 at the investigators' request; development shown as discontinued in phase 1. Reasons for termination and any results were not verified.",
+    "Human evidence: No published human results were found.",
+    "Quality and identity: Vendor product identity, purity and how it compares with the research compound are not verified. Names 'FTPP' and 'FTTP' appear interchangeable in vendor lists.",
+    "Anti-doping: Not named on the WADA page opened. As a non-approved drug it likely falls under S0 (inference, not verified).",
+    "To check: the final status of NCT01262664 on ClinicalTrials.gov and any later publications."
+   ],
+   "evidence": "Weak: monkey data with kidney toxicity; one human phase 1 trial terminated in 2019 with no results found.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC3666164/",
+    "https://adisinsight.springer.com/drugs/800035229",
+    "https://www.nbcnews.com/health/health-news/drug-helps-monkeys-lose-weight-are-humans-next-flna1c9453254",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "adipotide",
+    "prohibitin targeting peptide 1",
+    "NCT01262664"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "aicar",
+   "cat": "immune",
+   "name": "AICAR",
+   "aliases": [
+    "Acadesine",
+    "AICA riboside",
+    "AICAr"
+   ],
+   "status": "limited",
+   "for": "A small molecule (a nucleoside, not a peptide) that activates the enzyme AMPK. Promoted as an 'exercise in a pill' after a 2008 mouse study. As acadesine it was tested in people for heart surgery and leukemia, by IV only. High doses caused kidney problems. It is on the WADA list.",
+   "refShort": "Reference only · IV trials in heart surgery and leukemia",
+   "refMsg": "No safe human dose exists outside past trials, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: AICAr (5-aminoimidazole-4-carboxamide ribonucleoside, acadesine) is a cell-permeable AMP analog. Cells convert it to ZMP. It is a small molecule, not a peptide.",
+    "US status: No FDA approval found in the sources opened; not verified against Drugs@FDA. Not found on FDA's 503A bulk-substances categories page (content current as of 2026-04-22).",
+    "Human evidence: Phase I (1991) was well tolerated but oral bioavailability was poor, so it needs IV infusion. Bypass-surgery trials (1990s, 2006 phase 3) suggested benefit, but the 2012 RED-CABG trial stopped early with no significant benefit. A 2013 phase 1/2 in chronic lymphocytic leukemia showed activity at high IV doses. A 2019 phase 1/2 in MDS/AML was stopped after 2-3 cycles because of serious kidney toxicity.",
+    "Animal and lab evidence: A 2008 mouse study reported better running endurance, which led to the 'exercise mimetic' label. A review found many effects of AICAr do not depend on AMPK (e.g. blocking pyrimidine synthesis, stopping cell growth).",
+    "Reported harms: Raised uric acid, temporary anemia or low platelets, kidney impairment, low blood pressure during infusion, raised lactate, mild low blood sugar. High-dose leukemia studies produced serious kidney toxicity.",
+    "Quality and identity: Oral or injected vendor product has not been verified. The human studies used IV infusion under medical supervision.",
+    "Anti-doping: Prohibited. WADA S4.4.1 names AICAR as an example of an AMPK activator, at all times. A review says WADA added it after Tour de France concerns, and a 2012 Spanish arrest case involved its supply.",
+    "To check: Drugs@FDA and EMA for any acadesine approval or orphan designation; not verified here."
+   ],
+   "evidence": "Moderate for safety signals: multiple IV human trials with kidney toxicity at high doses; no proven benefit in the largest heart trial.",
+   "sources": [
+    "https://mdpi.com/2073-4409/10/5/1095",
+    "https://www.wada-ama.org/en/prohibited-list",
+    "https://www.dshs-koeln.de/en/universitaet/organisation/institute-einrichtungen/department-of-biochemistry/doping-substances/prohibited-classes-of-substances-and-methods/s4-hormones-and-metabolic-modulators",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm"
+   ],
+   "lookup": [
+    "acadesine",
+    "AICAR AMPK exercise"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "5amino1mq",
+   "cat": "wl",
+   "name": "5-Amino-1MQ",
+   "aliases": [
+    "5-Amino-1MQ",
+    "5A1MQ",
+    "5-amino-1-methylquinolinium",
+    "NNMT inhibitor",
+    "5 Amino 1MQ"
+   ],
+   "status": "none",
+   "for": "A small molecule, not a peptide. It blocks the enzyme NNMT. In obese mice it limited weight and fat gain. Sold for fat loss claims. No human trials were found.",
+   "refShort": "Reference only · small molecule, mouse data only",
+   "refMsg": "No human dose exists for 5-Amino-1MQ, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: 5-Amino-1MQ is a small-molecule inhibitor of nicotinamide N-methyltransferase (NNMT), an enzyme tied to fat-cell metabolism. It is not a peptide. The 2024 paper opened calls it '5A1MQ' and the abstract does not spell out the name; match to 5-Amino-1MQ is by common usage and is not fully verified.",
+    "US status: Not FDA-approved as far as found. Not on FDA's 503A bulk-substances categories page (content current as of 2026-04-22). No FDA listing for it was found; not verified further.",
+    "Human evidence: No human trials found.",
+    "Animal evidence: A 2024 study in Diabetes, Obesity and Metabolism used diet-induced obese mice. Over 28 days of daily dosing it limited weight and fat gain, improved glucose tolerance and insulin sensitivity, and reduced liver fat and enzymes (ALT, AST). It reached fat, muscle and liver after injection under the skin.",
+    "Harms: No human safety data found. Mouse safety findings beyond the above were not reviewed.",
+    "Quality and identity: Vendor products are often capsules or powders; strength and purity are not verified. Do not assume mouse results carry over.",
+    "Anti-doping: Not named on the WADA page opened. As a non-approved substance with no human approval it likely falls under S0 (inference, not verified).",
+    "To check: the first NNMT inhibitor papers (Neelakantan et al., 2018) and any registered trial; not verified here."
+   ],
+   "evidence": "Weak: one mouse study reviewed; no human data found.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/39161060/",
+    "https://www.wada-ama.org/en/prohibited-list",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm"
+   ],
+   "lookup": [
+    "5-amino-1MQ",
+    "NNMT inhibitor obesity"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "b733",
+   "cat": "heal",
+   "name": "B7-33",
+   "aliases": [
+    "B7-33",
+    "B7-33 relaxin",
+    "Relaxin B7-33",
+    "H2 relaxin analog",
+    "Relaxin-2 analog"
+   ],
+   "status": "none",
+   "for": "An engineered one-chain piece of human relaxin-2 that acts at the relaxin receptor RXFP1. In rodent heart and lung models it reduced fibrosis (scarring). Sold for healing claims. No human data were found.",
+   "refShort": "Reference only · rodent data only",
+   "refMsg": "No human dose exists for B7-33, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: B7-33 is a single-chain, B-chain-only analog of human gene-2 relaxin (H2 relaxin), designed to keep relaxin's benefits while being simpler to make. It binds RXFP1 and favors the pERK pathway over cAMP, which the authors call the first functionally selective RXFP1 agonist.",
+    "US status: Not FDA-approved. Not found on FDA's 503A bulk-substances categories page (content current as of 2026-04-22).",
+    "Human evidence: No human data on B7-33 found. Full-length H2 relaxin has been tested in people, but that does not apply to B7-33.",
+    "Animal evidence: In a 2016 Chemical Science paper, B7-33 prevented or reversed organ fibrosis and dysfunction in three rodent models of heart or lung disease, with potency similar to H2 relaxin. Fibrosis effect involved RXFP1-angiotensin II type 2 receptor pairs and the enzyme MMP-2.",
+    "Cancer theory: In that paper H2 relaxin promoted prostate tumor growth in vivo and B7-33 did not. Only one model was tested; an investigator should check for later work.",
+    "Harms: No human safety data found.",
+    "Quality and identity: Vendor product is a synthetic peptide; sequence (residues 7-33 of the relaxin B chain) and purity are not verified.",
+    "Anti-doping: Not named on the WADA page opened. As a non-approved substance it likely falls under S0 (inference, not verified)."
+   ],
+   "evidence": "Weak: rodent studies only; no human data found.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/30155023/",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "B7-33 relaxin",
+    "RXFP1 biased agonist"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "klothokp1",
+   "cat": "gh",
+   "name": "Klotho-derived peptide (KP-1)",
+   "aliases": [
+    "KP-1",
+    "KP1",
+    "Klotho peptide",
+    "Klotho-derived peptide 1",
+    "Klotho KP1"
+   ],
+   "status": "none",
+   "for": "Vendor name. Most likely KP1, a 30-amino-acid peptide taken from the human Klotho protein, studied in mice for kidney injury and scarring. Sold for anti-aging claims. Identity is not confirmed for this vendor's vial. No human trials were found.",
+   "refShort": "Reference only · mouse kidney studies, identity unclear",
+   "refMsg": "No human dose exists, and the product identity is unclear, so the calculator is off. Facts and links below.",
+   "notes": [
+    "Identity ambiguity: 'KP-1' is a vendor name. The best match in the literature is KP1, a 30-amino-acid peptide from human Klotho reported to bind TGF-beta receptor 2 and block TGF-beta/Smad3 signaling. Other Klotho fragments exist. It is not the same as KPV (a different tripeptide). Which this vendor ships is not verified.",
+    "US status: Not FDA-approved. Not found on FDA's 503A bulk-substances categories page (content current as of 2026-04-22).",
+    "Human evidence: None found. A 2024 paper states that whether giving Klotho helps kidney disease patients 'remains to be evaluated clinically.'",
+    "Animal and lab evidence: A Theranostics paper (2024) tested KP1 in male C57BL/6 mice with ischemia-reperfusion injury and ureteral obstruction (given into a vein), plus human and mouse kidney tubule cells. Outcomes: senescence and fibrosis markers, Klotho levels, creatinine and BUN. A search listing also shows a SARS-CoV-2 kidney injury paper; not opened.",
+    "Harms: The paper reported no toxicity, pharmacokinetic or safety data. Safety in people is unknown.",
+    "Quality and identity: Authors had KP1 made by a contract synthesis firm (purity above 95%) and dissolved it in dilute acetic acid. Vendor product content is not verified.",
+    "Anti-doping: Not named on the WADA page opened. As a non-approved substance it likely falls under S0 (inference, not verified).",
+    "To check: that the vendor sequence matches the published KP1 sequence (not given in the paper opened)."
+   ],
+   "evidence": "Weak: mouse and cell data from one research group's work; no human data found.",
+   "sources": [
+    "https://www.thno.org/v14p0420.pdf",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "Klotho-derived peptide KP1",
+    "klotho peptide TGF-beta kidney fibrosis"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "dermorphin",
+   "cat": "research",
+   "name": "Dermorphin",
+   "aliases": [
+    "Dermorphin",
+    "Tyr-D-Ala-Phe-Gly-Tyr-Pro-Ser-NH2",
+    "Frog opioid peptide",
+    "Frog juice",
+    "Mu opioid peptide"
+   ],
+   "status": "none",
+   "for": "A natural opioid peptide first found in the skin of South American Phyllomedusa frogs. It acts on the mu opioid receptor and is reported to be far stronger than morphine. It has been used illegally in horse racing. No approved human use was found.",
+   "refShort": "Reference only · potent opioid, banned in racing",
+   "refMsg": "No human dose exists for dermorphin, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: A seven-amino-acid peptide, H-Tyr-D-Ala-Phe-Gly-Tyr-Pro-Ser-NH2, from Phyllomedusa frog skin. It is a strong, selective mu opioid agonist, roughly 30 to 40 times stronger than morphine per Wikipedia. It is not found in mammals.",
+    "US status: Not FDA-approved. Not found on FDA's 503A bulk-substances categories page (content current as of 2026-04-22). Its federal controlled-substance status was not verified.",
+    "Human evidence: No human clinical trials were found in the sources opened. No human medical use was described.",
+    "Racing and sport: Dermorphin has been used illegally to make horses run harder. The Association of Racing Commissioners International classes it as a Class I prohibited drug; about 30 positives were reported in Oklahoma and Louisiana after a confirmatory test was developed. A 2013 study notes its extraction method also works in human urine.",
+    "Expected harms: As a potent mu opioid agonist, opioid-class risks (sedation, slowed breathing, dependence) are expected. These are inferred from the class and not confirmed with dermorphin human data.",
+    "Quality and identity: Vendor product identity and purity not verified. Potency means errors in strength could matter; do not assume labeled amounts are accurate.",
+    "Anti-doping: Not named in the WADA S7 narcotics list on the page opened. As a non-approved drug with no human approval it likely falls under S0 at all times (inference, not verified). Racing bodies treat it as banned.",
+    "To check: DEA scheduling and the WADA S0 wording with the current Prohibited List; not verified here."
+   ],
+   "evidence": "None for use: no human trials found. Strong animal-derived opioid; documented misuse in racing.",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Dermorphin",
+    "https://equimed.com/news/products/nhbpa-zero-tolerance-for-dermorphin-use-in-horses",
+    "https://madbarn.com/research/a-high-throughput-screen-for-17-dermorphin-peptides-in-equine-and-human-urine-and-equine-plasma",
+    "https://www.wada-ama.org/en/prohibited-list",
+    "https://www.fda.gov:443/Drugs/GuidanceComplianceRegulatoryInformation/PharmacyCompounding/ucm502449.htm"
+   ],
+   "lookup": [
+    "dermorphin",
+    "dermorphin doping detection"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "epithalon",
+   "cat": "gh",
+   "name": "Epithalon",
+   "aliases": [
+    "Epitalon",
+    "AEDG",
+    "Ala-Glu-Asp-Gly",
+    "NA Epithalon Amidate",
+    "N-acetyl epitalon amidate",
+    "Epitalon acetate"
+   ],
+   "status": "limited",
+   "refShort": "Reference only · not FDA-approved · small human data from one lab",
+   "refMsg": "No verified human dose exists, so the calculator is off. Human data are small and from one research group. Facts and links below.",
+   "notes": [
+    "What it is: synthetic tetrapeptide AEDG, designed from epithalamin (bovine pineal extract) by V. Khavinson's group in St. Petersburg. Vendor 'NA Epithalon Amidate' is a chemically modified form (N-acetyl, C-terminal amide); the same peptide with added protecting groups.",
+    "US status: not FDA-approved. FDA advisory committee (PCAC) voted Jul 24 2026 to recommend adding epitalon to the 503A bulks list for insomnia; reports give the tally as 7-4 (STAT) or 7-5 with 1 abstention (RAPS). FDA staff had recommended against. Votes are non-binding.",
+    "Epitalon was on the list of 12 peptides FDA planned (Apr 15 2026 notice) to remove from Category 2. On Oct 28 2026 HHS announced interim enforcement discretion letting 503A pharmacies compound epitalon acetate (SC/IM, intermittent courses) on a patient-specific prescription. No end date; not an approval. Federal Register publication was scheduled Oct 30 (not verified).",
+    "The enforcement policy covers epitalon acetate only as listed. It does not cover sales as research chemicals or supplements. The amidate variant is a different molecule; it appears outside the listed identity (not verified by FDA text).",
+    "Human evidence: a July 2026 preprint review (not peer reviewed) found no human RCTs, PK studies or registered trials of synthetic epitalon. It cites three small reports (night-shift workers, elderly melatonin, retinitis pigmentosa). Larger cohort data (n=266, 6-8 yrs) are for epithalamin, not the pure peptide, and were unblinded.",
+    "Lab evidence: rodent lifespan extension and telomerase activation in human cell lines are reported, mostly by Khavinson's group; one 2025 independent cell study reportedly replicated telomerase activation (from the review; not independently checked).",
+    "Harms: no formal toxicology or human safety studies found. FDA flagged immunogenicity (worse if aggregated) and peptide impurities; committee members who voted no cited poor characterization and carcinogenicity risk. Telomerase activation is a theoretical cancer concern; animal tumor-reduction reports do not prove safety.",
+    "Amidate variant: almost no evidence specific to it. Claimed longer half-life is chemistry reasoning, not published human PK data; main studies used base epitalon or epithalamin.",
+    "Anti-doping: epitalon is not named on the WADA prohibited-list page I opened; status by name not verified. Check with your anti-doping organization."
+   ],
+   "evidence": "Weak: small, mostly single-lab human reports; no RCTs of pure epitalon found; epithalamin cohort data not the same drug.",
+   "sources": [
+    "https://www.fda.gov/media/193709/download",
+    "https://www.raps.org/resource/fda-advisory-committee-backs-two-more-peptides-rejects-one-for-compounding-list.html",
+    "https://statnews.com/2026/07/24/fda-peptide-compounding-panel-backs-epitalon-rejects-emideltide",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/",
+    "https://www.frierlevitt.com/articles/fda-peptides-do-not-compound-list-update-2026/",
+    "https://www.preprints.org/manuscript/202607.2123",
+    "https://khavinson.info/assets/files/russ/2020-khavinson.pdf"
+   ],
+   "lookup": [
+    "epitalon",
+    "epithalon AEDG",
+    "epithalamin"
+   ],
+   "refOnly": true,
+   "for": "Synthetic 4-amino-acid peptide (Ala-Glu-Asp-Gly) modeled on epithalamin, a cattle pineal gland extract. Promoted for longevity, telomere length and sleep/melatonin. Nearly all human data are small and come from one Russian group."
+  },
+  {
+   "id": "motsc",
+   "cat": "immune",
+   "name": "MOTS-c",
+   "aliases": [
+    "MOTS-c acetate",
+    "Mitochondrial ORF of the 12S rRNA type-c",
+    "CB4211 (analog)"
+   ],
+   "status": "none",
+   "refShort": "Reference only · not FDA-approved · no human trials of MOTS-c itself",
+   "refMsg": "No human dose exists for MOTS-c, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: a 16-amino-acid mitochondria-derived peptide that activates AMPK signaling in animal studies. Public Citizen notes it can enter the cell nucleus and may alter gene expression in poorly understood ways.",
+    "US status: not FDA-approved. PCAC voted Jul 23 2026, 7-5 with 2 abstentions, to recommend adding MOTS-c to the 503A bulks list (cited uses: obesity, osteoporosis). FDA staff recommended against; the vote is non-binding and does not establish benefit.",
+    "MOTS-c was on the 12 peptides FDA planned to remove from Category 2 (Apr 15 2026 notice). On Oct 28 2026 HHS announced interim enforcement discretion for 503A compounding of MOTS-c acetate (SC/IM) with a patient-specific prescription. No end date; not an approval; 503B outsourcing facilities and research/supplement sales are not covered.",
+    "Human evidence: Public Citizen (testimony to the panel) says no published human studies of MOTS-c exist. The only human study it identifies tested CB4211, a modified analog (Phase 1a/1b, NCT03998514, CohBar): 11 subjects, 4 weeks, liver biomarkers; development was discontinued. Results for CB4211 were not verified by me.",
+    "Lab evidence: small, short rodent and cell studies (weeks), no dose-response work, per Public Citizen. FDA scientists said MOTS-c products are not well characterized in naming, composition and purity.",
+    "Harms: unknown in humans. Raised concerns: impurities and aggregation, unwanted immune reactions, and unknown gene-expression effects with long-term use.",
+    "Quality: vendor 'MOTS-c' vials are not verified to match label; the 503A policy requires an FDA-registered source and a certificate of analysis, which research-chemical vendors do not meet.",
+    "Anti-doping: the WADA prohibited-list page I opened listed MOTS-c under S4.4.1 (AMPK activators) in a page summary; confirm against the official 2026 list PDF."
+   ],
+   "evidence": "Very weak: rodent and cell data only; no human trials of MOTS-c found (one small trial of an analog, discontinued).",
+   "sources": [
+    "https://ajmc.com/view/fda-panel-backs-6-peptides-for-compounding",
+    "https://www.pharmexec.com/view/fda-votes-loosen-restrictions-four-peptides",
+    "https://www.citizen.org/article/testimony-before-the-food-and-drug-administrations-pharmacy-compounding-advisory-committee-regarding-placing-mots-c-on-the-503a-bulks-list-no-human-studies-or-proven-benefits-but-possible-r/",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/",
+    "https://kfgo.com/2026/10/28/us-health-department-to-allow-temporary-sale-of-some-unapproved-peptides/",
+    "https://www.frierlevitt.com/articles/fda-peptides-do-not-compound-list-update-2026/",
+    "https://www.wada-ama.org/en/prohibited-list",
+    "https://www.fda.gov/media/193709/download"
+   ],
+   "lookup": [
+    "MOTS-c",
+    "mitochondrial open reading frame 12S rRNA-c",
+    "CB4211"
+   ],
+   "refOnly": true,
+   "for": "16-amino-acid peptide encoded in mitochondrial DNA. Studied in rodents for metabolism, insulin sensitivity, exercise and aging. Promoted for obesity and mitochondrial health. No published human trials of MOTS-c itself were found."
+  },
+  {
+   "id": "pinealon",
+   "cat": "brain",
+   "name": "Pinealon",
+   "aliases": [
+    "EDR",
+    "Glu-Asp-Arg",
+    "Khavinson tripeptide"
+   ],
+   "status": "none",
+   "refShort": "Reference only · not FDA-approved · mostly one Russian group",
+   "refMsg": "No verified human dose exists, so the calculator is off. Evidence is mostly animal and from one research group. Facts and links below.",
+   "notes": [
+    "What it is: Glu-Asp-Arg (EDR) tripeptide, short peptide from V. Khavinson's St. Petersburg group, one of the 'short peptide bioregulators' (cytogens). Reported origin: Khavinson's Cortexin-related work.",
+    "US status: not FDA-approved. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026. Category 2 / bulks-list placement for this peptide: not verified.",
+    "Abroad: Russia. A secondary source says it is sold in Russia as a 'cytogen' supplement; not verified by me.",
+    "Human evidence: No completed human trials or published human PK found (secondary source). The 2020 review describes cells, mice, rats and macaques only. Khavinson's 2020 review cites phase I-III trials of organ-extract complexes with no results, not of this pure peptide. Almost all work is from his institute; no independent replication found.",
+    "Lab evidence: cell culture and rodent studies (and some primate work for others in the family), mostly from the same group. Proposed gene-regulation by DNA binding is not accepted outside that network.",
+    "Harms: no human safety, toxicology or pharmacokinetic data verified. Long-term and cancer data are absent. Immune reaction and impurity risks apply to any unapproved peptide product.",
+    "Quality: gray-market vials are unverified for identity and purity. Russian supplement capsules (e.g. Kardiogen) are peptide complexes with excipients, not equivalent to a pure injectable.",
+    "Anti-doping: WADA status by name not verified.",
+    "Secondary source states Pinealon falls under WADA S0 (non-approved substances); not verified against the official list."
+   ],
+   "evidence": "Weak: animal and cell data, mostly one lab; no verified human trials.",
+   "sources": [
+    "https://khavinson.info/assets/files/russ/2020-khavinson.pdf",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/",
+    "https://www.fda.gov/media/193709/download",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "Pinealon EDR",
+    "Glu-Asp-Arg peptide"
+   ],
+   "refOnly": true,
+   "for": "Synthetic 3-amino-acid peptide (Glu-Asp-Arg) from the Khavinson group. Studied in cells and rodents for neuroprotection and aging. Promoted for cognition and brain protection. No completed human trials found."
+  },
+  {
+   "id": "prostamax",
+   "cat": "research",
+   "name": "Prostamax",
+   "aliases": [
+    "KEDP",
+    "Lys-Glu-Asp-Pro"
+   ],
+   "status": "none",
+   "refShort": "Reference only · not FDA-approved · mostly one Russian group",
+   "refMsg": "No verified human dose exists, so the calculator is off. Evidence is mostly animal and from one research group. Facts and links below.",
+   "notes": [
+    "What it is: Lys-Glu-Asp-Pro (KEDP) tetrapeptide, short peptide from V. Khavinson's St. Petersburg group, one of the 'short peptide bioregulators' (cytogens). It is not mentioned in Khavinson's 2020 review I opened.",
+    "US status: not FDA-approved. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026. Category 2 / bulks-list placement for this peptide: not verified.",
+    "Abroad: Russia. Russian supplement or drug status: not verified. Russia supplement status is not verified for this one.",
+    "Human evidence: No registered trials found. One indexed 2004 paper used lymphocytes from donors aged 60-79 in vitro. A secondary source mentions unregistered clinic observations in BPH, no details. Khavinson's 2020 review cites phase I-III trials of organ-extract complexes with no results, not of this pure peptide. Almost all work is from his institute; no independent replication found.",
+    "Lab evidence: cell culture and rodent studies (and some primate work for others in the family), mostly from the same group. Proposed gene-regulation by DNA binding is not accepted outside that network.",
+    "Harms: no human safety, toxicology or pharmacokinetic data verified. Long-term and cancer data are absent. Immune reaction and impurity risks apply to any unapproved peptide product.",
+    "Quality: gray-market vials are unverified for identity and purity. Russian supplement capsules (e.g. Kardiogen) are peptide complexes with excipients, not equivalent to a pure injectable.",
+    "Anti-doping: WADA status by name not verified."
+   ],
+   "evidence": "Weak: animal and cell data, mostly one lab; no verified human trials.",
+   "sources": [
+    "https://khavinson.info/assets/files/russ/2020-khavinson.pdf",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/",
+    "https://www.fda.gov/media/193709/download",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "Prostamax",
+    "KEDP peptide"
+   ],
+   "refOnly": true,
+   "for": "Short Khavinson-group peptide (KEDP) promoted for prostate support. The only indexed study found is an in-vitro study on blood lymphocytes. No human trials found."
+  },
+  {
+   "id": "cartalax",
+   "cat": "research",
+   "name": "Cartalax",
+   "aliases": [
+    "AED",
+    "Ala-Glu-Asp",
+    "Cartilage bioregulator"
+   ],
+   "status": "none",
+   "refShort": "Reference only · not FDA-approved · mostly one Russian group",
+   "refMsg": "No verified human dose exists, so the calculator is off. Evidence is mostly animal and from one research group. Facts and links below.",
+   "notes": [
+    "What it is: Ala-Glu-Asp (AED) tripeptide, short peptide from V. Khavinson's St. Petersburg group, one of the 'short peptide bioregulators' (cytogens). Per Khavinson's 2020 review it derives from the cartilage complex Chondrolux.",
+    "US status: not FDA-approved. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026. Category 2 / bulks-list placement for this peptide: not verified.",
+    "Abroad: Russia. Russian supplement status: not verified for this peptide. The cartilage complex it derives from was listed as a drug candidate in phase I-III in the 2020 review (no results given).",
+    "Human evidence: No human trials verified. Khavinson's 2020 review cites phase I-III trials of organ-extract complexes with no results, not of this pure peptide. Almost all work is from his institute; no independent replication found.",
+    "Lab evidence: cell culture and rodent studies (and some primate work for others in the family), mostly from the same group. Proposed gene-regulation by DNA binding is not accepted outside that network.",
+    "Harms: no human safety, toxicology or pharmacokinetic data verified. Long-term and cancer data are absent. Immune reaction and impurity risks apply to any unapproved peptide product.",
+    "Quality: gray-market vials are unverified for identity and purity. Russian supplement capsules (e.g. Kardiogen) are peptide complexes with excipients, not equivalent to a pure injectable.",
+    "Anti-doping: WADA status by name not verified."
+   ],
+   "evidence": "Weak: animal and cell data, mostly one lab; no verified human trials.",
+   "sources": [
+    "https://khavinson.info/assets/files/russ/2020-khavinson.pdf",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/",
+    "https://www.fda.gov/media/193709/download",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "Cartalax",
+    "AED tripeptide Khavinson"
+   ],
+   "refOnly": true,
+   "for": "Short Khavinson-group peptide (AED) promoted for cartilage and joint support. Evidence is rat cartilage explants and animal bone density. No human trials found."
+  },
+  {
+   "id": "cardiogen",
+   "cat": "research",
+   "name": "Cardiogen",
+   "aliases": [
+    "AEDR",
+    "Ala-Glu-Asp-Arg",
+    "Heart bioregulator"
+   ],
+   "status": "none",
+   "refShort": "Reference only · not FDA-approved · mostly one Russian group",
+   "refMsg": "No verified human dose exists, so the calculator is off. Evidence is mostly animal and from one research group. Facts and links below.",
+   "notes": [
+    "What it is: Ala-Glu-Asp-Arg (AEDR) tetrapeptide, short peptide from V. Khavinson's St. Petersburg group, one of the 'short peptide bioregulators' (cytogens). Per Khavinson's 2020 review it derives from the heart complex Corapept.",
+    "US status: not FDA-approved. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026. Category 2 / bulks-list placement for this peptide: not verified.",
+    "Abroad: Russia. A product named Kardiogen is sold in Russia as a dietary supplement (BAA) from the firm 'Firma-Vita': a peptide complex (alanine, glutamic acid, aspartic acid, arginine), 100 mcg per capsule, per RLS listing. It is not a drug approval.",
+    "Human evidence: No human trials verified. Khavinson's 2020 review cites phase I-III trials of organ-extract complexes with no results, not of this pure peptide. Almost all work is from his institute; no independent replication found.",
+    "Lab evidence: cell culture and rodent studies (and some primate work for others in the family), mostly from the same group. Proposed gene-regulation by DNA binding is not accepted outside that network.",
+    "Harms: no human safety, toxicology or pharmacokinetic data verified. Long-term and cancer data are absent. Immune reaction and impurity risks apply to any unapproved peptide product.",
+    "Quality: gray-market vials are unverified for identity and purity. Russian supplement capsules (e.g. Kardiogen) are peptide complexes with excipients, not equivalent to a pure injectable.",
+    "Anti-doping: WADA status by name not verified."
+   ],
+   "evidence": "Weak: animal and cell data, mostly one lab; no verified human trials.",
+   "sources": [
+    "https://khavinson.info/assets/files/russ/2020-khavinson.pdf",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/",
+    "https://www.fda.gov/media/193709/download",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "Cardiogen AEDR",
+    "Khavinson cardiogen"
+   ],
+   "refOnly": true,
+   "for": "Short Khavinson-group peptide (AEDR) promoted for heart muscle support. Evidence is rat heart-attack models (about 3-fold lower post-infarct mortality reported by the group). No verified human trials."
+  },
+  {
+   "id": "bronchogen",
+   "cat": "research",
+   "name": "Bronchogen",
+   "aliases": [
+    "AEDL",
+    "Ala-Glu-Asp-Leu",
+    "Lung bioregulator"
+   ],
+   "status": "none",
+   "refShort": "Reference only · not FDA-approved · mostly one Russian group",
+   "refMsg": "No verified human dose exists, so the calculator is off. Evidence is mostly animal and from one research group. Facts and links below.",
+   "notes": [
+    "What it is: Ala-Glu-Asp-Leu (AEDL) tetrapeptide, short peptide from V. Khavinson's St. Petersburg group, one of the 'short peptide bioregulators' (cytogens). Per Khavinson's 2020 review it derives from the bronchial complex Langopept.",
+    "US status: not FDA-approved. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026. Category 2 / bulks-list placement for this peptide: not verified.",
+    "Abroad: Russia. Russian supplement status: not verified for this peptide.",
+    "Human evidence: No human trials verified. Khavinson's 2020 review cites phase I-III trials of organ-extract complexes with no results, not of this pure peptide. Almost all work is from his institute; no independent replication found.",
+    "Lab evidence: cell culture and rodent studies (and some primate work for others in the family), mostly from the same group. Proposed gene-regulation by DNA binding is not accepted outside that network.",
+    "Harms: no human safety, toxicology or pharmacokinetic data verified. Long-term and cancer data are absent. Immune reaction and impurity risks apply to any unapproved peptide product.",
+    "Quality: gray-market vials are unverified for identity and purity. Russian supplement capsules (e.g. Kardiogen) are peptide complexes with excipients, not equivalent to a pure injectable.",
+    "Anti-doping: WADA status by name not verified."
+   ],
+   "evidence": "Weak: animal and cell data, mostly one lab; no verified human trials.",
+   "sources": [
+    "https://khavinson.info/assets/files/russ/2020-khavinson.pdf",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/",
+    "https://www.fda.gov/media/193709/download",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "Bronchogen AEDL",
+    "Khavinson bronchogen"
+   ],
+   "refOnly": true,
+   "for": "Short Khavinson-group peptide (AEDL) promoted for lung and bronchial support. Evidence is gene expression and epithelial studies. No human data described."
+  },
+  {
+   "id": "cortagen",
+   "cat": "brain",
+   "name": "Cortagen",
+   "aliases": [
+    "AEDP",
+    "Ala-Glu-Asp-Pro",
+    "Cortex bioregulator"
+   ],
+   "status": "none",
+   "refShort": "Reference only · not FDA-approved · mostly one Russian group",
+   "refMsg": "No verified human dose exists, so the calculator is off. Evidence is mostly animal and from one research group. Facts and links below.",
+   "notes": [
+    "What it is: Ala-Glu-Asp-Pro (AEDP) tetrapeptide, short peptide from V. Khavinson's St. Petersburg group, one of the 'short peptide bioregulators' (cytogens). Per Khavinson's 2020 review it was synthesized based on Cortexin (a cattle brain extract drug).",
+    "US status: not FDA-approved. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026. Category 2 / bulks-list placement for this peptide: not verified.",
+    "Abroad: Russia. Russian supplement status: not verified for this peptide.",
+    "Human evidence: No human trials verified. Khavinson's 2020 review cites phase I-III trials of organ-extract complexes with no results, not of this pure peptide. Almost all work is from his institute; no independent replication found.",
+    "Lab evidence: cell culture and rodent studies (and some primate work for others in the family), mostly from the same group. Proposed gene-regulation by DNA binding is not accepted outside that network.",
+    "Harms: no human safety, toxicology or pharmacokinetic data verified. Long-term and cancer data are absent. Immune reaction and impurity risks apply to any unapproved peptide product.",
+    "Quality: gray-market vials are unverified for identity and purity. Russian supplement capsules (e.g. Kardiogen) are peptide complexes with excipients, not equivalent to a pure injectable.",
+    "Anti-doping: WADA status by name not verified."
+   ],
+   "evidence": "Weak: animal and cell data, mostly one lab; no verified human trials.",
+   "sources": [
+    "https://khavinson.info/assets/files/russ/2020-khavinson.pdf",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/",
+    "https://www.fda.gov/media/193709/download",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "Cortagen AEDP",
+    "Khavinson cortagen"
+   ],
+   "refOnly": true,
+   "for": "Short Khavinson-group peptide (AEDP) promoted for brain cortex function. Evidence is animal studies only. The human stroke trial (n=272) in the review concerns Cortexin, not Cortagen."
+  },
+  {
+   "id": "vesugen",
+   "cat": "research",
+   "name": "Vesugen",
+   "aliases": [
+    "KED",
+    "Lys-Glu-Asp",
+    "Vezugen",
+    "Vessel bioregulator"
+   ],
+   "status": "none",
+   "refShort": "Reference only · not FDA-approved · mostly one Russian group",
+   "refMsg": "No verified human dose exists, so the calculator is off. Evidence is mostly animal and from one research group. Facts and links below.",
+   "notes": [
+    "What it is: Lys-Glu-Asp (KED) tripeptide, short peptide from V. Khavinson's St. Petersburg group, one of the 'short peptide bioregulators' (cytogens). Per Khavinson's 2020 review it derives from the vascular complex Slavinorm.",
+    "US status: not FDA-approved. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026. Category 2 / bulks-list placement for this peptide: not verified.",
+    "Abroad: Russia. A product sold as 'Vezugen (Khavinson peptides)' is listed on Ozon as a dietary supplement (BAD for veins and vessels, 60 capsules, Russian registration number shown). Capsule contents were not listed. Not a drug approval.",
+    "Human evidence: No human trials verified. Khavinson's 2020 review cites phase I-III trials of organ-extract complexes with no results, not of this pure peptide. Almost all work is from his institute; no independent replication found.",
+    "Lab evidence: cell culture and rodent studies (and some primate work for others in the family), mostly from the same group. Proposed gene-regulation by DNA binding is not accepted outside that network.",
+    "Harms: no human safety, toxicology or pharmacokinetic data verified. Long-term and cancer data are absent. Immune reaction and impurity risks apply to any unapproved peptide product.",
+    "Quality: gray-market vials are unverified for identity and purity. Russian supplement capsules (e.g. Kardiogen) are peptide complexes with excipients, not equivalent to a pure injectable.",
+    "Anti-doping: WADA status by name not verified."
+   ],
+   "evidence": "Weak: animal and cell data, mostly one lab; no verified human trials.",
+   "sources": [
+    "https://khavinson.info/assets/files/russ/2020-khavinson.pdf",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/",
+    "https://www.fda.gov/media/193709/download",
+    "https://www.wada-ama.org/en/prohibited-list"
+   ],
+   "lookup": [
+    "Vesugen KED",
+    "Khavinson vesugen"
+   ],
+   "refOnly": true,
+   "for": "Short Khavinson-group peptide (KED) promoted for blood vessel support. Evidence is rat artery explants and cell markers. No verified human trials."
+  },
+  {
+   "id": "foxo4dri",
+   "cat": "gh",
+   "name": "FOXO4-DRI",
+   "aliases": [
+    "FOXO4 D-Retro-Inverso",
+    "FOXO4-p53 interfering peptide"
+   ],
+   "status": "none",
+   "refShort": "Reference only · not FDA-approved · mouse data only",
+   "refMsg": "No human dose exists, so the calculator is off. Mouse data only. Facts and links below.",
+   "notes": [
+    "What it is: a retro-inverso (D-amino acid, reversed order) peptide that blocks FOXO4 binding to p53 so p53 triggers death of senescent cells. Described in Baar et al., Cell, Mar 23 2017 (Peter de Keizer's lab; Buck Institute and Erasmus MC).",
+    "US status: not FDA-approved. No FDA committee review found for it. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026.",
+    "Abroad: no approval found.",
+    "Human evidence: none found. A 2018 Fight Aging post described a single-person self-experiment idea, not a trial. No registered human trials verified.",
+    "Animal evidence: in fast-aging XpdTTD/TTD mice and naturally aged mice it improved fur density, activity and kidney function; it reduced doxorubicin chemotoxicity. A 2017 editorial says toxicity of the peptide itself was not reported and safety needs more work.",
+    "Harms: unknown in humans. Selectively activating p53-driven cell death is a theoretical risk to healthy cells; long-term senescent cell clearance safety is not established. No PK, immunogenicity or dosing data in people.",
+    "Quality: it is an unusual D-amino-acid construct; vendor product identity and purity cannot be assumed.",
+    "Anti-doping: WADA status by name not verified."
+   ],
+   "evidence": "Weak: one lab's 2017 mouse and cell data; no human trials found.",
+   "sources": [
+    "https://pure.prinsesmaximacentrum.nl/en/publications/targeted-apoptosis-of-senescent-cells-restores-tissue-homeostasis/",
+    "https://www.oncotarget.com/article/18046/pdf",
+    "https://gorod.it.com/?p=20179",
+    "https://www.fightaging.org/archives/2018/03/how-to-plan-and-carry-out-a-simple-self-experiment-a-single-person-trial-of-senolytic-peptide-foxo4-dri/?nc",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/"
+   ],
+   "lookup": [
+    "FOXO4-DRI",
+    "FOXO4 p53 senescent cells peptide"
+   ],
+   "refOnly": true,
+   "for": "Engineered D-amino-acid peptide that disrupts the FOXO4-p53 link and kills senescent ('aged') cells in lab and mouse studies. Promoted as a senolytic anti-aging peptide. No human trials found."
+  },
+  {
+   "id": "slupp322",
+   "cat": "research",
+   "name": "SLU-PP-322",
+   "aliases": [
+    "SLU-PP-332",
+    "SLUPP332",
+    "ERR agonist",
+    "exercise mimetic"
+   ],
+   "status": "none",
+   "refShort": "Reference only · small molecule, not a peptide · mouse data only",
+   "refMsg": "No human dose exists, so the calculator is off. Not a peptide. Mouse data only. Facts and links below.",
+   "notes": [
+    "Identity flag: the vendor name 'SLU-PP-322' does not match the published compound. The literature name is SLU-PP-332 (Washington University in St. Louis, Burris lab). I assume the vendor means 332; confirm with the vendor's label and CAS number.",
+    "What it is: a synthetic small molecule that activates ERR-alpha, beta and gamma nuclear receptors. It is not a peptide. Designed to mimic effects of aerobic exercise.",
+    "US status: not FDA-approved; no FDA review found. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026.",
+    "Human evidence: none found. A secondary source states no human trials are registered and it has not entered Phase 1; I did not independently confirm registries.",
+    "Animal evidence: in diet-induced obese and ob/ob mice it raised energy expenditure and fatty-acid oxidation and reduced fat gain (PubMed 37739806). A separate 2023 PubMed paper (36988910) is titled 'Synthetic ERR alpha/beta/gamma agonist induces an ERR-alpha-dependent acute aerobic exercise response' (content not opened).",
+    "Harms: unknown in humans. No toxicology or safety data in people. ERR pathways affect muscle, heart and metabolism broadly; effects of long-term activation are unstudied.",
+    "Anti-doping: a secondary source says it is under anti-doping surveillance. The WADA page I opened does not name ERR agonists (it lists Rev-erb agonists and AMPK activators). Status by name not verified."
+   ],
+   "evidence": "Weak: mouse data only; no human trials found.",
+   "sources": [
+    "https://www.pubmed.gov/37739806/",
+    "https://superpower.com/guides/peptides/slu-pp-332",
+    "https://profiles.wustl.edu/en/publications/a-synthetic-err-agonist-alleviates-metabolic-syndrome/",
+    "https://www.wada-ama.org/en/prohibited-list",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/"
+   ],
+   "lookup": [
+    "SLU-PP-332",
+    "estrogen-related receptor agonist exercise mimetic"
+   ],
+   "refOnly": true,
+   "for": "Likely a vendor typo of SLU-PP-332, a small-molecule ERR (estrogen-related receptor) agonist. It is NOT a peptide. Studied in mice as an 'exercise mimetic' for obesity and metabolism. No human trials found."
+  },
+  {
+   "id": "p21",
+   "cat": "brain",
+   "name": "P21 (P021)",
+   "aliases": [
+    "P021",
+    "CNTF-derived peptide",
+    "Ac-DGGLAG-NH2",
+    "P021 peptide"
+   ],
+   "status": "none",
+   "refShort": "Reference only · not FDA-approved · mouse data only",
+   "refMsg": "No human dose exists, so the calculator is off. Mouse data only. Facts and links below.",
+   "notes": [
+    "Identity flag: 'P21' is easily confused with p21 (CDKN1A/WAF1), a cell-cycle tumor-suppressor protein. Here I assume the CNTF-derived peptide P021 (named 'P21' in a 2010 paper). Confirm with the vendor.",
+    "What it is: a modified CNTF fragment, reported as Ac-DGGLAG-NH2 with an adamantyl group to cross the blood-brain barrier. Sequence details differ by source (Ala vs Aib) and are not fully verified.",
+    "US status: not FDA-approved; no FDA review found. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026.",
+    "Human evidence: none. No clinical or observational studies and no trials on ClinicalTrials.gov, per the Alzheimer's Drug Discovery Foundation report. No human safety assessment exists.",
+    "Animal evidence: raised BDNF, neurogenesis and lower tau in 3xTg-AD mice and others; mixed results (no benefit in a CDKL5-knockout model). A 2024 independent group did not reproduce the BDNF effect in live mice. Most positive papers have the inventor as senior author; he co-founded Phanes Biotech, which licenses the peptide.",
+    "Harms: rodents dosed up to 18 months showed no weight loss or tumors (ADDF); human safety unknown. Antibody formation is a theoretical concern. Full-length CNTF caused anorexia and muscle loss in people, but P021 is a different molecule.",
+    "Anti-doping: WADA status by name not verified."
+   ],
+   "evidence": "Weak: preclinical mouse studies, mostly from the developer's network; one independent non-replication; no human trials.",
+   "sources": [
+    "https://www.alzdiscovery.org/uploads/cognitive_vitality_media/P021.pdf",
+    "https://outliyr.com/reports/p21/",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/"
+   ],
+   "lookup": [
+    "P021 CNTF peptide Alzheimer",
+    "Ac-DGGLAG-NH2"
+   ],
+   "refOnly": true,
+   "for": "Short lab-designed peptide built from part of ciliary neurotrophic factor (CNTF), with an adamantane group. Studied in Alzheimer's and Down-syndrome mouse models for memory and BDNF. Developed by Phanes Biotech. No human trials found."
+  },
+  {
+   "id": "ptddbm",
+   "cat": "skin",
+   "name": "PTD-DBM",
+   "aliases": [
+    "PTD-1",
+    "CXXC5-Dvl blocker",
+    "Wnt activator peptide"
+   ],
+   "status": "none",
+   "refShort": "Reference only · not FDA-approved · mouse data only",
+   "refMsg": "No human dose exists, so the calculator is off. Mouse data only. Facts and links below.",
+   "notes": [
+    "What it is: PTD-DBM is a protein-transduction-domain peptide that disrupts the CXXC5-Dishevelled interaction (Yonsei University, Prof. Choi Kang-yell's group). The vendor alias 'PTD-1' is not confirmed in sources I opened.",
+    "US status: not FDA-approved; no FDA review found. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026.",
+    "Human evidence: none found. A Korea Herald report on the work describes it as preclinical, with animal toxicity tests still running.",
+    "Animal evidence: topical PTD-DBM promoted new hair follicle growth in mouse skin; a 2023 Cells paper found it reversed PGD2-induced hair loss and, with a GSK-3beta inhibitor, DHT-induced hair loss in mice.",
+    "Harms: unknown. Switching on Wnt/beta-catenin signaling is linked to cell growth in some cancers, so safety with unapproved systemic or injected use is a theoretical concern (my inference; not shown in the sources).",
+    "Quality: no known commercial standard; vendor identity and purity unverified.",
+    "Anti-doping: WADA status by name not verified."
+   ],
+   "evidence": "Weak: mouse data from one academic group; no human trials found.",
+   "sources": [
+    "https://www.koreaherald.com/article/1510736",
+    "https://doaj.org/article/e748a3a88dce4e9dbe31c94e1e347d31",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/"
+   ],
+   "lookup": [
+    "PTD-DBM",
+    "CXXC5 Dishevelled peptide hair"
+   ],
+   "refOnly": true,
+   "for": "Cell-penetrating peptide that blocks CXXC5 from binding Dishevelled, restoring Wnt/beta-catenin signaling in hair follicles. Developed at Yonsei University. Studied in mice for hair regrowth and androgenetic alopecia. No human trials found."
+  },
+  {
+   "id": "matrixyl",
+   "cat": "skin",
+   "name": "Matrixyl",
+   "aliases": [
+    "Palmitoyl pentapeptide-4",
+    "Pal-KTTKS",
+    "Matrixyl 3000",
+    "Palmitoyl pentapeptide"
+   ],
+   "status": "limited",
+   "refShort": "Reference only · cosmetic ingredient, not a drug · small topical studies",
+   "refMsg": "This is a topical cosmetic ingredient with no drug dose, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: palmitoyl pentapeptide-4 (INCI name), sequence Lys-Thr-Thr-Lys-Ser plus palmitic acid; 'Matrixyl' is the trade name (Sederma). It is meant to signal skin cells to make collagen and other matrix proteins.",
+    "US status: not an FDA-approved drug. FDA does not pre-approve cosmetics or their ingredients (page updated Nov 18 2025). Claims to treat disease or change body structure would make a product a drug. Injectable use is not a studied or labeled use.",
+    "Human evidence (topical): about 10 small studies, mostly 4-12 weeks, 12-93 people. Examples: 93 women, 12 weeks, some wrinkle endpoints met; 15-woman split-face study of a 7% serum showed lower crow's-feet depth at 8 weeks. Several were funded by Sederma or Procter & Gamble.",
+    "Independence: the first fully independent study appeared over a decade after launch. Most subjects were women aged 35-65; little data beyond 4 months.",
+    "Harms: topical studies report no irritation. A head-to-head with 0.07% retinol found no irritation from the peptide. Safety of injected or ingested vendor vials is not studied.",
+    "Quality: vendor 'Matrixyl' vials sold for injection are not cosmetic-grade products and are unverified. Topical studies do not support injecting.",
+    "Anti-doping: no WADA concern found; not verified by name."
+   ],
+   "evidence": "Limited: small topical cosmetic studies, many manufacturer-funded; no drug trials; not an approved drug.",
+   "sources": [
+    "https://www.fda.gov/cosmetics/laws-regulations/fda-authority-over-cosmetics-how-cosmetics-are-not-fda-approved-are-fda-regulated",
+    "https://peptidejournal.org/research/matrixyl-clinical-studies-anti-wrinkle-evidence",
+    "https://rsujournals.rsu.ac.th/index.php/rgrc/article/view/1792",
+    "https://www.dr-emiskin.de/en/pages/inci-lexikon/palmitoyl-pentapeptide-4"
+   ],
+   "lookup": [
+    "palmitoyl pentapeptide-4",
+    "Pal-KTTKS wrinkle",
+    "Matrixyl"
+   ],
+   "refOnly": true,
+   "for": "Cosmetic ingredient: the 5-amino-acid peptide KTTKS joined to palmitic acid, used in creams and serums to reduce the look of fine lines. It is a cosmetic ingredient, not an approved drug. Studies are small topical trials, many funded by makers."
+  },
+  {
+   "id": "snap8",
+   "cat": "skin",
+   "name": "Snap-8",
+   "aliases": [
+    "Acetyl octapeptide-3",
+    "SNAP-8",
+    "Acetyl glutamyl heptapeptide-3",
+    "Argireline analog"
+   ],
+   "status": "limited",
+   "refShort": "Reference only · cosmetic ingredient, not a drug · thin evidence",
+   "refMsg": "This is a topical cosmetic ingredient with no drug dose, so the calculator is off. Facts and links below.",
+   "notes": [
+    "What it is: acetyl octapeptide-3 (INCI), an elongated analogue of acetyl hexapeptide-8 (Argireline) made by Lipotec. It is claimed to compete with SNAP-25 in SNARE complexes and so lower muscle contraction signals; this is claimed, not independently confirmed.",
+    "US status: not an FDA-approved drug. FDA does not pre-approve cosmetics or their ingredients (page updated Nov 18 2025). It is not related to botulinum toxin.",
+    "Human evidence: thin. An ingredient database cites a manufacturer study (n=17, 28 days, 10% concentration, up to 35% wrinkle-depth reduction) and one 2024 Ann Dermatol study (n=24, 28 days, microneedle patch delivery). Evidence graded D by one site: no independent RCT.",
+    "The related Argireline has a 60-person placebo-controlled 2013 study (reduced periorbital wrinkles over 4 weeks); that result is for a different peptide.",
+    "Harms: topical irritation is low per ingredient sites; a 2024 study reported no adverse effects. Pregnancy: precautionary avoidance advised by SEGO 2023 for botox-like actives. Injected use is not studied.",
+    "Quality: secondary sites quote a '63% wrinkle reduction' that none of their cited studies supports; treat such claims as unverified. Vendor vials are unverified.",
+    "Anti-doping: no WADA concern found; not verified by name."
+   ],
+   "evidence": "Limited: a few small, mostly manufacturer-linked topical studies; effect is weaker than botulinum toxin.",
+   "sources": [
+    "https://www.fda.gov/cosmetics/laws-regulations/fda-authority-over-cosmetics-how-cosmetics-are-not-fda-approved-are-fda-regulated",
+    "https://peptide-db.com/peptides/snap-8",
+    "https://www.evigrade.com/en/ingredients/acetyl-octapeptide-3",
+    "https://superpower.com/guides/botox-like-peptides"
+   ],
+   "lookup": [
+    "acetyl octapeptide-3",
+    "SNAP-8 wrinkle",
+    "acetyl hexapeptide-8 argireline"
+   ],
+   "refOnly": true,
+   "for": "Cosmetic ingredient: an 8-amino-acid acetylated peptide, an extended version of Argireline, used in creams to soften expression lines. Marketed as a 'Botox-like' ingredient. It is not an approved drug and the evidence is mostly maker data."
+  },
+  {
+   "id": "ahkcu",
+   "cat": "skin",
+   "name": "AHK-Cu",
+   "aliases": [
+    "Copper tripeptide",
+    "Ala-His-Lys copper",
+    "L-alanyl-L-histidyl-L-lysine-Cu",
+    "Copper peptide (hair)"
+   ],
+   "status": "none",
+   "refShort": "Reference only · cosmetic/hair use · lab data only; not GHK-Cu",
+   "refMsg": "No human dose exists, so the calculator is off. Lab hair-follicle data only. Facts and links below.",
+   "notes": [
+    "What it is: the copper (Cu2+) complex of L-alanyl-L-histidyl-L-lysine. A different peptide from GHK-Cu (glycyl-histidyl-lysine), though marketing mixes them up.",
+    "US status: not an FDA-approved drug. FDA does not pre-approve cosmetics or their ingredients (page updated Nov 18 2025). Not on the Oct 28 2026 HHS enforcement-discretion list. Not covered by the Oct 28 2026 HHS interim enforcement discretion policy, which names only six peptides (BPC-157, TB-500, epitalon, semax, KPV, MOTS-c). Products sold as research chemicals or dietary supplements are outside it. Source: Baker Donelson summary, Oct 28 2026.",
+    "Human evidence: no human clinical trial of AHK-Cu found. The main paper is Pyo et al., Arch Pharm Res 2007, using cultured human hair follicles and dermal papilla cells.",
+    "Lab results: at 10^-12 to 10^-9 M it lengthened ex-vivo human hair follicles and raised dermal papilla cell growth; apoptosis fell but not significantly at 10^-9 M. No sample sizes in the abstract.",
+    "Harms: no safety data for injection. Copper complexes can irritate skin; systemic copper exposure from injected vials is unstudied.",
+    "Quality: vendor vials (often sold in large mg amounts) are unverified for identity and copper content; cosmetic studies used topical, very low concentrations.",
+    "Anti-doping: not verified."
+   ],
+   "evidence": "Very weak: one in-vitro/ex-vivo hair follicle study; no human trials found.",
+   "sources": [
+    "https://agris.fao.org/search/en/records/65de423b63b8185d9ca7d5b9",
+    "https://www.fda.gov/cosmetics/laws-regulations/fda-authority-over-cosmetics-how-cosmetics-are-not-fda-approved-are-fda-regulated",
+    "https://www.bakerlaw.com/insights/hhs-issues-enforcement-discretion-policy-regarding-503a-compounding-using-certain-peptide-bulk-drug-substances/"
+   ],
+   "lookup": [
+    "AHK-Cu hair",
+    "tripeptide-copper complex hair growth"
+   ],
+   "refOnly": true,
+   "for": "Copper complex of the tripeptide Ala-His-Lys, used in some cosmetic and hair products. Lab studies on human hair follicles in dish culture show growth effects. No human trials of AHK-Cu found. Often confused with GHK-Cu."
+  },
+  {
+   "id": "ll37",
+   "cat": "immune",
+   "name": "LL-37 (vendor lists \"LL375\")",
+   "aliases": [
+    "LL375",
+    "LL-37 5 mg",
+    "Cathelicidin LL-37",
+    "hCAP-18 fragment",
+    "Cathelicidin"
+   ],
+   "status": "limited",
+   "for": "LL-37 is the active piece of the human cathelicidin protein, an antimicrobial and immune-signaling peptide (37 amino acids). It has been tested as a topical treatment for hard-to-heal leg ulcers. It is sold for wound healing, infection and immune support.",
+   "refShort": "Reference only · topical ulcer trials; no injectable human dose",
+   "refMsg": "No injectable human dose exists, so the calculator is off. Only topical gel trials in leg ulcers were found. Facts and links below.",
+   "notes": [
+    "Identity: the vendor name \"LL375\" is ambiguous. It most likely means LL-37, 5 mg vial. Not verified with the vendor. LL-37 is the 37-amino-acid fragment of human cathelicidin (hCAP-18), made by white blood cells and skin cells.",
+    "US status: not FDA-approved. FDA's Apr 15 2026 notice moved LL-37 off Category 2 into an interim tier, but this did not make it lawfully compoundable (Goodwin Law; PeptidesBeat). LL-37, GHK-Cu, Dihexa, MT2 and PEG-MGF were slated for a later Pharmacy Compounding Advisory Committee meeting expected before Feb 2027. No date found.",
+    "It was not among the 7 peptides the committee reviewed on Jul 23-24 2026. I found no later FDA action on LL-37 (PeptidesBeat tracker, updated Sep 4 2026). Anything after that date is not verified.",
+    "Human evidence: first-in-man trial, 34 people with venous leg ulcers, topical LL-37 twice weekly vs placebo. Healing was faster at the lower strengths, significant for only one; the highest strength did not beat placebo. No safety concerns reported (PubMed 25041740).",
+    "Phase 2b HEAL LL-37 trial: 148 people with hard-to-heal venous leg ulcers, topical gel vs placebo. No significant healing benefit in the full group. A post-hoc look at large wounds (10 cm2 or more) showed benefit; authors call for a larger confirming trial (Lund University record).",
+    "All human trials found used a topical gel on wounds. No controlled human trial of injected LL-37 was found. There is no human dose for injection.",
+    "Lab and animal evidence is broad: kills bacteria, affects immune cells and wound repair. Effects on cancer depend on the tissue: it promoted growth in ovarian, lung and breast models and was anti-tumor in colon and gastric models (Springer review).",
+    "Reported or theoretical risks: it can carry self-DNA/RNA to immune sensors, a mechanism linked to psoriasis and lupus. High topical strengths caused ulceration and inflammation in wound studies. A secondary source advises avoiding it with active cancer (peptideprotocolwiki).",
+    "Quality: vendor vials are not checked by FDA. Purity, endotoxin and actual content are unverified. FDA's Aug 24 2026 warning letters said 'research use only' labels do not change intended use (FDA letter to Royal Peptides).",
+    "Anti-doping: LL-37 is not named in the 2026 WADA list I checked. Unapproved peptides may fall under S0 (non-approved substances). Not verified for LL-37 specifically."
+   ],
+   "evidence": "Limited: 2 topical wound trials (n=34, n=148); mixed results. No injectable human trials found.",
+   "sources": [
+    "https://www.goodwinlaw.com/en/insights/blogs/2026/05/fda-signals-potentially-evolving-stance-toward-compounding-of-certain-peptides",
+    "https://peptidesbeat.pages.dev/tracker/fda-timeline/",
+    "https://www.pulse.bot/healthcare/news/meeting-of-the-pharmacy-compounding-advisory-committee-60080d2b-f7d8-4245-ac94-860d99177123/",
+    "https://www.pubmed.gov/25041740/",
+    "https://lup.lub.lu.se/record/a11c5d36-67c8-4a10-a8b4-af798f98b3b9",
+    "https://link.springer.com/article/10.1007/s00005-015-0359-5",
+    "https://www.peptideprotocolwiki.com/peptides/ll-37/risks",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026"
+   ],
+   "lookup": [
+    "LL-37 venous leg ulcer",
+    "cathelicidin LL-37 clinical trial"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "dihexa",
+   "cat": "brain",
+   "name": "Dihexa",
+   "aliases": [
+    "PNB-0408",
+    "Dihexa acetate",
+    "N-hexanoic-Tyr-Ile-6-aminohexanoic",
+    "Angiotensin IV analog"
+   ],
+   "status": "none",
+   "for": "Dihexa is a lab-made peptide derived from angiotensin IV. In rodents it boosted memory and nerve connections by enhancing hepatocyte growth factor (HGF) signaling through the c-Met receptor. It is sold for memory and cognition.",
+   "refShort": "Reference only · no human trials found",
+   "refMsg": "No human dose exists, so the calculator is off. Only animal and lab studies were found. Facts and links below.",
+   "notes": [
+    "What it is: a small, metabolically stabilized analog of angiotensin IV, built to cross the blood-brain barrier and work by mouth in rodents. It binds HGF and boosts c-Met signaling (J Pharmacol Exp Ther 2014).",
+    "US status: not FDA-approved. FDA's Apr 15 2026 notice moved Dihexa acetate off Category 2 into an interim tier, but not into lawful compounding (Goodwin Law; PeptidesBeat). Slated for a later advisory committee review expected before Feb 2027; no date found.",
+    "Human evidence: no human trial found. No published human safety, pharmacokinetic or efficacy data.",
+    "Animal and lab evidence: in cell cultures it increased spine and synapse formation. In rats an HGF blocker stopped the memory benefit in a water maze test. Several authors are founders of M3 Biotechnology, which develops HGF mimetics (JPET 2014).",
+    "Theoretical risk: HGF/c-Met signaling is tied to cancer growth, blood-vessel growth and spread. Boosting it could in theory promote unwanted growth. No human data tests this (secondary source: Superpower).",
+    "Quality: vendor product is unverified. Purity, identity and strength are not checked by FDA. FDA's Aug 24 2026 warning letters said 'research use only' labels do not change intended use.",
+    "Anti-doping: not named in the 2026 WADA list I checked. Non-approved substances fall under S0, so it would likely be treated as prohibited. Not verified for Dihexa by name."
+   ],
+   "evidence": "Weak: animal and lab data only; no human trials found.",
+   "sources": [
+    "https://jpet.aspetjournals.org/content/351/2/390.short",
+    "https://wf.superpower.com/peptides/dihexa",
+    "https://www.goodwinlaw.com/en/insights/blogs/2026/05/fda-signals-potentially-evolving-stance-toward-compounding-of-certain-peptides",
+    "https://peptidesbeat.pages.dev/tracker/fda-timeline/",
+    "https://www.pulse.bot/healthcare/news/meeting-of-the-pharmacy-compounding-advisory-committee-60080d2b-f7d8-4245-ac94-860d99177123/",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf"
+   ],
+   "lookup": [
+    "dihexa",
+    "Nle1-angiotensin IV HGF c-Met"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "pe2228",
+   "cat": "brain",
+   "name": "PE-22-28",
+   "aliases": [
+    "PE 22-28",
+    "Spadin analog",
+    "Mini-spadin",
+    "TREK-1 inhibitor peptide"
+   ],
+   "status": "none",
+   "for": "PE-22-28 is a short, lab-made peptide based on spadin, a natural fragment of the sortilin receptor. It blocks the TREK-1 potassium channel. In mice it acted like an antidepressant within days. It is sold for mood and depression.",
+   "refShort": "Reference only · mouse data only; no human trials found",
+   "refMsg": "No human dose exists, so the calculator is off. Only mouse and cell studies were found. Facts and links below.",
+   "notes": [
+    "What it is: a shortened analog of spadin, a peptide derived from the propeptide of sortilin. It was designed to block the TREK-1 channel with better potency and longer action than spadin (Frontiers in Pharmacology 2017).",
+    "US status: not FDA-approved and not on any FDA compounding list I found. No FDA statement specific to it was found.",
+    "Human evidence: no human trial found. The 2017 paper reports no human data.",
+    "Animal and lab evidence: in cells with human TREK-1, it blocked the channel at lower strength than spadin. In mice it shortened immobility in the forced swim test and sped up eating in a novelty feeding test after 4 days. It raised markers of new neurons and synapses.",
+    "Duration claim: the paper reports action lasting about 23 hours in mice vs about 7 hours for spadin. This is animal data only.",
+    "Known harms: the paper reports no safety or toxicity data. Human risks are unknown.",
+    "Quality: vendor product is unverified. FDA's Aug 24 2026 warning letters said 'research use only' labels do not change intended use.",
+    "Anti-doping: not named in the 2026 WADA list I checked. Non-approved substances fall under S0; not verified for this peptide by name."
+   ],
+   "evidence": "Weak: one preclinical paper in mice and cells; no human trials found.",
+   "sources": [
+    "https://public-pages-files-2025.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2017.00643/text",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.afslaw.com/perspectives/alerts/ruo-ined-five-peptide-vendors-learn-research-use-only-not-legal-strategy",
+    "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf"
+   ],
+   "lookup": [
+    "PE 22-28 spadin",
+    "spadin TREK-1 depression"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "pnc27",
+   "cat": "research",
+   "name": "PNC-27",
+   "aliases": [
+    "PNC27",
+    "p53-penetratin peptide",
+    "p53 residues 12-26 chimera",
+    "HDM-2 binding peptide"
+   ],
+   "status": "none",
+   "for": "PNC-27 is a lab-made chimeric peptide: a piece of the p53 tumor protein joined to a cell-entry sequence. In cell studies it binds HDM-2 on the surface of cancer cells and punches holes in their membranes. It is sold as an anticancer peptide.",
+   "refShort": "Reference only · cell studies only; no human trials found",
+   "refMsg": "No human dose exists, so the calculator is off. Only cell and limited animal studies were found. Facts and links below.",
+   "notes": [
+    "What it is: a chimeric peptide joining p53 residues (the HDM-2 binding region) to a penetratin cell-entry tail. Reported to bind HDM-2 on cancer cell membranes and form pores that cause cell death by necrosis (Anticancer Research 2020; PMC 2022).",
+    "US status: not FDA-approved. I found no FDA statement naming PNC-27 and no compounding list entry. A secondary source says FDA has warned against cancer-treatment claims; not verified.",
+    "Human evidence: no human trial found. A search of the literature and a secondary review found none. The 2020 paper itself reports only cell lines.",
+    "Lab evidence: killed 3 leukemia (AML) cell lines in vitro. Strength varied about 20-fold between lines (IC50 about 4.7 to 91 micromolar, 4 hours). Normal rat blood cells were not harmed, but they are rat cells, not human cells.",
+    "Animal evidence: limited. The paper cites earlier work with patient leukemia cells grafted in mice. Published animal data are sparse (secondary source: peptideprotocolwiki).",
+    "Known harms: no safety data in people. Theoretical risks include injection-site reactions, immune reactions and off-target membrane damage.",
+    "Quality and claims: a cancer product sold without trials. Anyone with cancer should not treat this as a substitute for approved care. Vendor product purity is unverified.",
+    "Anti-doping: not named in the 2026 WADA list I checked."
+   ],
+   "evidence": "Very weak: cell lines and sparse animal data; no human trials found.",
+   "sources": [
+    "https://ar.iiarjournals.org/content/40/9/4857",
+    "https://www.peptideprotocolwiki.com/peptides/pnc27",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.afslaw.com/perspectives/alerts/ruo-ined-five-peptide-vendors-learn-research-use-only-not-legal-strategy"
+   ],
+   "lookup": [
+    "PNC-27",
+    "p53 penetratin HDM-2 membrane"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "reta_cag",
+   "cat": "wl",
+   "name": "Retatrutide + Cagrilintide (vendor \"Reta+Cag\")",
+   "aliases": [
+    "Reta+Cag",
+    "Reta/Cag",
+    "Retatrutide Cagrilintide blend"
+   ],
+   "status": "none",
+   "for": "A vendor blend of two unapproved weight-loss peptides: retatrutide (GIP, GLP-1 and glucagon agonist) and cagrilintide (long-acting amylin analog). Each is in company trials; this combination has not been tested in people.",
+   "refShort": "Blend · both ingredients unapproved; combination has no trials",
+   "refMsg": "No human dose exists for this mix, so the calculator is off. Facts and links below.",
+   "notes": [
+    "Identity: the vendor sells a 10 mg vial. How many mg of each ingredient it holds is not stated and not verified.",
+    "Retatrutide: Eli Lilly's investigational triple agonist. Not FDA-approved. Phase 3 (TRIUMPH) trials report up to about 22.6% weight loss at 80 weeks. Lilly plans to submit to FDA in early 2027 (Epocrates; Drugs.com).",
+    "Cagrilintide: Novo Nordisk's investigational amylin analog. Not approved on its own. Novo submitted an FDA application for CagriSema (cagrilintide plus semaglutide) in Dec 2025; no decision date found (Drugs.com).",
+    "Combination: I found no trial of retatrutide with cagrilintide. Their effects on appetite, nausea and fluid loss could stack; this is unstudied. No dose exists for the mix.",
+    "Retatrutide safety: the most common side effects in phase 3 were nausea, diarrhea, constipation, decreased appetite and vomiting. Long-term safety is not established (Epocrates). Related approved incretin drugs carry warnings for pancreatitis, gallbladder disease and kidney injury from dehydration (Zepbound label).",
+    "FDA Aug 24 2026 warning letters named retatrutide sold as 'research use only' and said such labels do not change intended use (FDA letter; ArentFox Schiff).",
+    "Quality: gray-market retatrutide is unverified. Drugs.com warns any product claiming to be retatrutide is not legitimate.",
+    "Anti-doping: neither ingredient is named in the 2026 WADA list sections I checked. Unapproved substances may fall under S0; not verified."
+   ],
+   "evidence": "Ingredients have trial data; the combination has none. Evidence for this blend: none.",
+   "sources": [
+    "https://www.drugs.com/history/retatrutide",
+    "https://www.epocrates.com/online/article/retatrutide-heads-toward-fda-filing-after-positive-phase-3-obesity-trial-results",
+    "https://www.drugs.com/history/cagrisema.html",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.afslaw.com/perspectives/alerts/ruo-ined-five-peptide-vendors-learn-research-use-only-not-legal-strategy",
+    "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/217806s042lbl.pdf"
+   ],
+   "lookup": [
+    "retatrutide",
+    "cagrilintide"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "reta_tirz",
+   "cat": "wl",
+   "name": "Retatrutide 20 mg + Tirzepatide 40 mg (vendor blend)",
+   "aliases": [
+    "Reta+Tirz",
+    "Reta/Tirz blend",
+    "Retatrutide Tirzepatide 60 mg",
+    "10 mL vial"
+   ],
+   "status": "none",
+   "for": "A vendor blend of retatrutide (unapproved) and tirzepatide (FDA-approved as Mounjaro and Zepbound). The vendor lists a 10 mL vial with 60 mg total. Combining two incretin drugs has not been tested in people.",
+   "refShort": "Blend · two incretin drugs; no trials; overdose-type risk",
+   "refMsg": "No human dose exists for this mix, so the calculator is off. The tirzepatide label advises against using it with other GLP-1 drugs. Facts and links below.",
+   "notes": [
+    "Identity: vendor lists retatrutide 20 mg plus tirzepatide 40 mg in one 10 mL vial (60 mg total). Whether the vial matches that is not verified.",
+    "Tirzepatide: FDA-approved (Mounjaro for type 2 diabetes; Zepbound for weight and sleep apnea). The Zepbound label says it is not recommended with other tirzepatide products or any GLP-1 receptor agonist (FDA label).",
+    "Retatrutide: not FDA-approved. Phase 3 trials are ongoing and reporting; Lilly plans an FDA submission in early 2027 (Epocrates; Drugs.com).",
+    "Combination: no trial of retatrutide plus tirzepatide was found. Both act on GIP and GLP-1 receptors, so effects overlap. Stacking two is an overdose-type risk: severe vomiting, dehydration, kidney injury, low blood sugar with insulin or sulfonylureas.",
+    "Tirzepatide label warnings: boxed warning for thyroid C-cell tumors (rodents), plus pancreatitis, gallbladder disease, kidney injury, severe stomach problems, and aspiration risk during anesthesia (FDA label).",
+    "Legal: tirzepatide compounding was ended for general use (Fifth Circuit upheld the shortage-list removal Aug 27 2026; PeptidesBeat). FDA's Aug 24 2026 warning letters named retatrutide and tirzepatide sold as 'research use only' (FDA letter).",
+    "Quality: concentration in a mixed multi-dose vial cannot be checked by the buyer. No dose can be derived from the vendor's total mg.",
+    "Anti-doping: not verified for retatrutide. Tirzepatide is not named in the WADA sections I checked."
+   ],
+   "evidence": "Each drug has human data; the combination has none. Evidence for this blend: none.",
+   "sources": [
+    "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/217806s042lbl.pdf",
+    "https://www.drugs.com/history/retatrutide",
+    "https://www.epocrates.com/online/article/retatrutide-heads-toward-fda-filing-after-positive-phase-3-obesity-trial-results",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.afslaw.com/perspectives/alerts/ruo-ined-five-peptide-vendors-learn-research-use-only-not-legal-strategy",
+    "https://peptidesbeat.pages.dev/tracker/fda-timeline/"
+   ],
+   "lookup": [
+    "retatrutide tirzepatide",
+    "tirzepatide adverse events"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "tesa_ipa",
+   "cat": "gh",
+   "name": "Tesamorelin + Ipamorelin (vendor blend)",
+   "aliases": [
+    "Tesa+Ipa",
+    "Tesamorelin/Ipamorelin",
+    "BIMORELIN",
+    "Tesa Ipa 15 mg",
+    "Tesa Ipa 13 mg"
+   ],
+   "status": "none",
+   "for": "A vendor blend of tesamorelin (a growth-hormone-releasing hormone analog, FDA-approved as Egrifta) and ipamorelin (an unapproved growth-hormone secretagogue). The blend is sold for body composition and recovery.",
+   "refShort": "Blend · tesamorelin is approved (HIV fat); combination has no trials",
+   "refMsg": "No human dose exists for this mix, so the calculator is off. Facts and links below.",
+   "notes": [
+    "Identity: vendor sizes 15, 13 and 16 mg. The split between tesamorelin and ipamorelin in each size is not stated and not verified.",
+    "Tesamorelin: FDA-approved since 2010 as Egrifta to reduce excess belly fat in adults with HIV lipodystrophy. Not for weight loss (FDA label, revised Mar 2025).",
+    "Tesamorelin label warnings: do not use with active cancer; raises IGF-1; fluid retention; glucose intolerance; injection-site reactions in 25% vs 14% on placebo; hypersensitivity in about 4%.",
+    "Ipamorelin: not FDA-approved. One phase 2 trial in 114-117 people after bowel surgery missed its main goal (Beck 2014; ClinicalTrials.gov NCT00672074). Listed on FDA's 503B Category 2 as of Apr 2026 (PeptidesBeat; secondary source).",
+    "Combination: no trial of tesamorelin with ipamorelin was found. Both raise growth hormone by different routes; the combined effect on IGF-1, blood sugar and fluid is untested.",
+    "FDA's Aug 24 2026 warning letter to Royal Peptides named tesamorelin and a tesamorelin/ipamorelin blend called 'BIMORELIN' as unapproved new drugs and said 'research use only' labels do not change intended use.",
+    "Quality: even tesamorelin sold by vendors is not the approved Egrifta product. Content and purity are unverified.",
+    "Anti-doping: both are prohibited at all times. WADA 2026 S2.2.4 lists ipamorelin under growth hormone secretagogues and tesamorelin under GHRH analogues."
+   ],
+   "evidence": "Ingredient evidence is limited and mixed; the combination has no trials.",
+   "sources": [
+    "https://www.accessdata.fda.gov/drugsatfda_docs/label/2025/022505s020lbl.pdf",
+    "https://superpower.com/guides/peptides/ipamorelin",
+    "https://decentrialz.com/clinical-trials/NCT00672074/safety-and-efficacy-of-ipamorelin-for-management-of-post-operative-ileus",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf",
+    "https://peptidesbeat.pages.dev/tracker/fda-timeline/"
+   ],
+   "lookup": [
+    "tesamorelin",
+    "ipamorelin"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "semax_selank",
+   "cat": "brain",
+   "name": "Semax + Selank (vendor blend)",
+   "aliases": [
+    "Semax/Selank",
+    "Semax Selank 10 mg",
+    "Semax Selank 20 mg",
+    "Russian nootropic stack"
+   ],
+   "status": "none",
+   "for": "A vendor blend of two Russian-developed peptides: Semax (an ACTH fragment analog) and Selank (a tuftsin analog). Both are sold for focus and anxiety. Each has small Russian studies; the combination has no trials.",
+   "refShort": "Blend · both unapproved in US; combination has no trials",
+   "refMsg": "No human dose exists for this mix, so the calculator is off. Facts and links below.",
+   "notes": [
+    "Identity: vendor sizes 10 mg and 20 mg. The split between Semax and Selank is not stated and not verified.",
+    "Semax: a 7-amino-acid analog of ACTH(4-10). Used in Russia and Ukraine (Russian essential drugs list, 2011) for stroke and cognitive disorders; not FDA-approved (MDWiki summary).",
+    "Selank: a 7-amino-acid tuftsin analog developed in Russia, approved there as an anti-anxiety agent. Not FDA-approved (Superpower).",
+    "Human evidence: small, mostly Russian, often sponsor-run studies, not independently replicated; one summary rates Selank evidence as low. I did not independently review the individual studies.",
+    "US compounding: Semax moved off Category 2 on Apr 15 2026, and an FDA advisory committee recommended it (non-binding) for the 503A bulks list on Jul 24 2026 (PeptidesBeat). FDA rulemaking is still needed. Selank was not reviewed.",
+    "Combination: no trial of Semax with Selank was found. Interaction and added effects are unstudied.",
+    "Harms: published safety data are thin in the sources I opened. Mechanism of Semax may involve melanocortin receptors and enkephalin breakdown; clinical meaning is uncertain.",
+    "Anti-doping: neither is named in the 2026 WADA list sections I checked. Not verified."
+   ],
+   "evidence": "Weak-to-limited: small Russian studies for each; no trial of the combination.",
+   "sources": [
+    "https://kiwix.lema.org/mdwiki_en_all_2024-03/A/Semax",
+    "https://superpower.com/guides/peptides/selank",
+    "https://www.goodwinlaw.com/en/insights/blogs/2026/05/fda-signals-potentially-evolving-stance-toward-compounding-of-certain-peptides",
+    "https://peptidesbeat.pages.dev/tracker/fda-timeline/",
+    "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026"
+   ],
+   "lookup": [
+    "Semax",
+    "Selank"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "ghkcu_kpv",
+   "cat": "heal",
+   "name": "GHK-Cu + KPV (vendor blend, line CK60)",
+   "aliases": [
+    "CK60",
+    "GHK-Cu/KPV",
+    "Copper peptide KPV",
+    "GHK-Cu KPV 10 mg"
+   ],
+   "status": "none",
+   "for": "A vendor blend of GHK-Cu (copper tripeptide, used in skincare) and KPV (a 3-amino-acid piece of alpha-MSH). It is sold for skin, healing and inflammation. The combination has not been tested in people.",
+   "refShort": "Blend · both unapproved as injectables; combination has no trials",
+   "refMsg": "No human dose exists for this mix, so the calculator is off. Facts and links below.",
+   "notes": [
+    "Identity and strength are ambiguous. The vendor lists a 10 mg line (CK60). It is not stated whether 10 mg is the total or per ingredient, or the ratio. Not verified.",
+    "GHK-Cu: a copper-binding tripeptide found naturally in the body. Human data are essentially limited to topical cosmetic and wound uses; no robust trials of injected GHK-Cu (Superpower).",
+    "GHK-Cu US status: not FDA-approved as an injectable. Moved off Category 2 on Apr 15 2026 but not made compoundable. Slated for a later committee review expected before Feb 2027 (Goodwin; PCAC notice).",
+    "KPV: a tripeptide from alpha-MSH. Evidence is animal and cell only, including mouse colitis studies; no human efficacy trials (Superpower). Not FDA-approved.",
+    "KPV US status: committee reviewed KPV Jul 23 2026 and recommended it (non-binding) for the 503A bulks list; FDA rulemaking is still needed (PeptidesBeat). Later claims of enforcement discretion are not verified.",
+    "Combination: no trial of GHK-Cu with KPV was found.",
+    "Harms: published human safety data for the injected forms are minimal. FDA flagged unapproved injectables sold as 'research use only' in Aug 24 2026 letters.",
+    "Anti-doping: not named in the WADA list sections I checked; not verified for either ingredient."
+   ],
+   "evidence": "Ingredients: weak human data (GHK-Cu topical only; KPV animal only). Combination: none.",
+   "sources": [
+    "https://superpower.com/guides/copper-peptides-ghk-cu-skin-hair-healing-evidence",
+    "https://superpower.com/guides/peptides/kpv",
+    "https://www.goodwinlaw.com/en/insights/blogs/2026/05/fda-signals-potentially-evolving-stance-toward-compounding-of-certain-peptides",
+    "https://peptidesbeat.pages.dev/tracker/fda-timeline/",
+    "https://www.pulse.bot/healthcare/news/meeting-of-the-pharmacy-compounding-advisory-committee-60080d2b-f7d8-4245-ac94-860d99177123/",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026"
+   ],
+   "lookup": [
+    "GHK-Cu",
+    "KPV alpha-MSH"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "lcarnitine",
+   "cat": "immune",
+   "name": "L-Carnitine injection",
+   "aliases": [
+    "Levocarnitine",
+    "Carnitor",
+    "L-carnitine 400 mg",
+    "L-carnitine 600 mg",
+    "L-carnitine 1200 mg"
+   ],
+   "status": "limited",
+   "for": "L-carnitine (levocarnitine) moves fatty acids into mitochondria. An injectable form is FDA-approved for carnitine deficiency and for people on dialysis. Vendors sell it for fat loss and energy.",
+   "refShort": "Approved only for deficiency/dialysis · fat-loss use not verified",
+   "refMsg": "No dose is given here. The approved injection has a label dose for deficiency only; fat-loss dosing is not established. Facts and links below.",
+   "notes": [
+    "Identity: the vendor lists sizes of 2 mg(?), 400, 600 and 1200 mg. The 2 mg size looks like a typo; the real size is not verified. The vendor product is not confirmed to be the approved Carnitor.",
+    "US status: levocarnitine injection (Carnitor) is FDA-approved for primary or secondary carnitine deficiency and for end-stage kidney disease on dialysis. Both are orphan-drug uses (PDR summary).",
+    "Fat loss or athletic use is not an approved use. I did not verify trial evidence for weight loss from injected carnitine.",
+    "Reported serious reactions on the label: high potassium, atrial fibrillation, seizures, allergic-type reactions, throat swelling and bronchospasm. Warfarin users may see higher INR; close monitoring is advised (PDR summary).",
+    "Monitoring on the approved product includes blood chemistry and plasma carnitine levels.",
+    "Quality: compounded or imported vials are not Carnitor. Strength and sterility are unverified. FDA says unapproved injectables sold online may be unsafe.",
+    "Anti-doping: L-carnitine is not named in the WADA list sections I checked. Large IV amounts are not verified."
+   ],
+   "evidence": "Approved drug for deficiency; fat-loss use not verified.",
+   "sources": [
+    "https://www.pdr.net/drug-summary/Carnitor-Injection-levocarnitine-1644",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf"
+   ],
+   "lookup": [
+    "levocarnitine injection",
+    "carnitine supplementation weight loss"
+   ],
+   "refOnly": true,
+   "statusLabel": "Rx only (Carnitor)"
+  },
+  {
+   "id": "b12inj",
+   "cat": "immune",
+   "name": "Vitamin B12 injection (methylcobalamin)",
+   "aliases": [
+    "Methylcobalamin",
+    "Methyl B12",
+    "Mecobalamin",
+    "B12 10 mg",
+    "Vitamin B12 shot"
+   ],
+   "status": "limited",
+   "for": "Methylcobalamin is one active form of vitamin B12, needed for blood cells and nerves. The FDA-approved injectable form is cyanocobalamin (and hydroxocobalamin). Methylcobalamin injections are sold for energy, nerve health and fat-loss programs.",
+   "refShort": "Methylcobalamin not an FDA-approved injectable · cyanocobalamin is",
+   "refMsg": "No dose is given here. B12 injections treat deficiency under a clinician. Facts and links below.",
+   "notes": [
+    "What it is: methylcobalamin is a natural, active form of vitamin B12. Vendor lists a 10 mg size; whether that is total per vial or per mL is not stated.",
+    "US status: cyanocobalamin injection is the FDA-approved B12 injectable . A patient-advocacy page calls it the only FDA-approved form, implying methylcobalamin is not (Lyme Disease Association page; one-sided).",
+    "Methylcobalamin is on FDA's compounding Category 1 per an advocate's claim; not verified from an FDA source. California's pharmacy board debated limiting it in Nov 2024; outcome not verified.",
+    "Approved uses of B12 injection: deficiency and pernicious anemia, under clinician care. Evidence of benefit for energy or weight loss in people without deficiency is not verified.",
+    "Harms: not verified from a label I opened. General cautions for any injectable include allergic reaction and injection-site problems.",
+    "Quality: vendor 10 mg vials are unverified. Compounded sterile injectables have been recalled for sterility lapses (see MIC/lipotropic entries).",
+    "Anti-doping: vitamin B12 is not a prohibited substance in the WADA sections I checked."
+   ],
+   "evidence": "Limited: vitamin is essential; methylcobalamin injection use beyond deficiency is not verified.",
+   "sources": [
+    "https://www.lymedisease.org/?p=462064",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf"
+   ],
+   "lookup": [
+    "methylcobalamin injection",
+    "vitamin B12 deficiency treatment"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "mic_lipoc",
+   "cat": "wl",
+   "name": "MIC / Lipo-C with B12 (lipotropic blend)",
+   "aliases": [
+    "MIC B12",
+    "Lipo-C",
+    "Lipotropic injection",
+    "Skinny shot",
+    "Methionine Inositol Choline"
+   ],
+   "status": "none",
+   "for": "A compounded-style blend of methionine, inositol and choline (MIC), often with vitamin B12. It is sold as a 'fat-burning' or 'lipotropic' shot. No approved drug of this type exists.",
+   "refShort": "Unapproved blend · no trials found for fat loss",
+   "refMsg": "No dose is given here. This is a vitamin and amino-acid mix with no approved use. Facts and links below.",
+   "notes": [
+    "What it is: three nutrients (methionine, inositol, choline), usually plus B12. Vendor lists a 10 mg size; the amount of each ingredient is not stated and not verified.",
+    "US status: no FDA-approved MIC injectable was found. Such products are made by compounding pharmacies or imported. I did not find an FDA statement about MIC by name.",
+    "Recalls: a compounded 'lipotropic with MIC' injectable (methionine, inositol, choline, carnitine, methylcobalamin, lidocaine) was recalled in 2016-2017 for lack of assurance of sterility (FDA recall D-0271-2017 data).",
+    "Human evidence: no controlled trial showing fat loss from MIC injections was found. Not verified in a full search.",
+    "Harms: injected non-sterile products can cause infection. FDA has warned about unapproved fat-reduction injections in general (see Lemon Bottle entry).",
+    "Quality: ingredient amounts in vendor vials are unverified.",
+    "Anti-doping: none of the three nutrients is named in the WADA sections I checked."
+   ],
+   "evidence": "None: no human trials of MIC injections for fat loss found.",
+   "sources": [
+    "https://api.ai-analytics.org/recall/D-0271-2017",
+    "https://www.fda.gov/drugs/buying-using-medicine-safely/using-fat-dissolving-injections-are-not-fda-approved-can-be-harmful",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf"
+   ],
+   "lookup": [
+    "methionine inositol choline injection",
+    "lipotropic injection"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "lc120",
+   "cat": "wl",
+   "name": "LC120 Lipo-C",
+   "aliases": [
+    "LC120",
+    "Lipo-C LC120"
+   ],
+   "status": "none",
+   "for": "A vendor-coded lipotropic injection blend. Per the vendor sheet it holds methionine, choline chloride, carnitine and dexpanthenol (provitamin B5). Sold as a 'fat-burning' shot.",
+   "refShort": "Unapproved vitamin/amino blend · no trials found",
+   "refMsg": "No dose is given here. This is a nutrient mix with no approved use. Facts and links below.",
+   "notes": [
+    "Ingredients per vendor sheet (unverified): methionine 15 mg, choline chloride 50 mg, carnitine 50 mg, dexpanthenol 5 mg. Per-mL or per-vial basis not stated.",
+    "Identity: LC120 is a vendor code, not a recognized drug name. No matching approved product was found.",
+    "US status: no FDA-approved lipotropic blend was found. I did not find an FDA statement about this product.",
+    "Individual parts: levocarnitine injection is approved only for carnitine deficiency and dialysis (PDR). Dexpanthenol injection has approved uses; not verified here.",
+    "Human evidence: no trials of this blend for fat loss were found.",
+    "Harms: nonsterile compounded lipotropic injections have been recalled for sterility lapses (FDA recall D-0271-2017).",
+    "Anti-doping: none of the listed ingredients is named in the WADA sections I checked."
+   ],
+   "evidence": "None: blend not studied; ingredient lists unverified.",
+   "sources": [
+    "https://www.pdr.net/drug-summary/Carnitor-Injection-levocarnitine-1644",
+    "https://api.ai-analytics.org/recall/D-0271-2017",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf"
+   ],
+   "lookup": [
+    "lipotropic injection methionine choline carnitine",
+    "levocarnitine injection"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "lc216",
+   "cat": "wl",
+   "name": "LC216 MIC Lipo-B",
+   "aliases": [
+    "LC216",
+    "MIC Lipo-B",
+    "Lipo-B"
+   ],
+   "status": "none",
+   "for": "A vendor-coded MIC blend with added amino acids and B vitamins. Per the vendor sheet: L-carnitine, L-arginine, methionine, inositol, choline, B6, B5 and B12. Sold as a 'fat-burning' shot.",
+   "refShort": "Unapproved vitamin/amino blend · no trials found",
+   "refMsg": "No dose is given here. This is a nutrient mix with no approved use. Facts and links below.",
+   "notes": [
+    "Ingredients per vendor sheet (unverified): L-carnitine 20 mg, L-arginine 20 mg, methionine 25 mg, inositol 50 mg, choline 50 mg, B6 25 mg, B5 25 mg, B12 1 mg. Per-mL or per-vial basis not stated.",
+    "Identity: LC216 is a vendor code. No matching approved product was found.",
+    "US status: no FDA-approved lipotropic blend was found. No FDA statement about this product found.",
+    "Human evidence: no trials of this blend for fat loss were found.",
+    "Harms: nonsterile compounded lipotropic injections have been recalled for sterility lapses (FDA recall D-0271-2017). Vendor vials are not FDA-checked.",
+    "Anti-doping: none of the listed ingredients is named in the WADA sections I checked."
+   ],
+   "evidence": "None: blend not studied; ingredient lists unverified.",
+   "sources": [
+    "https://api.ai-analytics.org/recall/D-0271-2017",
+    "https://www.pdr.net/drug-summary/Carnitor-Injection-levocarnitine-1644",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf"
+   ],
+   "lookup": [
+    "MIC lipotropic injection",
+    "methionine inositol choline"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "lc526",
+   "cat": "wl",
+   "name": "LC526 Lipo-C Fat Blaster",
+   "aliases": [
+    "LC526",
+    "Lipo-C Fat Blaster",
+    "Fat Blaster"
+   ],
+   "status": "none",
+   "for": "A vendor-coded lipotropic blend. Per the vendor sheet: L-carnitine, methionine, inositol, choline, B12, B6 and NADH. Sold as a 'fat-burning' shot.",
+   "refShort": "Unapproved vitamin/amino blend · no trials found",
+   "refMsg": "No dose is given here. This is a nutrient mix with no approved use. Facts and links below.",
+   "notes": [
+    "Ingredients per vendor sheet (unverified): L-carnitine 300 mg, methionine 25 mg, inositol 50 mg, choline 50 mg, B12 1 mg, B6 50 mg, NADH 50 mg. Per-mL or per-vial basis not stated.",
+    "Identity: LC526 is a vendor code. No matching approved product was found.",
+    "US status: no FDA-approved lipotropic blend or NADH injection was found. No FDA statement about this product found.",
+    "Human evidence: no trials of this blend for fat loss were found.",
+    "Harms: nonsterile compounded lipotropic injections have been recalled for sterility lapses (FDA recall D-0271-2017). Levocarnitine injection label lists arrhythmia, seizures and allergic reactions (PDR).",
+    "Anti-doping: none of the listed ingredients is named in the WADA sections I checked."
+   ],
+   "evidence": "None: blend not studied; ingredient lists unverified.",
+   "sources": [
+    "https://api.ai-analytics.org/recall/D-0271-2017",
+    "https://www.pdr.net/drug-summary/Carnitor-Injection-levocarnitine-1644",
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf"
+   ],
+   "lookup": [
+    "lipotropic injection NADH carnitine",
+    "methionine inositol choline"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "rp226",
+   "cat": "brain",
+   "name": "RP226 Relaxation PM",
+   "aliases": [
+    "RP226",
+    "Relaxation PM",
+    "GABA melatonin injection"
+   ],
+   "status": "none",
+   "for": "A vendor-coded relaxation and sleep injection blend. Per the vendor sheet: GABA, melatonin, arginine and glutamine. Sold for sleep and calm.",
+   "refShort": "Unapproved nutrient/hormone blend · no injection trials found",
+   "refMsg": "No dose is given here. This blend has no approved use. Facts and links below.",
+   "notes": [
+    "Ingredients per vendor sheet (unverified): GABA 100 mg, melatonin 1 mg, arginine 100 mg, glutamine 25 mg. Per-mL or per-vial basis not stated.",
+    "Identity: RP226 is a vendor code. No matching approved product was found.",
+    "US status: no FDA-approved injectable of this blend was found. Melatonin is sold in the US as an oral supplement; an injectable form is not an approved drug (not verified from an FDA page).",
+    "Human evidence: no trial of this injected blend was found.",
+    "Harms: not verified. Injected GABA is poorly studied; melatonin can cause drowsiness.",
+    "Quality: vendor vials are not FDA-checked. FDA's Aug 24 2026 letters targeted unapproved injectables sold under research labels.",
+    "Anti-doping: melatonin and amino acids are not named in the WADA sections I checked."
+   ],
+   "evidence": "None: no trials of this injected blend found.",
+   "sources": [
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
+    "https://www.afslaw.com/perspectives/alerts/ruo-ined-five-peptide-vendors-learn-research-use-only-not-legal-strategy",
+    "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf"
+   ],
+   "lookup": [
+    "injectable melatonin GABA",
+    "melatonin sleep trial"
+   ],
+   "refOnly": true
+  },
+  {
+   "id": "lemonbottle",
+   "cat": "skin",
+   "name": "Lemon Bottle (fat-dissolving injection)",
+   "aliases": [
+    "LemonBottle",
+    "Lemon Bottle ampoule",
+    "Fat dissolver",
+    "Lipolysis solution"
+   ],
+   "status": "none",
+   "for": "A branded injectable sold for dissolving small fat deposits and cellulite. Distributors list bromelain, lecithin and riboflavin. It is not the FDA-approved fat-dissolving drug Kybella (deoxycholic acid).",
+   "refShort": "Unapproved injectable · FDA warning letter Mar 2025",
+   "refMsg": "No dose is given here. This is an unapproved product with FDA and Swiss regulator warnings. Facts and links below.",
+   "notes": [
+    "Identity is ambiguous. Distributor pages say main ingredients are riboflavin, lecithin and bromelain, made by Sid Medicos, with no deoxycholic acid. Other 'lipolysis' products do use deoxycholic acid. The vendor's 10 mL size and formula are not verified.",
+    "US status: FDA warning letter dated Mar 3 2025 to Vivid-Scientific LLC named LemonBottle Ampoule Solution as an unapproved new drug, citing fat and cellulite dissolving claims.",
+    "FDA's position: Kybella (deoxycholic acid) is the only approved fat-dissolving injectable, for double-chin fat only. Unapproved brands have caused permanent scars, serious infections, skin deformities, cysts and painful knots (FDA page, Dec 2023).",
+    "Abroad: Swissmedic warned against Lemon Bottle on Mar 27 2024. Lab tests showed contents did not match labels and some samples held none of the listed ingredients. It counts as a medicine when injected.",
+    "Human evidence: no controlled trials were found in my sources. Benefit claims come from marketing.",
+    "Harms: injection-site pain, swelling, bruising and allergic reaction are listed. Pregnancy and breastfeeding are listed as contraindications by distributors.",
+    "Quality: counterfeit and mislabeled vials are a documented problem (Swissmedic).",
+    "Anti-doping: not applicable or not verified."
+   ],
+   "evidence": "None: no trials found; regulators warn it is unapproved and contents may not match labels.",
+   "sources": [
+    "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/vivid-scientific-llc-699226-03032025",
+    "https://www.fda.gov/drugs/buying-using-medicine-safely/using-fat-dissolving-injections-are-not-fda-approved-can-be-harmful",
+    "https://swissinfo.ch/eng/life-aging/switzerland-warns-against-using-lemon-bottle-fat-dissolving-injections/74408244",
+    "https://www.consentz.com/directory/products/brands/lemonbottle/lemon-bottle-x1-vial/"
+   ],
+   "lookup": [
+    "deoxycholic acid injection submental fat",
+    "phosphatidylcholine deoxycholate lipolysis"
+   ],
+   "refOnly": true
+  }
+ ]
 }
