@@ -1213,6 +1213,7 @@ function renderDetail(){
     html+='<section class="block calc" aria-label="No dose"><h3>Dose</h3><p class="flag '+(p.refTone||"bad")+'">'+esc(p.refMsg||"No published human dose for this route, so the calculator is off for this entry.")+'</p><p class="hint">Need the arithmetic for something else? <button type="button" class="btn small" data-open="custom">Open Any vial (custom)</button></p></section>';
     if(p.notes.length) html+='<section class="block notes"><h3>What to know</h3><ul>'+p.notes.map(n=>'<li>'+esc(n)+'</li>').join("")+'</ul></section>';
     if((p.storage&&p.storage!=="n/a")||p.evidence) html+='<section class="block kv">'+(p.storage&&p.storage!=="n/a"?'<div><span class="k">Storage: </span>'+esc(p.storage)+'</div>':'')+(p.evidence?'<div><span class="k">Evidence: </span>'+esc(p.evidence)+'</div>':'')+'</section>';
+    html+=detailNewsHtml(p);
     html+=liveShellHtml(p);
     if(p.sources.length) html+='<details class="sources"><summary>Sources</summary><ul>'+p.sources.map(u=>'<li><a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(srcLabel(u))+'</a></li>').join("")+srcHint(p.sources)+'</ul></details>';
     detailEl.innerHTML=html; labelTables(detailEl); return;
@@ -1492,6 +1493,8 @@ function cleanEntry(e){
   if(typeof e.vialLabel==="string") out.vialLabel=clip(e.vialLabel,40);
   if(posNum(e.useDays)) out.useDays=e.useDays;
   if(ref){ out.refOnly=true; out.refMsg=clip(e.refMsg||"",300); out.refShort=clip(e.refShort||"",120); }
+  const lk=strList(e.lookup,3,60); if(lk.length) out.lookup=lk;
+  if(typeof e.statusLabel==="string"&&e.statusLabel.trim()) out.statusLabel=clip(e.statusLabel.trim(),40);
   return out;
 }
 function cleanUpdates(j){
@@ -1510,7 +1513,7 @@ function cleanUpdates(j){
     const x=j.append[id]; if(!x||typeof x!=="object") continue;
     u.append[id]={notes:strList(x.notes,6,400),evidence:clip(x.evidence||"",300),sources:strList(x.sources,6,300).filter(okUrl)};
   }
-  for(const e of (Array.isArray(j.peptides)?j.peptides:[]).slice(0,60)){ const c=cleanEntry(e); if(c) u.peptides.push(c); }
+  for(const e of (Array.isArray(j.peptides)?j.peptides:[]).slice(0,150)){ const c=cleanEntry(e); if(c) u.peptides.push(c); }
   return u;
 }
 function applyUpdates(u){
