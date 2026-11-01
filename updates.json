@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "updated": "2026-11-01",
+  "notice": "",
+  "news": [
+    {
+      "date": "2026-11-01",
+      "kind": "new",
+      "title": "Update feed and live study lookups added",
+      "summary": "This app now reads a small updates file for news, status changes and new peptides, and each peptide page can run a live check of PubMed, ClinicalTrials.gov and the FDA's drug database. Nothing here changes your saved vials.",
+      "url": "",
+      "tags": []
+    },
+    {
+      "date": "2026-10-22",
+      "kind": "new",
+      "title": "HHB and SHB pre-mixed blends added",
+      "summary": "HHB is a B-vitamin and biotin mix; SHB is an amino-acid mix. Neither is a peptide and neither has a published dose, so the app shows the strength per mL and lets you pick the amount.",
+      "url": "",
+      "tags": ["hhb", "shb"]
+    },
+    {
+      "date": "2026-10-16",
+      "kind": "new",
+      "title": "KLOW added; vials turn red when two overlap",
+      "summary": "KLOW is the GLOW blend plus KPV. A saved vial now turns red if it shares an ingredient or drug class with another active vial. No red does not mean safe: most of these have never been studied together.",
+      "url": "",
+      "tags": ["klow", "glow", "bpc157", "tb500", "ghkcu", "kpv"]
+    },
+    {
+      "date": "2026-08-24",
+      "kind": "fda",
+      "title": "FDA warning letters reject 'research use only' labels on peptides",
+      "summary": "FDA sent warning letters to five online peptide sellers (products named include semaglutide, tirzepatide, retatrutide and tesamorelin). It said a 'research use only' label does not change a product's intended use when the website shows human use: dosing guidance, mixing tools, disease claims, or bacteriostatic water sold with the peptides.",
+      "url": "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/txp-innovations-llc-dba-tex-peptides-735067-08242026",
+      "tags": ["semaglutide", "tirzepatide", "retatrutide", "tesamorelin"]
+    },
+    {
+      "date": "2026-07-24",
+      "kind": "fda",
+      "title": "Panel also recommended Epitalon and Semax; DSIP was not recommended",
+      "summary": "A trade-group summary says the FDA advisory committee recommended six of the seven peptides it reviewed for the compounding list, and that DSIP was the one it did not. Still advice only.",
+      "url": "https://www.americanmedspa.org/news/fda-advisory-committee-recommends-adding-six-of-seven-peptides-to-compounding-list/",
+      "tags": ["semax", "dsip"]
+    },
+    {
+      "date": "2026-07-23",
+      "kind": "fda",
+      "title": "FDA advisory panel votes on four peptides for compounding",
+      "summary": "The Pharmacy Compounding Advisory Committee voted 8-6 (one abstention) to recommend BPC-157, KPV and TB-500 for the compounding list, and 7-5 (two abstentions) for MOTS-c. This is advice, not approval: FDA rulemaking is still needed, which one attorney estimates at 8-12 months.",
+      "url": "https://www.pharmexec.com/view/fda-votes-loosen-restrictions-four-peptides",
+      "tags": ["bpc157", "kpv", "tb500"]
+    },
+    {
+      "date": "2026-04-22",
+      "kind": "fda",
+      "title": "FDA takes 12 peptides off its Category 2 'safety concerns' list",
+      "summary": "The 12 were BPC-157, TB-500, MOTS-c, GHK-Cu (injectable), Epitalon, Semax, KPV, DSIP, melanotan II, LL-37, Dihexa and PEG-MGF. Leaving Category 2 does not make a peptide approved or compoundable by itself. Seven were reviewed in July; GHK-Cu, melanotan II, LL-37, Dihexa and PEG-MGF are due for committee review by the end of February 2027.",
+      "url": "https://www.peppal.app/news/fda-category-2-removal-april-2026",
+      "tags": ["bpc157", "tb500", "ghkcu", "kpv", "semax", "dsip", "mt2"]
+    },
+    {
+      "date": "2025-12-01",
+      "kind": "fda",
+      "title": "CagriSema: FDA application filed, still under review",
+      "summary": "Novo's application was filed in December 2025 (date approximate). At the last check in October 2026 it was still under review and no decision date had been found.",
+      "url": "",
+      "tags": ["cagrisema", "cagrilintide", "semaglutide"]
+    }
+  ],
+  "status": {},
+  "append": {},
+  "peptides": []
+}

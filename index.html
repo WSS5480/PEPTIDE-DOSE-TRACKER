@@ -196,6 +196,54 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 .install-sheet .is-sec h3{margin:0 0 6px;font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .install-sheet ol{margin:0;padding-left:20px;display:grid;gap:5px;font-size:.9rem}
 .install-sheet .is-note{padding:8px 10px;border-left:3px solid var(--warn);border-radius:6px;background:var(--field)}
+
+/* friendlier layout, news, live panel */
+.btn .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--bad);margin-left:6px;vertical-align:middle}
+.notice details>summary{cursor:pointer;list-style:none}
+.notice details>summary::-webkit-details-marker{display:none}
+.notice details>summary::after{content:" \25BE";color:var(--muted)}
+.notice details[open]>summary::after{content:" \25B4"}
+.notice details p{margin-top:8px}
+.intro{border:1px solid var(--accent);background:var(--accent-soft);border-radius:var(--radius);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.intro h3{color:var(--accent)}
+.intro ol{margin:0;padding-left:20px;display:grid;gap:4px;font-size:.9rem}
+.today{border:1px solid var(--warn);background:color-mix(in srgb,var(--warn) 9%,var(--surface));border-radius:var(--radius);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.today .trow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.today.clear{border-color:var(--line);background:var(--surface);color:var(--muted);font-size:.86rem}
+.news{display:none;flex-direction:column;gap:14px;margin-top:14px;min-width:0}
+.app[data-view="news"] .panes,.app[data-view="news"] .vials{display:none}
+.app[data-view="news"] .news{display:flex}
+.app[data-view="news"] .top .search,.app[data-view="news"] .top .chips,.app[data-view="news"] .notice{display:none}
+.newscard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.newscard .nmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.76rem;color:var(--muted)}
+.newscard h3.nt{font-size:1rem;text-transform:none;letter-spacing:0;color:var(--ink);font-weight:600}
+.kind{border-radius:999px;padding:1px 8px;font-size:.7rem;font-weight:600;background:var(--field);color:var(--ink);border:1px solid var(--line)}
+.kind.fda{background:color-mix(in srgb,var(--info) 12%,transparent);color:var(--info);border-color:transparent}
+.kind.safety{background:color-mix(in srgb,var(--bad) 12%,transparent);color:var(--bad);border-color:transparent}
+.kind.new{background:color-mix(in srgb,var(--good) 12%,transparent);color:var(--good);border-color:transparent}
+.tagrow{display:flex;gap:6px;flex-wrap:wrap}
+.tagrow button{border:1px solid var(--line);background:var(--field);border-radius:999px;padding:2px 9px;font-size:.76rem}
+.live>summary{cursor:pointer;font-weight:600}
+.live .lsec{display:flex;flex-direction:column;gap:4px;padding:8px 0;border-top:1px solid var(--line)}
+.live .lsec:first-of-type{border-top:0}
+.live .lsec h4{margin:0;font-size:.8rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.live .big2{font-size:1.05rem;font-weight:600}
+.live ul{margin:0;padding-left:18px;display:grid;gap:3px;font-size:.86rem}
+.logcards{display:flex;flex-direction:column;gap:6px}
+.logrow{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.logrow .lr-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.logrow .lr-main span{font-size:.8rem;color:var(--muted)}
+.logrow .lr-amt{font-family:var(--font-mono);font-size:.86rem;text-align:right}
+.logrow .x{border:0;background:transparent;color:var(--bad);font-weight:700;padding:4px 8px;font-size:1.1rem;line-height:1}
+.backup textarea{width:100%;min-height:90px;font-family:var(--font-mono);font-size:.76rem;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--ink);padding:8px}
+@media (max-width:640px){
+  table.stack thead{display:none}
+  table.stack,table.stack tbody{display:block}
+  table.stack tr{display:block;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;padding:4px 10px}
+  table.stack td{display:flex;justify-content:space-between;gap:14px;border:0;padding:3px 0;white-space:normal}
+  table.stack td[data-label]::before{content:attr(data-label);color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;flex:0 0 auto;padding-top:2px}
+  table.stack td[colspan]{display:block}
+}
 @media (prefers-reduced-motion:reduce){.syringe .fill{transition:none}}
 </style>
 <style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
@@ -206,14 +254,16 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 <div class="app" id="app" data-view="list">
   <header class="top">
     <div class="brand">
-      <div class="btnrow" style="align-items:center"><h1>Peptide Dose Guide</h1><button type="button" class="btn small primary" id="vials-btn">My vials</button><button type="button" class="btn small" id="install-btn" hidden aria-haspopup="dialog"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Install app</button></div>
-      <span class="rev">reviewed 2026-10 · U-100 syringe · BAC water</span>
+      <div class="btnrow" style="align-items:center"><h1>Peptide Dose Guide</h1><button type="button" class="btn small primary" id="vials-btn">My vials</button><button type="button" class="btn small" id="news-btn">What's new<span class="dot" id="news-dot" hidden></span></button><button type="button" class="btn small" id="install-btn" hidden aria-haspopup="dialog"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Install app</button></div>
+      <span class="rev" id="rev">data reviewed 2026-10 · U-100 syringe · BAC water</span>
     </div>
-    <input class="search" id="q" type="search" placeholder="Search by name or alias (reta, hcg, selank, glow...)" autocomplete="off" aria-label="Search peptides">
+    <input class="search" id="q" type="search" placeholder="Search peptides (reta, bpc, glow…)" autocomplete="off" aria-label="Search peptides">
     <div class="chips" id="cats" role="group" aria-label="Category"></div>
   </header>
-  <div class="notice"><strong>Not medical advice.</strong> Vendor vials are unverified, so every number here assumes the label is right. Most of these compounds have no human dosing data; the badge on each one says how much is actually known. Entries marked reference-only have no calculator: either no human dose exists, or it is a prescription product that a clinician doses.</div>
+  <div class="notice"><details id="notice-d"><summary><strong>Not medical advice.</strong> Tap to read what the numbers assume.</summary><p>Vendor vials are unverified, so every number here assumes the label is right. Most of these compounds have no human dosing data; the badge on each one says how much is actually known. Entries marked reference-only have no calculator: either no human dose exists, or it is a prescription product that a clinician doses.</p></details></div>
+  <div class="flag" id="site-notice" hidden></div>
   <section class="vials" id="vials" aria-label="My vials and dose log"></section>
+  <section class="news" id="news" aria-label="What's new"></section>
   <main class="panes">
     <section class="list" id="list" aria-label="Peptides"></section>
     <section class="detail" id="detail" aria-live="polite"></section>
@@ -224,8 +274,8 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p>Draw up the bacteriostatic water, push it in slowly down the inside wall of the vial so it does not spray the powder, then swirl or roll gently. Never shake. Refrigerate after mixing (2–8 °C) and use within the window shown for that peptide, usually about 4 weeks. Check the vial's capacity before adding 3 mL or more; most vendor vials are 3 mL.</p>
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
-    <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: in July 2026 the FDA's compounding advisory committee voted to recommend adding BPC-157, TB-500, KPV, MOTS-c, epithalon and Semax to the compounding list and rejected DSIP, but the votes are advisory and FDA rulemaking could run into 2027 or later; melanotan II and injectable GHK-Cu are due for committee review before the end of February 2027; CagriSema's FDA application, filed in December 2025, was still under review at the last check. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-10-22b · HHB, SHB, KLOW, red interaction flags, evidence notes</p>
+    <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: open <b>What's new</b> for recent FDA and study updates, with links to the sources. Approved drugs are described from their current labels.</p>
+    <p class="hint" id="appver">App version 2026-11-01 · update feed, live study and FDA lookups, Today strip, backup and restore</p>
     <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
@@ -951,7 +1001,7 @@ function myVialsHtml(){
 }
 function renderList(){
   const items=DATA.filter(matches);
-  let html=(q||cat!=="all")?"":myVialsHtml();
+  let html=(q||cat!=="all")?"":(introHtml()+todayHtml()+myVialsHtml());
   if(!items.length){ listEl.innerHTML=html+'<p class="empty">Nothing matches that. Try a shorter name or an alias.</p>'; return; }
   let lastCat=null;
   for(const p of items){
@@ -1115,11 +1165,12 @@ function renderVials(){
   html+='<section class="block hist"><div class="vhead"><h3>Dose log · '+rows.length+' entr'+(rows.length===1?'y':'ies')+'</h3>'+(rows.length?'<button type="button" class="btn small" id="export-log">Copy as CSV</button>':'')+'</div>';
   if(uiFlags.exportOpen) html+='<textarea class="export" id="export-text" readonly>'+esc(exportText())+'</textarea><p class="hint">Select all and copy if the button did not work.</p>';
   if(rows.length){
-    html+='<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Peptide</th><th class="mono">Dose</th><th class="mono">Amount</th><th></th></tr></thead><tbody>'
-      +rows.slice(0,100).map(r=>'<tr><td class="mono">'+fmtDate(r.e.d)+'</td><td>'+esc(r.p.name)+'</td><td class="mono">'+fmt(r.e.dose)+' '+esc(r.p.unitLabel||r.p.unit)+'</td><td class="mono">'+(isOral(r.p)?fmt(r.units/100,2)+' mL':fmt(r.units,1)+'u')+'</td><td><button type="button" class="x" data-delentry="'+r.e.id+'" data-delvial="'+r.v.id+'" aria-label="Delete entry">&times;</button></td></tr>').join("")
-      +'</tbody></table></div>'+(rows.length>100?'<p class="hint">Showing the latest 100.</p>':'');
+    html+='<div class="logcards">'
+      +rows.slice(0,100).map(r=>'<div class="logrow"><div class="lr-main"><b>'+esc(r.p.name)+'</b><span>'+fmtDate(r.e.d)+'</span></div><div class="lr-amt">'+fmt(r.e.dose)+' '+esc(r.p.unitLabel||r.p.unit)+'<br>'+(isOral(r.p)?fmt(r.units/100,2)+' mL':fmt(r.units,1)+' units')+'</div><button type="button" class="x" data-delentry="'+r.e.id+'" data-delvial="'+r.v.id+'" aria-label="Delete entry">&times;</button></div>').join("")
+      +'</div>'+(rows.length>100?'<p class="hint">Showing the latest 100.</p>':'');
   } else html+='<p class="hint">Nothing logged yet.</p>';
   html+='</section>';
+  html+=backupHtml();
   vialsEl.innerHTML=html;
   if(uiFlags.add) fillAddDefaults();
   liveLogAlerts(vialsEl);
@@ -1140,10 +1191,12 @@ function renderDetail(){
     html+='<section class="block calc" aria-label="No dose"><h3>Dose</h3><p class="flag '+(p.refTone||"bad")+'">'+esc(p.refMsg||"No published human dose for this route, so the calculator is off for this entry.")+'</p><p class="hint">Need the arithmetic for something else? <button type="button" class="btn small" data-open="custom">Open Any vial (custom)</button></p></section>';
     if(p.notes.length) html+='<section class="block notes"><h3>What to know</h3><ul>'+p.notes.map(n=>'<li>'+esc(n)+'</li>').join("")+'</ul></section>';
     if((p.storage&&p.storage!=="n/a")||p.evidence) html+='<section class="block kv">'+(p.storage&&p.storage!=="n/a"?'<div><span class="k">Storage: </span>'+esc(p.storage)+'</div>':'')+(p.evidence?'<div><span class="k">Evidence: </span>'+esc(p.evidence)+'</div>':'')+'</section>';
+    html+=liveShellHtml(p);
     if(p.sources.length) html+='<details class="sources"><summary>Sources</summary><ul>'+p.sources.map(u=>'<li><a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(srcLabel(u))+'</a></li>').join("")+srcHint(p.sources)+'</ul></details>';
-    detailEl.innerHTML=html; return;
+    detailEl.innerHTML=html; labelTables(detailEl); return;
   }
   if(v&&!uiFlags.form) html+=trackerHtml(p,v);
+  html+=detailNewsHtml(p);
   if(p.freq){
     html+='<div class="glance">'
       +'<div><span class="k">Typical dose</span><span class="v mono">'+esc(doseRange(p))+'</span></div>'
@@ -1169,7 +1222,7 @@ function renderDetail(){
   if(p.ladder.length){
     html+='<section class="block ladder" aria-label="Dosing sequence"><h3>Dosing sequence'+(v?' · your plan':'')+'</h3>'
       +(p.ladderNote?'<p class="hint">'+esc(p.ladderNote)+'</p>':'')
-      +'<div class="tbl-wrap"><table><thead><tr><th>Weeks</th><th>Dose</th><th class="mono">'+(isOral(p)?'Amount':'Units')+'</th><th>Note</th></tr></thead><tbody id="ladder-body"></tbody></table></div></section>';
+      +'<div class="tbl-wrap"><table class="stack"><thead><tr><th>Weeks</th><th>Dose</th><th class="mono">'+(isOral(p)?'Amount':'Units')+'</th><th>Note</th></tr></thead><tbody id="ladder-body"></tbody></table></div></section>';
   }
   if(p.notes.length){
     html+='<section class="block notes"><h3>What to know</h3><ul>'+p.notes.map(n=>'<li>'+esc(n)+'</li>').join("")+'</ul></section>';
@@ -1177,11 +1230,13 @@ function renderDetail(){
   if(p.storage||p.evidence){
     html+='<section class="block kv">'+(p.storage?'<div><span class="k">Storage after mixing: </span>'+esc(p.storage)+'</div>':'')+(p.evidence?'<div><span class="k">Evidence: </span>'+esc(p.evidence)+'</div>':'')+'</section>';
   }
+  html+=liveShellHtml(p);
   if(p.sources.length){
     html+='<details class="sources"><summary>Sources</summary><ul>'+p.sources.map(u=>'<li><a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(srcLabel(u))+'</a></li>').join("")+srcHint(p.sources)+'</ul></details>';
   }
   detailEl.innerHTML=html;
   renderCalcOut(p);
+  labelTables(detailEl);
 }
 function renderCalcOut(p){
   const c=getCalc(p); const r=compute(p,c); const v=vialFor(p.id);
@@ -1217,6 +1272,7 @@ function renderCalcOut(p){
       }).join("")+(!isOral(p)&&p.ladder.some(s=>unitsFor(toMg(s.dose,p.unit),c.vial,c.water)>100)?'<tr><td colspan="4" class="hint">* over 100 units at this mix: use less water or a bigger vial.</td></tr>':'');
     }
   }
+  labelTables(detailEl);
   detailEl.querySelectorAll('.chip[data-set]').forEach(b=>{ if(b.dataset.set!=="target") b.setAttribute("aria-pressed", String(Number(b.dataset.val)===Number(c[b.dataset.set]))); });
 }
 
@@ -1378,9 +1434,301 @@ detailEl.addEventListener("input",e=>{
   sync();
 })();
 
+
+/* ---------- updates.json: news, status changes, new peptides ---------- */
+const UPD_KEY="pdg:updates", NEWS_SEEN="pdg:newsSeen";
+let UPD=null, newsMine=false;
+const KINDS={fda:"FDA & rules",study:"Study",new:"What's new in the app",safety:"Safety",other:"Update"};
+const clip=(x,n)=>String(x==null?"":x).slice(0,n);
+const okUrl=u=>/^https:\/\/[^\s"'<>]+$/i.test(String(u||""))?String(u):"";
+const okDate=d=>/^\d{4}-\d{2}-\d{2}$/.test(String(d||""))?String(d):"";
+const posNum=v=>typeof v==="number"&&isFinite(v)&&v>0;
+const strList=(a,n,m)=>(Array.isArray(a)?a:[]).filter(x=>typeof x==="string"&&x.trim()).slice(0,n).map(x=>clip(x.trim(),m));
+function cleanEntry(e){
+  if(!e||typeof e!=="object") return null;
+  const id=String(e.id||"");
+  if(!/^[a-z0-9_-]{2,30}$/.test(id)||id==="custom") return null;
+  if(!CATNAME[e.cat]||e.cat==="tool") return null;
+  if(typeof e.name!=="string"||e.name.trim().length<2) return null;
+  const ref=!!e.refOnly;
+  if(!ref){
+    if(e.unit!=="mg"&&e.unit!=="mcg") return null;
+    if(!posNum(e.min)||!posNum(e.max)||!posNum(e.common)||e.min>e.max) return null;
+    if(!Array.isArray(e.vials)||!e.vials.length||!e.vials.every(posNum)) return null;
+  }
+  const vials=(Array.isArray(e.vials)?e.vials.filter(posNum):[]).slice(0,8);
+  const ladder=(Array.isArray(e.ladder)?e.ladder:[]).filter(l=>l&&posNum(l.dose)&&l.weeks!=null).slice(0,12).map(l=>({weeks:clip(l.weeks,12),dose:l.dose,label:clip(l.label||"",80)}));
+  const out={id,cat:e.cat,name:clip(e.name.trim(),80),aliases:strList(e.aliases,8,40),
+    status:STATUS[e.status]?e.status:"none",for:clip(e.for||"",600),
+    unit:e.unit==="mcg"?"mcg":"mg",min:e.min||1,max:e.max||1,common:e.common||1,
+    freq:clip(e.freq||"",200),interval:(typeof e.interval==="number"&&e.interval>=0)?e.interval:null,timing:clip(e.timing||"",200),
+    ladder,vials,vialDefault:posNum(e.vialDefault)?e.vialDefault:(vials[0]||10),water:posNum(e.water)?e.water:2,
+    waterPresets:(Array.isArray(e.waterPresets)&&e.waterPresets.every(posNum)&&e.waterPresets.length)?e.waterPresets.slice(0,6):[1,2,3,5],
+    cycle:clip(e.cycle||"",200),notes:strList(e.notes,12,500),storage:clip(e.storage||"",200),evidence:clip(e.evidence||"",300),
+    sources:strList(e.sources,8,300).filter(okUrl),_upd:true};
+  if(typeof e.unitLabel==="string") out.unitLabel=clip(e.unitLabel,20);
+  if(typeof e.vialLabel==="string") out.vialLabel=clip(e.vialLabel,40);
+  if(posNum(e.useDays)) out.useDays=e.useDays;
+  if(ref){ out.refOnly=true; out.refMsg=clip(e.refMsg||"",300); out.refShort=clip(e.refShort||"",120); }
+  return out;
+}
+function cleanUpdates(j){
+  if(!j||typeof j!=="object"||j.version!==1) return null;
+  const u={updated:okDate(j.updated)||"",notice:clip(j.notice||"",400),news:[],status:{},append:{},peptides:[]};
+  for(const n of (Array.isArray(j.news)?j.news:[]).slice(0,80)){
+    if(!n||typeof n!=="object"||!okDate(n.date)||typeof n.title!=="string"||!n.title.trim()) continue;
+    u.news.push({date:n.date,kind:KINDS[n.kind]?n.kind:"other",title:clip(n.title.trim(),140),summary:clip(n.summary||"",600),url:okUrl(n.url),tags:strList(n.tags,12,30)});
+  }
+  u.news.sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);
+  if(j.status&&typeof j.status==="object") for(const id of Object.keys(j.status).slice(0,80)){
+    const x=j.status[id]; if(!x||!STATUS[x.status]) continue;
+    u.status[id]={status:x.status,label:clip(x.label||"",40),note:clip(x.note||"",400)};
+  }
+  if(j.append&&typeof j.append==="object") for(const id of Object.keys(j.append).slice(0,80)){
+    const x=j.append[id]; if(!x||typeof x!=="object") continue;
+    u.append[id]={notes:strList(x.notes,6,400),evidence:clip(x.evidence||"",300),sources:strList(x.sources,6,300).filter(okUrl)};
+  }
+  for(const e of (Array.isArray(j.peptides)?j.peptides:[]).slice(0,60)){ const c=cleanEntry(e); if(c) u.peptides.push(c); }
+  return u;
+}
+function applyUpdates(u){
+  for(let i=DATA.length-1;i>=0;i--) if(DATA[i]._upd) DATA.splice(i,1);
+  for(const p of DATA) if(p._orig){ p.status=p._orig.status; p.statusLabel=p._orig.statusLabel; p.evidence=p._orig.evidence; p.notes=p._orig.notes; p.sources=p._orig.sources; delete p._orig; }
+  if(!u) return;
+  const stamp=u.updated?fmtDate(u.updated):"";
+  const keep=p=>{ if(!p._orig) p._orig={status:p.status,statusLabel:p.statusLabel,evidence:p.evidence,notes:p.notes,sources:p.sources}; };
+  for(const id of Object.keys(u.status)){ const p=DATA.find(x=>x.id===id&&!x._upd); if(!p) continue; keep(p); const x=u.status[id]; p.status=x.status; p.statusLabel=x.label||undefined; if(x.note) p.notes=["UPDATE"+(stamp?" ("+stamp+")":"")+": "+x.note].concat(p.notes); }
+  for(const id of Object.keys(u.append)){ const p=DATA.find(x=>x.id===id&&!x._upd); if(!p) continue; keep(p); const x=u.append[id];
+    p.notes=x.notes.map(n=>"UPDATE"+(stamp?" ("+stamp+")":"")+": "+n).concat(p.notes);
+    if(x.evidence) p.evidence=x.evidence;
+    if(x.sources.length) p.sources=p.sources.concat(x.sources.filter(z=>p.sources.indexOf(z)<0)); }
+  for(const e of u.peptides){ if(DATA.some(x=>x.id===e.id&&!x._upd)) continue; DATA.push(Object.assign({},e)); if(!CATS.some(c=>c.id===e.cat)) CATS.splice(CATS.length,0,{id:e.cat,label:CATNAME[e.cat]}); }
+  DATA.sort((a,b)=>CATORDER.indexOf(a.cat)-CATORDER.indexOf(b.cat));
+}
+function newsDot(){
+  const dot=$("#news-dot"); if(!dot) return;
+  const latest=UPD&&UPD.news.length?UPD.news[0].date:"";
+  const seen=load(NEWS_SEEN,"");
+  dot.hidden=!(latest&&latest>seen);
+}
+function paintHeader(){
+  const rev=$("#rev"); if(rev&&UPD&&UPD.updated) rev.textContent="data updated "+UPD.updated+" · U-100 syringe · BAC water";
+  const sn=$("#site-notice"); if(sn){ sn.hidden=!(UPD&&UPD.notice); sn.textContent=UPD&&UPD.notice?UPD.notice:""; }
+  newsDot();
+}
+async function fetchUpdates(){
+  try{
+    const c=new AbortController(); const t=setTimeout(()=>c.abort(),8000);
+    const r=await fetch("updates.json?ts="+Date.now(),{cache:"no-store",signal:c.signal}); clearTimeout(t);
+    if(!r.ok) return;
+    const u=cleanUpdates(await r.json()); if(!u) return;
+    const changed=JSON.stringify(u)!==JSON.stringify(UPD);
+    UPD=u; save(UPD_KEY,u);
+    if(changed){ applyUpdates(u); if(current&&!DATA.some(p=>p.id===current)) current=null; renderCats(); renderAll(); renderNews(); }
+    paintHeader();
+  }catch(e){}
+}
+function newsFor(id){ return UPD?UPD.news.filter(n=>n.tags.indexOf(id)>=0):[]; }
+function newsCardHtml(n){
+  const tags=n.tags.map(id=>DATA.find(p=>p.id===id)).filter(Boolean);
+  return '<article class="newscard"><div class="nmeta"><span class="kind '+n.kind+'">'+esc(KINDS[n.kind])+'</span><span>'+esc(fmtFull(n.date))+'</span></div>'
+    +'<h3 class="nt">'+esc(n.title)+'</h3>'+(n.summary?'<p>'+esc(n.summary)+'</p>':'')
+    +(n.url?'<p><a href="'+esc(n.url)+'" target="_blank" rel="noopener">Read the source ('+esc(n.url.replace(/^https:\/\/(www\.)?/,"").split("/")[0])+')</a></p>':'')
+    +(tags.length?'<div class="tagrow">'+tags.map(p=>'<button type="button" data-open="'+p.id+'">'+esc(p.name.split(" (")[0])+'</button>').join("")+'</div>':'')
+    +'</article>';
+}
+function fmtFull(iso){ const A=parts(iso); if(!A) return ""; return new Date(A[0],A[1]-1,A[2]).toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"}); }
+function renderNews(){
+  const el=$("#news"); if(!el) return;
+  const mine=new Set(vials.map(v=>v.pid));
+  let items=UPD?UPD.news:[];
+  if(newsMine) items=items.filter(n=>n.tags.some(t=>mine.has(t)));
+  let html='<div class="vhead"><div><h2>What\'s new</h2><p class="hint">'+(UPD&&UPD.updated?'Updates file last changed '+esc(fmtFull(UPD.updated))+'. ':'')+'Each item links to its source. Check the source before acting on anything here.</p></div>'
+    +'<div class="btnrow"><button type="button" class="btn" id="news-back">&larr; Peptides</button></div></div>'
+    +'<div class="chips" role="group" aria-label="Filter"><button type="button" class="chip" data-nf="all" aria-pressed="'+(!newsMine)+'">Everything</button><button type="button" class="chip" data-nf="mine" aria-pressed="'+newsMine+'">Only my vials</button></div>';
+  if(!UPD) html+='<p class="empty">No updates loaded yet. Connect to the internet and reopen this page.</p>';
+  else if(!items.length) html+='<p class="empty">'+(newsMine?'Nothing new for the peptides in your vials.':'No updates yet.')+'</p>';
+  else html+=items.map(newsCardHtml).join("");
+  el.innerHTML=html;
+}
+function detailNewsHtml(p){
+  const n=newsFor(p.id).slice(0,3); if(!n.length) return "";
+  return '<section class="block"><h3>Recent updates</h3>'+n.map(x=>'<p style="margin-top:8px"><span class="kind '+x.kind+'">'+esc(KINDS[x.kind])+'</span> <span class="hint">'+esc(fmtFull(x.date))+'</span><br><b>'+esc(x.title)+'</b>'+(x.url?' · <a href="'+esc(x.url)+'" target="_blank" rel="noopener">source</a>':'')+'</p>').join("")+'</section>';
+}
+
+/* ---------- live studies and FDA records (PubMed, ClinicalTrials.gov, openFDA) ---------- */
+const LIVE_TTL=12*3600*1000;
+const LOOK={bpc157:["BPC-157","BPC 157","body protection compound"],tb500:["TB-500","thymosin beta-4","thymosin beta 4"],ghkcu:["GHK-Cu","copper tripeptide"],kpv:["KPV"],hgh:["somatropin"],cagrisema:["CagriSema"],
+  hhb:null,shb:null,glow:null,klow:null,bpctb:null,blend:null,custom:null};
+function lookTerms(p){
+  if(Object.prototype.hasOwnProperty.call(LOOK,p.id)) return LOOK[p.id];
+  if(Array.isArray(p.lookup)) return p.lookup.filter(x=>typeof x==="string"&&x.length>2).slice(0,4);
+  if(/blend|\//i.test(p.name)) return null;
+  const n=p.name.replace(/\s*\(.*?\)\s*/g," ").trim();
+  return n.length>2?[n]:null;
+}
+async function getJSON(url){
+  const c=new AbortController(); const t=setTimeout(()=>c.abort(),9000);
+  try{ const r=await fetch(url,{signal:c.signal}); if(r.status===404) return {__none:true}; if(!r.ok) throw new Error("http "+r.status); return await r.json(); }
+  finally{ clearTimeout(t); }
+}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function liveFetch(p){
+  const T=lookTerms(p); if(!T) return null;
+  const ors=T.map(t=>'"'+t+'"[Title/Abstract]').join(" OR ");
+  const eu="https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
+  const es=(term,extra)=>eu+"esearch.fcgi?db=pubmed&retmode=json&tool=peptide-dose-guide"+extra+"&term="+encodeURIComponent(term);
+  const ctBase="https://clinicaltrials.gov/api/v2/studies?format=json&countTotal=true&query.intr="+encodeURIComponent(T.join(" OR "));
+  const d={t:Date.now(),terms:T,pm:{trials:null,all:null,items:[]},ct:{total:null,recruiting:null,items:[]},fda:{found:null,items:[]},err:{pm:false,ct:false,fda:false}};
+  const pmTask=(async()=>{
+    try{
+      const a=await getJSON(es("("+ors+") AND (clinical trial[Publication Type] OR randomized controlled trial[Publication Type])","&retmax=5&sort=date"));
+      d.pm.trials=+((a.esearchresult||{}).count||0); const ids=(a.esearchresult||{}).idlist||[];
+      await wait(400);
+      const b=await getJSON(es("("+ors+")","&retmax=0")); d.pm.all=+((b.esearchresult||{}).count||0);
+      if(ids.length){ await wait(400); const s2=await getJSON(eu+"esummary.fcgi?db=pubmed&retmode=json&id="+ids.join(","));
+        d.pm.items=ids.map(id=>{ const r=(s2.result||{})[id]; return r?{id,title:clip(r.title,160),date:clip(r.pubdate,20),src:clip(r.source,40)}:null; }).filter(Boolean); }
+    }catch(e){ d.err.pm=true; }
+  })();
+  const ctTask=(async()=>{
+    try{
+      const a=await getJSON(ctBase+"&pageSize=4&sort=LastUpdatePostDate:desc&fields=NCTId,BriefTitle,OverallStatus,Phase,LastUpdatePostDate");
+      d.ct.total=+(a.totalCount||0);
+      d.ct.items=(a.studies||[]).map(s=>{ const ps=s.protocolSection||{}; const idm=ps.identificationModule||{}, st=ps.statusModule||{}, dm=ps.designModule||{};
+        return {id:clip(idm.nctId,20),title:clip(idm.briefTitle,160),status:clip(st.overallStatus,30),phase:(dm.phases||[]).join("/").replace(/PHASE/g,"Phase ").slice(0,30),upd:clip((st.lastUpdatePostDateStruct||{}).date,12)}; });
+      const r=await getJSON(ctBase+"&pageSize=1&filter.overallStatus=RECRUITING&fields=NCTId"); d.ct.recruiting=+(r.totalCount||0);
+    }catch(e){ d.err.ct=true; }
+  })();
+  const fdaTask=(async()=>{
+    try{
+      const a=await getJSON("https://api.fda.gov/drug/drugsfda.json?limit=5&search="+encodeURIComponent('openfda.generic_name:"'+T[0].toLowerCase()+'"'));
+      if(a.__none){ d.fda.found=false; return; }
+      d.fda.found=true;
+      const seen=new Set();
+      for(const r of (a.results||[])) for(const pr of (r.products||[])){ const k=(pr.brand_name||"")+r.application_number; if(seen.has(k)) continue; seen.add(k);
+        d.fda.items.push({brand:clip(pr.brand_name,60),sponsor:clip(r.sponsor_name,60),app:clip(r.application_number,20),status:clip(pr.marketing_status,30)}); }
+      d.fda.items=d.fda.items.slice(0,5);
+    }catch(e){ d.err.fda=true; }
+  })();
+  await Promise.all([pmTask,ctTask,fdaTask]);
+  return d;
+}
+function ago2(t){ const h=Math.round((Date.now()-t)/3600000); return h<1?"just now":h<48?h+" h ago":Math.round(h/24)+" days ago"; }
+function liveLinks(T){
+  const q=encodeURIComponent(T.map(t=>'"'+t+'"').join(" OR "));
+  return '<p class="hint">Open the full search: <a href="https://pubmed.ncbi.nlm.nih.gov/?term='+q+'" target="_blank" rel="noopener">PubMed</a> · <a href="https://clinicaltrials.gov/search?intr='+encodeURIComponent(T.join(" OR "))+'" target="_blank" rel="noopener">ClinicalTrials.gov</a> · <a href="https://www.accessdata.fda.gov/scripts/cder/daf/" target="_blank" rel="noopener">Drugs@FDA</a></p>';
+}
+function liveShellHtml(p){
+  const T=lookTerms(p);
+  if(!T) return '<section class="block"><h3>Studies and FDA records</h3><p class="hint">This is a blend or a tool, so there is no single search for it. Look up each ingredient on its own page.</p></section>';
+  const c=load("pdg:live:"+p.id,null);
+  return '<details class="block live" id="live" data-live="'+esc(p.id)+'"><summary>Latest studies and FDA records <span class="hint">'+(c?'(checked '+ago2(c.t)+')':'(tap to check live)')+'</span></summary><div id="live-body"><p class="hint">Opening…</p></div></details>';
+}
+function liveHtml(p,d){
+  let h='';
+  const miss=(k)=>'<p class="hint">Could not reach this source right now. Try the link below.</p>';
+  h+='<div class="lsec"><h4>Published studies (PubMed)</h4>'+(d.err.pm?miss():
+    '<div class="big2">'+(d.pm.trials==null?"–":d.pm.trials.toLocaleString())+' human trial'+(d.pm.trials===1?'':'s')+'</div><p class="hint">'+(d.pm.all==null?"":d.pm.all.toLocaleString()+' papers in all, most of them animal or lab work. ')+'Counts are search hits, not a quality rating.</p>'
+    +(d.pm.items.length?'<ul>'+d.pm.items.map(i=>'<li><a href="https://pubmed.ncbi.nlm.nih.gov/'+esc(i.id)+'/" target="_blank" rel="noopener">'+esc(i.title)+'</a> <span class="hint">'+esc(i.date)+(i.src?' · '+esc(i.src):'')+'</span></li>').join("")+'</ul>':''))+'</div>';
+  h+='<div class="lsec"><h4>Registered trials (ClinicalTrials.gov)</h4>'+(d.err.ct?miss():
+    '<div class="big2">'+(d.ct.total==null?"–":d.ct.total.toLocaleString())+' stud'+(d.ct.total===1?'y':'ies')+(d.ct.recruiting!=null?' · '+d.ct.recruiting.toLocaleString()+' recruiting now':'')+'</div>'
+    +(d.ct.items.length?'<ul>'+d.ct.items.map(i=>'<li><a href="https://clinicaltrials.gov/study/'+esc(i.id)+'" target="_blank" rel="noopener">'+esc(i.title)+'</a> <span class="hint">'+esc([i.phase,i.status.replace(/_/g," ").toLowerCase(),i.upd&&("updated "+i.upd)].filter(Boolean).join(" · "))+'</span></li>').join("")+'</ul>':'<p class="hint">No registered trials found under this name.</p>'))+'</div>';
+  h+='<div class="lsec"><h4>FDA approval record (Drugs@FDA)</h4>'+(d.err.fda?miss():
+    (d.fda.found?'<div class="big2">Found under the name “'+esc(d.terms[0])+'”</div><ul>'+d.fda.items.map(i=>'<li>'+esc(i.brand||"(no brand)")+' · '+esc(i.sponsor)+' · '+esc(i.app)+(i.status?' · '+esc(i.status):'')+'</li>').join("")+'</ul><p class="hint">That is the brand product. A vial from another source is not that product.</p>'
+    :'<div class="big2">No approval record under this name</div><p class="hint">That fits an unapproved peptide, but a missing name can also be a spelling difference. It says nothing about safety either way.</p>'))+'</div>';
+  h+=liveLinks(d.terms)+'<p class="hint">Live from public databases, checked '+ago2(d.t)+'. These are search results, not medical advice.</p>';
+  return h;
+}
+async function loadLive(p,force){
+  const body=$("#live-body"); if(!body) return;
+  const c=load("pdg:live:"+p.id,null);
+  if(c&&!force&&Date.now()-c.t<LIVE_TTL){ body.innerHTML=liveHtml(p,c); return; }
+  body.innerHTML=(c?liveHtml(p,c):'')+'<p class="hint">Checking PubMed, ClinicalTrials.gov and the FDA…</p>';
+  let d=null; try{ d=await liveFetch(p); }catch(e){}
+  if(current!==p.id||!$("#live-body")) return;
+  if(!d||(d.err.pm&&d.err.ct&&d.err.fda)){ $("#live-body").innerHTML=(c?liveHtml(p,c):'')+'<p class="flag">Could not reach the study databases right now (no signal, or a blocker on this network). '+(c?'Showing the last check above. ':'')+'</p>'+liveLinks(lookTerms(p)); return; }
+  save("pdg:live:"+p.id,d); $("#live-body").innerHTML=liveHtml(p,d);
+}
+
+/* ---------- friendlier home: first-run help and today strip ---------- */
+function introHtml(){
+  if(vials.length||load("pdg:intro",false)) return "";
+  return '<section class="intro"><h3>Start here</h3><ol><li>Pick your peptide from the list below.</li><li>Enter the vial size and the water you added. The app shows how many units to draw.</li><li>Tap <b>Save this vial</b> to track your doses, what is left, and what is due.</li></ol><div class="btnrow"><button type="button" class="btn primary small" id="intro-ok">Got it</button></div></section>';
+}
+function dueList(){
+  const out=[];
+  for(const v of vials){ const p=peptideOf(v); if(!p||!p.interval) continue; const t=trackerState(p,v); if(t.expired||!(t.week>0)) continue;
+    if(t.last?(t.dueIn!=null&&t.dueIn<=0):true) out.push({v,p,t}); }
+  return out;
+}
+function todayHtml(){
+  if(!vials.length) return "";
+  const due=dueList();
+  if(!due.length) return '<div class="today clear">Nothing due today.</div>';
+  return '<section class="today"><h3>Due today</h3>'+due.map(x=>'<div class="trow"><span><b>'+esc(x.p.name.split(" (")[0])+'</b> · <span class="mono">'+fmt(x.t.dose)+' '+esc(x.p.unitLabel||x.p.unit)+' = '+volTxt(x.p,toMg(x.t.dose,x.p.unit),x.v.vial,x.v.water)+'</span>'+(x.t.last&&x.t.dueIn<0?' · overdue '+(-x.t.dueIn)+'d':'')+'</span><button type="button" class="btn small primary" data-log="'+x.v.id+'">Log dose</button></div>').join("")+'</section>';
+}
+function labelTables(root){
+  root.querySelectorAll("table.stack").forEach(t=>{
+    const heads=[...t.querySelectorAll("thead th")].map(th=>th.textContent.trim());
+    t.querySelectorAll("tbody tr").forEach(tr=>{ [...tr.children].forEach((td,i)=>{ if(!td.hasAttribute("colspan")&&heads[i]) td.setAttribute("data-label",heads[i]); }); });
+  });
+}
+
+/* ---------- backup and restore (vials and dose log) ---------- */
+function backupData(){
+  const calc={}; try{ for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k&&k.indexOf("pdg:calc:")===0) calc[k]=JSON.parse(localStorage.getItem(k)); } }catch(e){}
+  return {app:"peptide-dose-guide",version:1,saved:new Date().toISOString(),vials:vials,calc:calc};
+}
+function backupHtml(){
+  let h='<section class="block backup"><h3>Backup</h3><p class="hint">Your vials and dose log live only on this phone. Save a copy now and then. If the app is ever reinstalled or cleared, paste it back with Restore.</p>'
+    +'<div class="btnrow"><button type="button" class="btn small" id="bk-copy">Copy backup</button><button type="button" class="btn small" id="bk-dl">Download file</button><button type="button" class="btn small" id="bk-open">'+(uiFlags.restoreOpen?'Close restore':'Restore…')+'</button></div>';
+  if(uiFlags.restoreOpen) h+='<p class="hint">Paste a backup below, or choose the file.</p><textarea id="bk-text" placeholder="Paste backup here"></textarea><div class="btnrow"><button type="button" class="btn small primary" id="bk-go">Restore</button><input type="file" id="bk-file" accept=".json,application/json"></div>';
+  if(uiFlags.bkMsg) h+='<p class="flag good">'+esc(uiFlags.bkMsg)+'</p>';
+  if(uiFlags.bkErr) h+='<p class="flag bad">'+esc(uiFlags.bkErr)+'</p>';
+  return h+'</section>';
+}
+function restoreFrom(text){
+  uiFlags.bkMsg=""; uiFlags.bkErr="";
+  let j; try{ j=JSON.parse(text); }catch(e){ uiFlags.bkErr="That is not a backup file. Nothing was changed."; return; }
+  if(!j||j.app!=="peptide-dose-guide"||!Array.isArray(j.vials)){ uiFlags.bkErr="That is not a Peptide Dose Guide backup. Nothing was changed."; return; }
+  let added=0, skipped=0;
+  for(const v of j.vials){
+    const ok=v&&typeof v.id==="string"&&typeof v.pid==="string"&&DATA.some(p=>p.id===v.pid)&&posNum(v.vial)&&posNum(v.water)&&posNum(v.target)&&okDate(v.mixed)&&okDate(v.start)&&Array.isArray(v.log)&&v.log.every(e=>e&&typeof e.id==="string"&&okDate(e.d)&&typeof e.dose==="number"&&isFinite(e.dose));
+    if(!ok){ skipped++; continue; }
+    if(vials.some(x=>x.id===v.id)){ skipped++; continue; }
+    vials.push({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))}); added++;
+  }
+  if(added) saveVials();
+  uiFlags.bkMsg="Restored "+added+" vial"+(added===1?"":"s")+(skipped?" ("+skipped+" skipped: already here or not readable)":"")+".";
+}
+function download(name,text){ try{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type:"application/json"})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); }catch(e){} }
+
+/* ---------- events (new) ---------- */
+
+$("#news-btn").addEventListener("click",()=>{ renderNews(); app.dataset.view="news"; window.scrollTo({top:0}); if(UPD&&UPD.news.length) save(NEWS_SEEN,UPD.news[0].date); newsDot(); });
+$("#news").addEventListener("click",e=>{
+  if(e.target.closest("#news-back")){ app.dataset.view="list"; return; }
+  const f=e.target.closest("[data-nf]"); if(f){ newsMine=f.dataset.nf==="mine"; renderNews(); return; }
+  const o=e.target.closest("[data-open]"); if(o) openPeptide(o.dataset.open);
+});
+listEl.addEventListener("click",e=>{ if(e.target.closest("#intro-ok")){ save("pdg:intro",true); renderList(); } });
+detailEl.addEventListener("toggle",e=>{ const d=e.target; if(d&&d.id==="live"&&d.open){ const p=DATA.find(x=>x.id===d.dataset.live); if(p) loadLive(p,false); } },true);
+vialsEl.addEventListener("click",e=>{
+  if(e.target.closest("#bk-copy")){ const txt=JSON.stringify(backupData()); const b=$("#bk-copy",vialsEl);
+    const done=()=>{ if(b) b.textContent="Copied"; }; const fb=()=>{ uiFlags.restoreOpen=true; renderVials(); const ta=$("#bk-text",vialsEl); if(ta){ ta.value=txt; ta.focus(); ta.select(); } };
+    try{ navigator.clipboard.writeText(txt).then(done,fb); }catch(err){ fb(); } return; }
+  if(e.target.closest("#bk-dl")){ download("dose-guide-backup-"+todayISO()+".json",JSON.stringify(backupData(),null,1)); return; }
+  if(e.target.closest("#bk-open")){ uiFlags.restoreOpen=!uiFlags.restoreOpen; uiFlags.bkMsg=""; uiFlags.bkErr=""; renderVials(); return; }
+  if(e.target.closest("#bk-go")){ restoreFrom(($("#bk-text",vialsEl)||{}).value||""); renderAll(); return; }
+});
+vialsEl.addEventListener("change",e=>{ if(e.target.id==="bk-file"&&e.target.files&&e.target.files[0]){ const r=new FileReader(); r.onload=()=>{ restoreFrom(String(r.result||"")); renderAll(); }; r.readAsText(e.target.files[0]); } });
+(function(){ const d=$("#notice-d"); if(!d) return; if(!load("pdg:noticeSeen",false)) d.open=true; d.addEventListener("toggle",()=>{ if(!d.open) save("pdg:noticeSeen",true); }); })();
+
 /* ---------- boot ---------- */
+{ const cu=cleanUpdates(load(UPD_KEY,null)); if(cu){ UPD=cu; applyUpdates(cu); } }
 if(current&&!DATA.some(p=>p.id===current)) current=null;
-renderCats(); renderAll();
+renderCats(); renderAll(); paintHeader();
+fetchUpdates();
 if(window.matchMedia("(min-width:880px)").matches && !current){ current=vials.length?vials[vials.length-1].pid:"retatrutide"; renderList(); renderDetail(); }
 app.dataset.view="list";
 })();
