@@ -297,7 +297,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: open <b>What's new</b> for recent FDA and study updates, with links to the sources. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-11-01f · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
+    <p class="hint" id="appver">App version 2026-11-01g · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
     <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
@@ -1789,6 +1789,7 @@ function renderPrices(){
     const i=$("#pr-pin"); if(i&&!prErr) i.focus(); return;
   }
   const ord=prOrder(), ed=prEdits(); const q=prQ.trim().toLowerCase();
+  if(uiFlags.prCart){ el.innerHTML=cartHtml(ord); window.scrollTo(0,0); return; }
   const groups=[],gi={}; PR.forEach(r=>{ let g=gi[r.n]; if(!g){ g={n:r.n,rows:[]}; gi[r.n]=g; groups.push(g); } g.rows.push(r); });
   groups.sort((a,b)=>a.n.localeCompare(b.n));
   const srcOk=r=>prSrc==="all"||(prSrc==="mine"?!r.u:prSrc==="box"?r.u==="box":r.u==="pc");
@@ -1808,7 +1809,7 @@ function renderPrices(){
   if(!sel.length) h+='<p class="empty">No match.</p>';
   h+=importHtml();
   h+='<section class="block"><h3>Adjust every price</h3><p class="hint">Add or take off a percent from your price list (not the Xint box prices), for example 20 for +20%. It replaces your earlier edits.</p><div class="btnrow"><input id="pr-adj" class="pedit" inputmode="decimal" placeholder="%" style="width:70px"><button type="button" class="btn small" id="pr-adjgo">Apply</button><button type="button" class="btn small" id="pr-reset">Reset to list</button></div></section>';
-  h+='<div class="ordbar"><div class="tot">Order: '+count+' item'+(count===1?'':'s')+' · '+money(total)+'</div>'+(unpriced?'<p class="hint">'+unpriced+' item'+(unpriced===1?' has':'s have')+' no price yet and '+(unpriced===1?'is':'are')+' not in the total. Type a price on its card.</p>':'')+'<div class="btnrow"><button type="button" class="btn small primary" id="pr-copy"'+(count?'':' disabled')+'>Copy order</button><button type="button" class="btn small" id="pr-clear"'+(count?'':' disabled')+'>Clear order</button></div>'+(uiFlags.prMsg?'<p class="hint">'+esc(uiFlags.prMsg)+'</p>':'')+'</div>';
+  h+='<div class="ordbar"><div class="tot">Order: '+count+' item'+(count===1?'':'s')+' · '+money(total)+'</div>'+(unpriced?'<p class="hint">'+unpriced+' item'+(unpriced===1?' has':'s have')+' no price yet and '+(unpriced===1?'is':'are')+' not in the total. Type a price on its card.</p>':'')+'<div class="btnrow"><button type="button" class="btn small primary" id="pr-cart-open">View cart'+(count?' ('+count+')':'')+'</button><button type="button" class="btn small" id="pr-copy"'+(count?'':' disabled')+'>Copy order</button><button type="button" class="btn small" id="pr-clear"'+(count?'':' disabled')+'>Clear order</button></div>'+(uiFlags.prMsg?'<p class="hint">'+esc(uiFlags.prMsg)+'</p>':'')+'</div>';
   const keepOpen=[...el.querySelectorAll("details.pgroup[open]")].map(d=>d.dataset.g);
   const pos=window.scrollY;
   el.innerHTML=h;
@@ -1894,7 +1895,37 @@ async function prSaveList(rows,name){
   const tb=a=>btoa(String.fromCharCode.apply(null,new Uint8Array(a)));
   save(CUSTOM_KEY,{iv:tb(iv),ct:tb(ct)}); PR=rows; PRINFO={name,at}; save(PEDIT_KEY,{});
 }
-function prLock(){ PR=null; PRKEY=null; PRBUILT=null; prImp=null; prErr=""; prQ=""; }
+
+function cartLines(ord){
+  const L=[]; PR.forEach(r=>{ const n=ord[prKey(r)]||0; if(n>0) L.push({r,n,p:prPrice(r)}); }); return L;
+}
+function cartText(ord){
+  const L=cartLines(ord); let tot=0;
+  const ls=L.map(x=>{ const nm=x.r.n+" "+x.r.s+(x.r.c?" ["+x.r.c+"]":"")+(x.r.u==="box"?" (box of 10)":""); if(x.p==null) return x.n+" x "+nm+" (price TBD)"; tot+=x.n*x.p; return x.n+" x "+nm+" @ "+money(x.p)+" = "+money(x.n*x.p); });
+  return ls.join("\n")+"\nTotal: "+money(tot);
+}
+function cartHtml(ord){
+  const L=cartLines(ord);
+  const groups=[["My price list",x=>!x.r.u],["Xint boxes (10 vials each)",x=>x.r.u==="box"],["Pens",x=>x.r.u==="pc"]];
+  let h='<div class="vhead"><div><h2>Cart</h2><p class="hint">'+(L.length?L.length+' line'+(L.length===1?'':'s')+', '+L.reduce((a,x)=>a+x.n,0)+' items. Change quantities here.':'Nothing in the cart yet.')+'</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-cart-close">&larr; Keep shopping</button></div></div>';
+  let total=0,unp=0;
+  if(!L.length) h+='<p class="empty">Your cart is empty. Go back, open a peptide, and tap + to add it.</p>';
+  groups.forEach(g=>{
+    const rows=L.filter(g[1]); if(!rows.length) return;
+    let sub=0; rows.forEach(x=>{ if(x.p==null) unp+=x.n; else sub+=x.n*x.p; }); total+=sub;
+    h+='<section class="block"><h3>'+g[0]+'</h3>'+rows.map(x=>{ const k=prKey(x.r);
+      return '<div class="prow"><div class="pl"><b>'+esc(x.r.n)+'</b><span class="pp">'+esc(x.r.s)+(x.r.c?' · '+esc(x.r.c):'')+'</span><span class="pp">'+(x.p==null?'no price yet':money(x.p)+(x.r.u==="box"?' per box':' each')+' · line '+money(x.n*x.p))+'</span></div>'
+       +'<div class="qty"><button type="button" data-q="-1" data-k="'+esc(k)+'" aria-label="Less">&minus;</button><span>'+x.n+'</span><button type="button" data-q="1" data-k="'+esc(k)+'" aria-label="More">+</button></div>'
+       +'<button type="button" class="btn small" data-rm="'+esc(k)+'">Remove</button></div>'; }).join("")
+      +'<p class="hint" style="margin-top:8px">Subtotal: <b>'+money(sub)+'</b></p></section>';
+  });
+  if(L.length){
+    h+='<div class="ordbar"><div class="tot">Total: '+money(total)+'</div>'+(unp?'<p class="hint">'+unp+' item'+(unp===1?' has':'s have')+' no price yet and '+(unp===1?'is':'are')+' not in the total.</p>':'')
+      +'<div class="btnrow"><button type="button" class="btn small primary" id="pr-copy">Copy order</button>'+(navigator.share?'<button type="button" class="btn small" id="pr-share">Share</button>':'')+'<button type="button" class="btn small" id="pr-clear">Clear cart</button></div>'+(uiFlags.prMsg?'<p class="hint" style="white-space:pre-wrap">'+esc(uiFlags.prMsg)+'</p>':'')+'</div>';
+  }
+  return h;
+}
+function prLock(){ uiFlags.prCart=false; PR=null; PRKEY=null; PRBUILT=null; prImp=null; prErr=""; prQ=""; }
 
 /* ---------- events (new) ---------- */
 
@@ -1902,6 +1933,8 @@ $("#prices-btn").addEventListener("click",()=>{ renderPrices(); app.dataset.view
 $("#prices").addEventListener("click",async e=>{
   const t=e.target; uiFlags.prFocus=false;
   if(t.closest("#pr-back")){ app.dataset.view="list"; return; }
+  if(t.closest("#pr-cart-open")){ uiFlags.prCart=true; uiFlags.prMsg=""; renderPrices(); return; }
+  if(t.closest("#pr-cart-close")){ uiFlags.prCart=false; uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-lock")){ prLock(); renderPrices(); return; }
   if(t.closest("#pr-go")){
     const now=Date.now(); if(now<prWait){ prErr="Too many tries. Wait "+Math.ceil((prWait-now)/1000)+" s."; renderPrices(); return; }
@@ -1911,13 +1944,13 @@ $("#prices").addEventListener("click",async e=>{
     renderPrices(); return;
   }
   if(!PR) return;
+  const rm=t.closest("[data-rm]"); if(rm){ const o=prOrder(); delete o[rm.dataset.rm]; save(ORD_KEY,o); renderPrices(); return; }
+  if(t.closest("#pr-share")){ try{ navigator.share({title:"Order",text:cartText(prOrder())}); }catch(err){} return; }
   const qb=t.closest("[data-q]");
   if(qb){ const k=qb.dataset.k, o=prOrder(); const n=Math.max(0,(o[k]||0)+(+qb.dataset.q)); if(n) o[k]=n; else delete o[k]; save(ORD_KEY,o); uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-clear")){ save(ORD_KEY,{}); uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-copy")){
-    const o=prOrder(); let tot=0, ls=[]; PR.forEach(r=>{ const n=o[prKey(r)]||0; if(n>0){ const p=prPrice(r); if(p==null){ ls.push(n+" x "+r.n+" "+r.s+" (price TBD)"); } else { tot+=n*p; ls.push(n+" x "+r.n+" "+r.s+" @ "+money(p)+" = "+money(n*p)); } } });
-    const txt=ls.join("\n")+"\nTotal: "+money(tot);
-    const done=()=>{ uiFlags.prMsg="Order copied."; renderPrices(); };
+    const txt=cartText(prOrder()); const done=()=>{ uiFlags.prMsg="Order copied."; renderPrices(); };
     try{ navigator.clipboard.writeText(txt).then(done,()=>{ uiFlags.prMsg=txt; renderPrices(); }); }catch(err){ uiFlags.prMsg=txt; renderPrices(); } return; }
   if(t.closest("#pr-adjgo")){ const pc=parseFloat(($("#pr-adj")||{}).value); if(!isFinite(pc)||pc<=-90||pc>500) return; const ed={}; PR.forEach(r=>{ if(typeof r.p==="number"&&!r.u) ed[prKey(r)]=Math.round(r.p*(1+pc/100)*100)/100; }); save(PEDIT_KEY,ed); uiFlags.prMsg="All prices adjusted "+(pc>=0?"+":"")+pc+"%."; renderPrices(); return; }
   if(t.closest("#pr-reset")){ save(PEDIT_KEY,{}); uiFlags.prMsg="Prices reset to the list."; renderPrices(); return; }
