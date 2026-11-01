@@ -297,7 +297,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: open <b>What's new</b> for recent FDA and study updates, with links to the sources. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-11-01j · Sync across devices · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
+    <p class="hint" id="appver">App version 2026-11-01k · Sync + subscription · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
     <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
@@ -1023,7 +1023,7 @@ function myVialsHtml(){
 }
 function renderList(){
   const items=DATA.filter(matches);
-  let html=(q||cat!=="all")?"":(introHtml()+todayHtml()+myVialsHtml());
+  let html=(q||cat!=="all")?"":(syBannerHtml()+introHtml()+todayHtml()+myVialsHtml());
   if(!items.length){ listEl.innerHTML=html+'<p class="empty">Nothing matches that. Try a shorter name or an alias.</p>'; return; }
   let lastCat=null;
   for(const p of items){
@@ -2070,7 +2070,9 @@ async function syncNow(manual){
     syTrack();
     const g=await syCall("/vials");
     if(g.status===401){ SY=null; save("pdg:sync",null); uiFlags.syErr="Signed out. Sign in again to keep syncing."; return; }
+    if(g.status===402){ SY.account=(g.j&&g.j.account)||SY.account; save("pdg:sync",SY); uiFlags.syErr=""; uiFlags.syMsg=""; renderList(); return; }
     if(!g.ok) throw new Error("get");
+    if(g.j&&g.j.account){ SY.account=g.j.account; save("pdg:sync",SY); }
     const rd=(g.j&&g.j.data)||{};
     const L={vials:vials,m:syLoad("pdg:syncM"),del:syLoad("pdg:syncDel")}, M=syMerge(L,{vials:Array.isArray(rd.vials)?rd.vials:[],m:rd.m||{},del:rd.del||{}});
     const changedLocal=syCanon(M.vials)!==syCanon(vials);
@@ -2080,30 +2082,52 @@ async function syncNow(manual){
     const remote=JSON.stringify({v:syCanon(Array.isArray(rd.vials)?rd.vials.map(syClean).filter(Boolean):[]),d:rd.del||{}}), mine=JSON.stringify({v:syCanon(vials),d:M.del});
     if(remote!==mine||JSON.stringify(rd.m||{})!==JSON.stringify(M.m)){
       const p=await syCall("/vials",{method:"PUT",body:JSON.stringify({data:{app:"peptide-dose-guide",vials:vials,m:M.m,del:M.del,saved:new Date().toISOString()}})});
+      if(p.status===402){ SY.account=(p.j&&p.j.account)||SY.account; save("pdg:sync",SY); renderList(); return; }
       if(!p.ok) throw new Error("put");
     }
     SY.last=Date.now(); save("pdg:sync",SY); uiFlags.syErr=""; uiFlags.syMsg="";
+    renderList();
     if(changedLocal){ renderAll(); return; }
   }catch(e){ uiFlags.syMsg=""; uiFlags.syErr="Could not reach the sync server. Your vials are safe on this phone and will sync later."; }
   finally{ syBusy=false; syRefresh(); if(syPending){ syPending=false; syQueue(); } }
 }
 function syQueue(){ if(!SY) return; clearTimeout(syTimer); syTimer=setTimeout(()=>syncNow(false),1500); }
 function syRefresh(){ if(typeof vialsEl!=="undefined"&&app.dataset.view==="vials"&&!uiFlags.syForm) { const s=$("#sync-card",vialsEl); if(s) s.outerHTML=syncHtml(); } else if(typeof vialsEl!=="undefined"&&app.dataset.view==="vials"){ const s=$("#sync-msg",vialsEl); if(s) s.innerHTML=syMsgHtml(); } }
+/* subscription: 30 days free, then $5/month paid to the owner by Cash App; the reminder shows on its own */
+function syAcct(){ return SY&&SY.account&&typeof SY.account==="object"?SY.account:null; }
+function syPayText(a){
+  const price="$"+esc((a.pay&&a.pay.price)||"5"), link=a.pay&&a.pay.link;
+  return {price:price, btn:link?'<a class="btn small primary" href="'+esc(link)+'" target="_blank" rel="noopener">Pay '+price+' on Cash App</a>':'<span class="hint">Ask Steve how to pay.</span>'};
+}
+function syLine(a){
+  if(!a) return "";
+  const t=syPayText(a);
+  if(a.state==="trial") return '<p class="hint">Free trial: <b>'+a.days_left+' day'+(a.days_left===1?"":"s")+' left</b>. After that it is '+t.price+'/month, paid on Cash App.</p>';
+  if(a.state==="due") return '<p class="flag bad">Your '+(a.trial?"free trial":"subscription")+' ends '+(a.days_left===0?"today":(a.days_left===1?"tomorrow":"in "+a.days_left+" days"))+(a.ends?" ("+esc(a.ends)+")":"")+'. Send '+t.price+' on Cash App to keep syncing.</p><div class="btnrow">'+t.btn+'</div>';
+  if(a.state==="grace") return '<p class="flag bad">Your '+(a.trial?"free trial":"subscription")+' ended'+(a.ends?" "+esc(a.ends):"")+'. Send '+t.price+' on Cash App now. Syncing stops in a few days.</p><div class="btnrow">'+t.btn+'</div>';
+  if(a.state==="locked") return '<p class="flag bad">Syncing is paused because your '+(a.trial?"free trial":"subscription")+' ended. Your vials are safe on this device. Send '+t.price+' on Cash App to turn it back on.</p><div class="btnrow">'+t.btn+'</div>';
+  return "";
+}
+function syBannerHtml(){
+  const a=syAcct(); if(!a||(a.state!=="due"&&a.state!=="grace"&&a.state!=="locked")) return "";
+  return '<section class="block" id="sy-banner">'+syLine(a)+'</section>';
+}
 function syMsgHtml(){ return (uiFlags.syMsg?'<p class="flag good">'+esc(uiFlags.syMsg)+'</p>':'')+(uiFlags.syErr?'<p class="flag bad">'+esc(uiFlags.syErr)+'</p>':''); }
 function syncHtml(){
   let h='<section class="block backup" id="sync-card"><h3>Sync across devices</h3>';
   if(SY){
     const t=SY.last?new Date(SY.last).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):"";
-    h+='<p class="hint">Signed in as <b>'+esc(SY.name)+'</b>'+(t?' · last synced '+esc(t):'')+'. Vials and dose logs follow you to every device where you sign in.</p>'
+    h+='<p class="hint">Signed in as <b>'+esc(SY.name)+'</b>'+(t?' · last synced '+esc(t):'')+'. Vials and dose logs follow you to every device where you sign in.</p>'+syLine(syAcct())
       +'<div class="btnrow"><button type="button" class="btn small primary" id="sy-now">Sync now</button><button type="button" class="btn small" id="sy-out">Sign out</button></div>';
   } else if(uiFlags.syForm){
     const mk=uiFlags.syForm==="new";
-    h+='<p class="hint">'+(mk?'Pick a login name and a 4-digit PIN. Use the same name and PIN on your other devices.':'Sign in with your login name and 4-digit PIN.')+'</p>'
+    h+='<p class="hint">'+(mk?'Pick a login name and a 4-digit PIN. Use the same name and PIN on your other devices. The first 30 days are free, then $5/month paid on Cash App. Your WhatsApp number is only used to send you the payment reminder.':'Sign in with your login name and 4-digit PIN.')+'</p>'
       +'<div class="addform"><label>Login name<input id="sy-name" type="text" autocomplete="username" autocapitalize="off" maxlength="40"></label>'
+      +(mk?'<label>WhatsApp number (with country code, digits only)<input id="sy-wa" type="tel" inputmode="numeric" placeholder="15551234567" autocomplete="tel" maxlength="20"></label>':'')
       +'<label>4-digit PIN<input id="sy-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="'+(mk?'new-password':'current-password')+'"></label></div>'
       +'<div class="btnrow"><button type="button" class="btn small primary" id="sy-go">'+(mk?'Create login':'Sign in')+'</button><button type="button" class="btn small" id="sy-cancel">Cancel</button></div>';
   } else {
-    h+='<p class="hint">Move your vials between your phone, tablet and computer. Make a login with a name and a 4-digit PIN. Nothing syncs until you do.</p>'
+    h+='<p class="hint">Move your vials between your phone, tablet and computer. Make a login with a name and a 4-digit PIN. Free for 30 days, then $5/month. Nothing syncs until you do.</p>'
       +'<div class="btnrow"><button type="button" class="btn small primary" id="sy-new">Create login</button><button type="button" class="btn small" id="sy-in">Sign in</button></div>';
   }
   return h+'<div id="sync-msg">'+syMsgHtml()+'</div></section>';
@@ -2112,11 +2136,13 @@ async function syAuth(kind){
   const name=(($("#sy-name",vialsEl)||{}).value||"").trim(), pin=(($("#sy-pin",vialsEl)||{}).value||"").trim();
   if(name.length<3){ uiFlags.syErr="Enter your login name (at least 3 letters)."; uiFlags.syMsg=""; syRefresh(); return; }
   if(!/^\d{4}$/.test(pin)){ uiFlags.syErr="The PIN is exactly 4 digits."; uiFlags.syMsg=""; syRefresh(); return; }
+  const wa=String((($("#sy-wa",vialsEl)||{}).value)||"").replace(/\D/g,"");
+  if(kind==="new"&&(wa.length<8||wa.length>15)){ uiFlags.syErr="Enter your WhatsApp number with the country code, digits only (for example 15551234567)."; uiFlags.syMsg=""; syRefresh(); return; }
   uiFlags.syErr=""; uiFlags.syMsg="Working… (the first try can take up to a minute while the server wakes up)"; syRefresh();
   try{
-    const r=await syCall(kind==="new"?"/register":"/login",{method:"POST",body:JSON.stringify({name:name,pin:pin})});
+    const r=await syCall(kind==="new"?"/register":"/login",{method:"POST",body:JSON.stringify({name:name,pin:pin,whatsapp:wa})});
     if(!r.ok){ uiFlags.syMsg=""; uiFlags.syErr=(r.j&&r.j.error)||"That did not work. Try again."; syRefresh(); return; }
-    SY={token:r.j.token,name:r.j.name,last:0}; save("pdg:sync",SY); uiFlags.syForm=""; uiFlags.syMsg=""; uiFlags.syErr="";
+    SY={token:r.j.token,name:r.j.name,last:0,account:r.j.account||null}; save("pdg:sync",SY); uiFlags.syForm=""; uiFlags.syMsg=""; uiFlags.syErr="";
     await syncNow(true); renderVials();
   }catch(e){ uiFlags.syMsg=""; uiFlags.syErr="Could not reach the sync server. Check your internet and try again."; syRefresh(); }
 }
