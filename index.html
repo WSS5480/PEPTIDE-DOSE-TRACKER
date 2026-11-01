@@ -244,6 +244,27 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
   table.stack td[data-label]::before{content:attr(data-label);color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;flex:0 0 auto;padding-top:2px}
   table.stack td[colspan]{display:block}
 }
+
+/* private price list */
+.app[data-view="prices"] .panes,.app[data-view="prices"] .vials,.app[data-view="prices"] .news{display:none}
+.app[data-view="prices"] .top .search,.app[data-view="prices"] .top .chips,.app[data-view="prices"] .notice{display:none}
+.prices{display:none;flex-direction:column;gap:12px;margin-top:14px;min-width:0}
+.app[data-view="prices"] .prices{display:flex}
+.pinbox{max-width:320px;margin:30px auto;display:flex;flex-direction:column;gap:10px;text-align:center}
+.pinbox input{font-size:1.6rem;text-align:center;letter-spacing:.5em;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink)}
+.pgroup{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.pgroup>summary{cursor:pointer;padding:10px 12px;font-weight:600;display:flex;justify-content:space-between;gap:10px}
+.pgroup>summary .hint{font-weight:400}
+.prow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-top:1px solid var(--line);flex-wrap:wrap}
+.prow .pl{display:flex;flex-direction:column;min-width:80px}
+.prow .pl b{font-size:.95rem}
+.prow .pp{font-family:var(--font-mono);font-size:.85rem;color:var(--muted)}
+.prow input.pedit{width:78px;font-family:var(--font-mono);padding:5px 6px;border:1px solid var(--line);border-radius:6px;background:var(--field);color:var(--ink)}
+.qty{display:flex;align-items:center;gap:6px}
+.qty button{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:var(--field);font-size:1.1rem;color:var(--ink)}
+.qty span{min-width:22px;text-align:center;font-family:var(--font-mono)}
+.ordbar{position:sticky;bottom:0;background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.ordbar .tot{font-size:1.1rem;font-weight:700}
 @media (prefers-reduced-motion:reduce){.syringe .fill{transition:none}}
 </style>
 <style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
@@ -254,7 +275,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 <div class="app" id="app" data-view="list">
   <header class="top">
     <div class="brand">
-      <div class="btnrow" style="align-items:center"><h1>Peptide Dose Guide</h1><button type="button" class="btn small primary" id="vials-btn">My vials</button><button type="button" class="btn small" id="news-btn">What's new<span class="dot" id="news-dot" hidden></span></button><button type="button" class="btn small" id="install-btn" hidden aria-haspopup="dialog"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Install app</button></div>
+      <div class="btnrow" style="align-items:center"><h1>Peptide Dose Guide</h1><button type="button" class="btn small primary" id="vials-btn">My vials</button><button type="button" class="btn small" id="prices-btn">Prices</button><button type="button" class="btn small" id="news-btn">What's new<span class="dot" id="news-dot" hidden></span></button><button type="button" class="btn small" id="install-btn" hidden aria-haspopup="dialog"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Install app</button></div>
       <span class="rev" id="rev">data reviewed 2026-10 · U-100 syringe · BAC water</span>
     </div>
     <input class="search" id="q" type="search" placeholder="Search peptides (reta, bpc, glow…)" autocomplete="off" aria-label="Search peptides">
@@ -264,6 +285,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
   <div class="flag" id="site-notice" hidden></div>
   <section class="vials" id="vials" aria-label="My vials and dose log"></section>
   <section class="news" id="news" aria-label="What's new"></section>
+  <section class="prices" id="prices" aria-label="Price list"></section>
   <main class="panes">
     <section class="list" id="list" aria-label="Peptides"></section>
     <section class="detail" id="detail" aria-live="polite"></section>
@@ -275,7 +297,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: open <b>What's new</b> for recent FDA and study updates, with links to the sources. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-11-01 · update feed, live study and FDA lookups, Today strip, backup and restore</p>
+    <p class="hint" id="appver">App version 2026-11-01b · Prices tab (PIN), update feed, live study and FDA lookups, Today strip, backup and restore</p>
     <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
@@ -1703,7 +1725,90 @@ function restoreFrom(text){
 }
 function download(name,text){ try{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type:"application/json"})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); }catch(e){} }
 
+
+/* ---------- private price list (encrypted; unlocks with a PIN) ---------- */
+const PRICE_BLOB={"s":"AUZb95sV2B2HJJ8mKoR3/g==","iv":"ZIZvER1bDAp8NAOZ","ct":"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"};
+const ORD_KEY="pdg:order", PEDIT_KEY="pdg:priceEdits";
+let PR=null, prLockAt=0, prErr="", prFails=0, prWait=0, prQ="", prAdj=0;
+const b64=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
+async function prUnlock(pin){
+  if(!window.crypto||!crypto.subtle) throw new Error("nocrypto");
+  const km=await crypto.subtle.importKey("raw",new TextEncoder().encode(pin),"PBKDF2",false,["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(PRICE_BLOB.s),iterations:200000,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt"]);
+  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(PRICE_BLOB.iv)},key,b64(PRICE_BLOB.ct));
+  return JSON.parse(new TextDecoder().decode(pt)).rows;
+}
+const money=n=>"$"+(Math.round(n*100)/100).toFixed(2);
+function prEdits(){ return load(PEDIT_KEY,{}); }
+function prPrice(r){ const e=prEdits(); const k=r.n+"|"+r.s; return typeof e[k]==="number"?e[k]:r.p; }
+function prOrder(){ return load(ORD_KEY,{}); }
+function renderPrices(){
+  const el=$("#prices"); if(!el) return;
+  if(!PR){
+    el.innerHTML='<div class="pinbox"><h2>Price list</h2><p class="hint">Private. Enter the PIN to view.</p><input id="pr-pin" type="password" inputmode="numeric" autocomplete="off" maxlength="12" aria-label="PIN"><button type="button" class="btn primary" id="pr-go">Unlock</button>'+(prErr?'<p class="flag bad">'+esc(prErr)+'</p>':'')+'<button type="button" class="btn small" id="pr-back">&larr; Peptides</button></div>';
+    const i=$("#pr-pin"); if(i&&!prErr) i.focus(); return;
+  }
+  const ord=prOrder(), ed=prEdits(); const q=prQ.trim().toLowerCase();
+  const groups=[]; PR.forEach(r=>{ let g=groups.find(x=>x.n===r.n); if(!g){ g={n:r.n,rows:[]}; groups.push(g); } g.rows.push(r); });
+  groups.sort((a,b)=>a.n.localeCompare(b.n));
+  const sel=groups.filter(g=>!q||g.n.toLowerCase().indexOf(q)>=0);
+  let total=0,count=0,lines=[];
+  PR.forEach(r=>{ const n=ord[r.n+"|"+r.s]||0; if(n>0){ total+=n*prPrice(r); count+=n; lines.push(n+" × "+r.n+" "+r.s+" @ "+money(prPrice(r))+" = "+money(n*prPrice(r))); } });
+  let h='<div class="vhead"><div><h2>Price list</h2><p class="hint">Per vial. Tap a peptide, set quantities to build an order. Edits to a price stay on this phone.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-back">&larr; Peptides</button><button type="button" class="btn small" id="pr-lock">Lock</button></div></div>'
+   +'<input id="pr-q" class="search" type="search" placeholder="Search price list" value="'+esc(prQ)+'" aria-label="Search price list">';
+  h+=sel.map(g=>{ const inOrd=g.rows.reduce((a,r)=>a+(ord[r.n+"|"+r.s]||0),0);
+    return '<details class="pgroup"'+((q||inOrd)?' open':'')+' data-g="'+esc(g.n)+'"><summary><span>'+esc(g.n)+'</span><span class="hint">'+g.rows.map(r=>esc(r.s)).join(" · ")+(inOrd?' · <b>'+inOrd+' in order</b>':'')+'</span></summary>'
+     +g.rows.map(r=>{ const k=r.n+"|"+r.s, n=ord[k]||0; return '<div class="prow"><div class="pl"><b>'+esc(r.s)+'</b><span class="pp">'+(typeof ed[k]==="number"?'edited · was '+money(r.p):'list '+money(r.p))+'</span></div>'
+       +'<input class="pedit" inputmode="decimal" value="'+prPrice(r).toFixed(2)+'" data-k="'+esc(k)+'" aria-label="Price for '+esc(r.n+' '+r.s)+'">'
+       +'<div class="qty"><button type="button" data-q="-1" data-k="'+esc(k)+'" aria-label="Less">&minus;</button><span>'+n+'</span><button type="button" data-q="1" data-k="'+esc(k)+'" aria-label="More">+</button></div></div>'; }).join("")+'</details>'; }).join("");
+  if(!sel.length) h+='<p class="empty">No match.</p>';
+  h+='<section class="block"><h3>Adjust every price</h3><p class="hint">Add or take off a percent from all list prices, for example 20 for +20%. It replaces your earlier edits.</p><div class="btnrow"><input id="pr-adj" class="pedit" inputmode="decimal" placeholder="%" style="width:70px"><button type="button" class="btn small" id="pr-adjgo">Apply</button><button type="button" class="btn small" id="pr-reset">Reset to list</button></div></section>';
+  h+='<div class="ordbar"><div class="tot">Order: '+count+' vial'+(count===1?'':'s')+' · '+money(total)+'</div><div class="btnrow"><button type="button" class="btn small primary" id="pr-copy"'+(count?'':' disabled')+'>Copy order</button><button type="button" class="btn small" id="pr-clear"'+(count?'':' disabled')+'>Clear order</button></div>'+(uiFlags.prMsg?'<p class="hint">'+esc(uiFlags.prMsg)+'</p>':'')+'</div>';
+  const keepOpen=[...el.querySelectorAll("details.pgroup[open]")].map(d=>d.dataset.g);
+  const pos=window.scrollY;
+  el.innerHTML=h;
+  el.querySelectorAll("details.pgroup").forEach(d=>{ if(keepOpen.indexOf(d.dataset.g)>=0) d.open=true; });
+  window.scrollTo(0,pos);
+  const qi=$("#pr-q"); if(qi&&uiFlags.prFocus){ qi.focus(); qi.setSelectionRange(qi.value.length,qi.value.length); }
+}
+function prLock(){ PR=null; prErr=""; prQ=""; }
+
 /* ---------- events (new) ---------- */
+
+$("#prices-btn").addEventListener("click",()=>{ renderPrices(); app.dataset.view="prices"; window.scrollTo({top:0}); });
+$("#prices").addEventListener("click",async e=>{
+  const t=e.target; uiFlags.prFocus=false;
+  if(t.closest("#pr-back")){ app.dataset.view="list"; return; }
+  if(t.closest("#pr-lock")){ prLock(); renderPrices(); return; }
+  if(t.closest("#pr-go")){
+    const now=Date.now(); if(now<prWait){ prErr="Too many tries. Wait "+Math.ceil((prWait-now)/1000)+" s."; renderPrices(); return; }
+    const pin=($("#pr-pin")||{}).value||"";
+    try{ PR=await prUnlock(pin); prErr=""; prFails=0; prLockAt=Date.now(); }
+    catch(err){ PR=null; if(err&&err.message==="nocrypto") prErr="This browser can't unlock it here (needs a secure https page)."; else { prFails++; prErr="Wrong PIN."; if(prFails>=5){ prWait=Date.now()+30000; prFails=0; prErr="Wrong PIN. Wait 30 s before trying again."; } } }
+    renderPrices(); return;
+  }
+  if(!PR) return;
+  const qb=t.closest("[data-q]");
+  if(qb){ const k=qb.dataset.k, o=prOrder(); const n=Math.max(0,(o[k]||0)+(+qb.dataset.q)); if(n) o[k]=n; else delete o[k]; save(ORD_KEY,o); uiFlags.prMsg=""; renderPrices(); return; }
+  if(t.closest("#pr-clear")){ save(ORD_KEY,{}); uiFlags.prMsg=""; renderPrices(); return; }
+  if(t.closest("#pr-copy")){
+    const o=prOrder(); let tot=0, ls=[]; PR.forEach(r=>{ const n=o[r.n+"|"+r.s]||0; if(n>0){ const p=prPrice(r); tot+=n*p; ls.push(n+" x "+r.n+" "+r.s+" @ "+money(p)+" = "+money(n*p)); } });
+    const txt=ls.join("\n")+"\nTotal: "+money(tot);
+    const done=()=>{ uiFlags.prMsg="Order copied."; renderPrices(); };
+    try{ navigator.clipboard.writeText(txt).then(done,()=>{ uiFlags.prMsg=txt; renderPrices(); }); }catch(err){ uiFlags.prMsg=txt; renderPrices(); } return; }
+  if(t.closest("#pr-adjgo")){ const pc=parseFloat(($("#pr-adj")||{}).value); if(!isFinite(pc)||pc<=-90||pc>500) return; const ed={}; PR.forEach(r=>{ ed[r.n+"|"+r.s]=Math.round(r.p*(1+pc/100)*100)/100; }); save(PEDIT_KEY,ed); uiFlags.prMsg="All prices adjusted "+(pc>=0?"+":"")+pc+"%."; renderPrices(); return; }
+  if(t.closest("#pr-reset")){ save(PEDIT_KEY,{}); uiFlags.prMsg="Prices reset to the list."; renderPrices(); return; }
+});
+$("#prices").addEventListener("change",e=>{
+  const i=e.target.closest&&e.target.closest(".pedit[data-k]"); if(!i||!PR) return;
+  const v=parseFloat(i.value); const ed=prEdits(); const r=PR.find(x=>x.n+"|"+x.s===i.dataset.k); if(!r) return;
+  if(isFinite(v)&&v>=0){ if(Math.abs(v-r.p)<0.005) delete ed[i.dataset.k]; else ed[i.dataset.k]=Math.round(v*100)/100; save(PEDIT_KEY,ed); }
+  uiFlags.prMsg=""; renderPrices();
+});
+$("#prices").addEventListener("input",e=>{ if(e.target.id==="pr-q"){ prQ=e.target.value; uiFlags.prFocus=true; renderPrices(); } });
+$("#prices").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.id==="pr-pin"){ const b=$("#pr-go"); if(b) b.click(); } });
+document.addEventListener("visibilitychange",()=>{ if(document.hidden) prLockAt=Date.now(); else if(PR&&Date.now()-prLockAt>120000){ prLock(); if(app.dataset.view==="prices") renderPrices(); } });
+
 
 $("#news-btn").addEventListener("click",()=>{ renderNews(); app.dataset.view="news"; window.scrollTo({top:0}); if(UPD&&UPD.news.length) save(NEWS_SEEN,UPD.news[0].date); newsDot(); });
 $("#news").addEventListener("click",e=>{
