@@ -297,7 +297,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: open <b>What's new</b> for recent FDA and study updates, with links to the sources. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-11-01c · Prices tab (PIN, upload your list), update feed, live study and FDA lookups, Today strip, backup and restore</p>
+    <p class="hint" id="appver">App version 2026-11-01d · Prices tab (PIN, upload your list), update feed, live study and FDA lookups, Today strip, backup and restore</p>
     <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
@@ -1759,7 +1759,8 @@ function renderPrices(){
   let total=0,count=0,unpriced=0;
   PR.forEach(r=>{ const n=ord[r.n+"|"+r.s]||0; if(n>0){ const pp=prPrice(r); if(pp==null) unpriced+=n; else total+=n*pp; count+=n; } });
   let h='<div class="vhead"><div><h2>Price list</h2><p class="hint">Per vial. Tap a peptide, set quantities to build an order. Edits to a price stay on this phone.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-back">&larr; Peptides</button><button type="button" class="btn small" id="pr-lock">Lock</button></div></div>'
-   +'<input id="pr-q" class="search" type="search" placeholder="Search price list" value="'+esc(prQ)+'" aria-label="Search price list">';
+   +'<input id="pr-q" class="search" type="search" placeholder="Search price list" value="'+esc(prQ)+'" aria-label="Search price list">'
+   +'<div class="btnrow" style="align-items:center"><span class="hint"><b>'+PR.length+' items</b> ('+PR.filter(r=>prPrice(r)!=null).length+' priced) in '+groups.length+' peptides'+(q?' · showing '+sel.length:'')+'. Sizes of one peptide share a card.</span><button type="button" class="btn small" id="pr-expand">Open all</button><button type="button" class="btn small" id="pr-collapse">Close all</button></div>';
   h+=sel.map(g=>{ const inOrd=g.rows.reduce((a,r)=>a+(ord[r.n+"|"+r.s]||0),0);
     return '<details class="pgroup"'+((q||inOrd)?' open':'')+' data-g="'+esc(g.n)+'"><summary><span>'+esc(g.n)+'</span><span class="hint">'+g.rows.map(r=>esc(r.s)).join(" · ")+(inOrd?' · <b>'+inOrd+' in order</b>':'')+'</span></summary>'
      +g.rows.map(r=>{ const k=r.n+"|"+r.s, n=ord[k]||0; return '<div class="prow"><div class="pl"><b>'+esc(r.s)+'</b><span class="pp">'+(typeof ed[k]==="number"?'edited · '+(r.p==null?'no list price':'was '+money(r.p)):(r.p==null?'no price listed':'list '+money(r.p)))+'</span></div>'
@@ -1890,6 +1891,7 @@ $("#prices").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.id==="
 
 $("#prices").addEventListener("click",async e=>{
   const t=e.target; if(!PR) return;
+  if(t.closest("#pr-expand")||t.closest("#pr-collapse")){ const o=!!t.closest("#pr-expand"); $("#prices").querySelectorAll("details.pgroup").forEach(d=>{ d.open=o; }); return; }
   if(t.closest("#pr-paste-open")){ uiFlags.prPaste=!uiFlags.prPaste; renderPrices(); return; }
   if(t.closest("#pr-text-go")){ stageImport(($("#pr-text")||{}).value||"","pasted list"); renderPrices(); return; }
   if(t.closest("#pr-cancel")){ prImp=null; uiFlags.prErr=""; renderPrices(); return; }
