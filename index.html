@@ -297,7 +297,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: open <b>What's new</b> for recent FDA and study updates, with links to the sources. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-11-01b · Prices tab (PIN), update feed, live study and FDA lookups, Today strip, backup and restore</p>
+    <p class="hint" id="appver">App version 2026-11-01c · Prices tab (PIN, upload your list), update feed, live study and FDA lookups, Today strip, backup and restore</p>
     <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
@@ -1727,20 +1727,24 @@ function download(name,text){ try{ const a=document.createElement("a"); a.href=U
 
 
 /* ---------- private price list (encrypted; unlocks with a PIN) ---------- */
-const PRICE_BLOB={"s":"AUZb95sV2B2HJJ8mKoR3/g==","iv":"ZIZvER1bDAp8NAOZ","ct":"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"};
+const PRICE_BLOB={"s":"Qik1rSoGWqttat/iXB71fA==","iv":"nZUbqVnrt6eFZX63","ct":"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"};
 const ORD_KEY="pdg:order", PEDIT_KEY="pdg:priceEdits";
+const CUSTOM_KEY="pdg:priceList"; let PRKEY=null, PRBUILT=null, PRINFO=null, prImp=null;
 let PR=null, prLockAt=0, prErr="", prFails=0, prWait=0, prQ="", prAdj=0;
 const b64=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
 async function prUnlock(pin){
   if(!window.crypto||!crypto.subtle) throw new Error("nocrypto");
   const km=await crypto.subtle.importKey("raw",new TextEncoder().encode(pin),"PBKDF2",false,["deriveKey"]);
-  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(PRICE_BLOB.s),iterations:200000,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(PRICE_BLOB.s),iterations:200000,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt","encrypt"]);
   const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(PRICE_BLOB.iv)},key,b64(PRICE_BLOB.ct));
-  return JSON.parse(new TextDecoder().decode(pt)).rows;
+  let rows=JSON.parse(new TextDecoder().decode(pt)).rows; PRKEY=key; PRBUILT=rows; PRINFO=null;
+  const c=load(CUSTOM_KEY,null);
+  if(c&&c.ct){ try{ const p2=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(c.iv)},key,b64(c.ct)); const j=JSON.parse(new TextDecoder().decode(p2)); if(Array.isArray(j.rows)&&j.rows.length){ rows=j.rows; PRINFO={name:j.name||"uploaded list",at:j.at||""}; } }catch(e){} }
+  return rows;
 }
-const money=n=>"$"+(Math.round(n*100)/100).toFixed(2);
+const money=n=>n==null?"no price":"$"+(Math.round(n*100)/100).toFixed(2);
 function prEdits(){ return load(PEDIT_KEY,{}); }
-function prPrice(r){ const e=prEdits(); const k=r.n+"|"+r.s; return typeof e[k]==="number"?e[k]:r.p; }
+function prPrice(r){ const e=prEdits(); const k=r.n+"|"+r.s; return typeof e[k]==="number"?e[k]:(typeof r.p==="number"?r.p:null); }
 function prOrder(){ return load(ORD_KEY,{}); }
 function renderPrices(){
   const el=$("#prices"); if(!el) return;
@@ -1752,18 +1756,19 @@ function renderPrices(){
   const groups=[]; PR.forEach(r=>{ let g=groups.find(x=>x.n===r.n); if(!g){ g={n:r.n,rows:[]}; groups.push(g); } g.rows.push(r); });
   groups.sort((a,b)=>a.n.localeCompare(b.n));
   const sel=groups.filter(g=>!q||g.n.toLowerCase().indexOf(q)>=0);
-  let total=0,count=0,lines=[];
-  PR.forEach(r=>{ const n=ord[r.n+"|"+r.s]||0; if(n>0){ total+=n*prPrice(r); count+=n; lines.push(n+" × "+r.n+" "+r.s+" @ "+money(prPrice(r))+" = "+money(n*prPrice(r))); } });
+  let total=0,count=0,unpriced=0;
+  PR.forEach(r=>{ const n=ord[r.n+"|"+r.s]||0; if(n>0){ const pp=prPrice(r); if(pp==null) unpriced+=n; else total+=n*pp; count+=n; } });
   let h='<div class="vhead"><div><h2>Price list</h2><p class="hint">Per vial. Tap a peptide, set quantities to build an order. Edits to a price stay on this phone.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-back">&larr; Peptides</button><button type="button" class="btn small" id="pr-lock">Lock</button></div></div>'
    +'<input id="pr-q" class="search" type="search" placeholder="Search price list" value="'+esc(prQ)+'" aria-label="Search price list">';
   h+=sel.map(g=>{ const inOrd=g.rows.reduce((a,r)=>a+(ord[r.n+"|"+r.s]||0),0);
     return '<details class="pgroup"'+((q||inOrd)?' open':'')+' data-g="'+esc(g.n)+'"><summary><span>'+esc(g.n)+'</span><span class="hint">'+g.rows.map(r=>esc(r.s)).join(" · ")+(inOrd?' · <b>'+inOrd+' in order</b>':'')+'</span></summary>'
-     +g.rows.map(r=>{ const k=r.n+"|"+r.s, n=ord[k]||0; return '<div class="prow"><div class="pl"><b>'+esc(r.s)+'</b><span class="pp">'+(typeof ed[k]==="number"?'edited · was '+money(r.p):'list '+money(r.p))+'</span></div>'
-       +'<input class="pedit" inputmode="decimal" value="'+prPrice(r).toFixed(2)+'" data-k="'+esc(k)+'" aria-label="Price for '+esc(r.n+' '+r.s)+'">'
+     +g.rows.map(r=>{ const k=r.n+"|"+r.s, n=ord[k]||0; return '<div class="prow"><div class="pl"><b>'+esc(r.s)+'</b><span class="pp">'+(typeof ed[k]==="number"?'edited · '+(r.p==null?'no list price':'was '+money(r.p)):(r.p==null?'no price listed':'list '+money(r.p)))+'</span></div>'
+       +'<input class="pedit" inputmode="decimal" placeholder="price" value="'+(prPrice(r)==null?'':prPrice(r).toFixed(2))+'" data-k="'+esc(k)+'" aria-label="Price for '+esc(r.n+' '+r.s)+'">'
        +'<div class="qty"><button type="button" data-q="-1" data-k="'+esc(k)+'" aria-label="Less">&minus;</button><span>'+n+'</span><button type="button" data-q="1" data-k="'+esc(k)+'" aria-label="More">+</button></div></div>'; }).join("")+'</details>'; }).join("");
   if(!sel.length) h+='<p class="empty">No match.</p>';
+  h+=importHtml();
   h+='<section class="block"><h3>Adjust every price</h3><p class="hint">Add or take off a percent from all list prices, for example 20 for +20%. It replaces your earlier edits.</p><div class="btnrow"><input id="pr-adj" class="pedit" inputmode="decimal" placeholder="%" style="width:70px"><button type="button" class="btn small" id="pr-adjgo">Apply</button><button type="button" class="btn small" id="pr-reset">Reset to list</button></div></section>';
-  h+='<div class="ordbar"><div class="tot">Order: '+count+' vial'+(count===1?'':'s')+' · '+money(total)+'</div><div class="btnrow"><button type="button" class="btn small primary" id="pr-copy"'+(count?'':' disabled')+'>Copy order</button><button type="button" class="btn small" id="pr-clear"'+(count?'':' disabled')+'>Clear order</button></div>'+(uiFlags.prMsg?'<p class="hint">'+esc(uiFlags.prMsg)+'</p>':'')+'</div>';
+  h+='<div class="ordbar"><div class="tot">Order: '+count+' vial'+(count===1?'':'s')+' · '+money(total)+'</div>'+(unpriced?'<p class="hint">'+unpriced+' vial'+(unpriced===1?' has':'s have')+' no price yet and '+(unpriced===1?'is':'are')+' not in the total. Type a price on its card.</p>':'')+'<div class="btnrow"><button type="button" class="btn small primary" id="pr-copy"'+(count?'':' disabled')+'>Copy order</button><button type="button" class="btn small" id="pr-clear"'+(count?'':' disabled')+'>Clear order</button></div>'+(uiFlags.prMsg?'<p class="hint">'+esc(uiFlags.prMsg)+'</p>':'')+'</div>';
   const keepOpen=[...el.querySelectorAll("details.pgroup[open]")].map(d=>d.dataset.g);
   const pos=window.scrollY;
   el.innerHTML=h;
@@ -1771,7 +1776,81 @@ function renderPrices(){
   window.scrollTo(0,pos);
   const qi=$("#pr-q"); if(qi&&uiFlags.prFocus){ qi.focus(); qi.setSelectionRange(qi.value.length,qi.value.length); }
 }
-function prLock(){ PR=null; prErr=""; prQ=""; }
+
+/* ---------- upload a new price list (CSV, TSV, pasted text, or Excel) ---------- */
+function csvRows(text){
+  text=String(text||"").replace(/^﻿/,""); const first=text.split(/\r?\n/).find(l=>l.trim())||"";
+  const d=(first.split("\t").length>1)?"\t":(first.split(";").length>first.split(",").length?";":",");
+  const rows=[]; let row=[],cur="",q=false;
+  for(let i=0;i<text.length;i++){ const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=c; }
+    else if(c==='"') q=true; else if(c===d){ row.push(cur); cur=""; }
+    else if(c==="\n"||c==="\r"){ if(c==="\r"&&text[i+1]==="\n") i++; row.push(cur); cur=""; if(row.some(x=>x.trim())) rows.push(row); row=[]; }
+    else cur+=c; }
+  row.push(cur); if(row.some(x=>x.trim())) rows.push(row); return rows;
+}
+const SZ=/(\d+(?:\.\d+)?)\s*(mg|mcg|ug|µg|iu|g|ml)\b/i;
+const normSize=z=>{ const m=String(z||"").trim().match(SZ); return m?(m[1]+" "+m[2].toLowerCase().replace("ug","mcg").replace("µg","mcg").replace("iu","IU")):clip(String(z||"").trim(),20); };
+function parsePriceText(text){
+  const rows=csvRows(text); if(rows.length<2) return {err:"I couldn't find rows in that file."};
+  let hi=rows.findIndex(r=>r.some(c=>/price|cost/i.test(c))&&r.some(c=>/pepti|name|product|item/i.test(c)));
+  let iN=-1,iS=-1,iP=-1;
+  if(hi>=0){ rows[hi].forEach((c,i)=>{ c=c.trim(); if(iP<0&&/price|cost/i.test(c)) iP=i; else if(iN<0&&/pepti|name|product|item/i.test(c)) iN=i; else if(iS<0&&/size|mg|strength|amount|vial|dose|qty/i.test(c)) iS=i; }); }
+  else { hi=-1; iN=0; iS=rows[0].length>2?1:-1; iP=rows[0].length-1; }
+  if(iN<0||iP<0) return {err:"I need a Peptide column and a Price column."};
+  const out=[],bad=[],seen={};
+  for(const r of rows.slice(hi+1)){
+    let n=(r[iN]||"").trim(), z=iS>=0?(r[iS]||"").trim():"", pr=(r[iP]||"").trim();
+    if(!n&&!z&&!pr) continue; if(!n) continue;
+    if(!z){ const m=n.match(/^(.*?)[\s,(-]+(\d+(?:\.\d+)?\s*(?:mg|mcg|iu|g|ml))\)?\s*$/i); if(m){ n=m[1].trim(); z=m[2]; } }
+    z=normSize(z);
+    const num=pr.replace(/[$,\s]/g,""); let p=null;
+    if(num!==""&&!/^(n\/?a|tbd|ask|-+|#.*)$/i.test(num)){ const f=parseFloat(num); if(isFinite(f)&&f>=0&&/^[0-9.]+$/.test(num)) p=Math.round(f*100)/100; else { bad.push(n+" "+z+" ("+pr+")"); continue; } }
+    const k=(n+"|"+z).toLowerCase(); if(seen[k]){ bad.push(n+" "+z+" (duplicate)"); continue; } seen[k]=1;
+    out.push({n:clip(n,90),s:z,p});
+  }
+  if(!out.length) return {err:"No usable rows found."};
+  if(out.length>400) return {err:"That is over 400 rows. Is it the right file?"};
+  return {rows:out,bad};
+}
+function importHtml(){
+  let h='<section class="block"><h3>Update the price list</h3><p class="hint">'+(PRINFO?'Using your uploaded list: <b>'+esc(PRINFO.name)+'</b>'+(PRINFO.at?' ('+esc(PRINFO.at)+')':'')+'.':'Using the built-in list.')+' Upload a new file when prices change. Columns: Peptide, Size, Price (Excel, CSV or pasted text). The new list replaces this one.</p>'
+   +'<div class="btnrow"><label class="btn small primary" for="pr-file" style="cursor:pointer">Choose file</label><input id="pr-file" type="file" accept=".csv,.tsv,.txt,.xlsx,.xls,text/csv,text/plain" style="position:absolute;left:-9999px"><button type="button" class="btn small" id="pr-paste-open">'+(uiFlags.prPaste?'Hide paste box':'Paste instead')+'</button><button type="button" class="btn small" id="pr-dl">Download current (CSV)</button>'+(PRINFO?'<button type="button" class="btn small" id="pr-builtin">Go back to built-in list</button>':'')+'</div>';
+  if(uiFlags.prPaste) h+='<textarea id="pr-text" class="pedit" style="width:100%;min-height:90px;margin-top:8px" placeholder="Peptide, Size, Price&#10;BPC-157, 10 mg, 25.98"></textarea><div class="btnrow"><button type="button" class="btn small" id="pr-text-go">Read it</button></div>';
+  if(uiFlags.prErr) h+='<p class="flag bad">'+esc(uiFlags.prErr)+'</p>';
+  if(prImp){ const d=prImp.diff;
+    h+='<div class="flag"><b>Preview: '+esc(prImp.name)+'</b><br>'+prImp.rows.length+' items ('+prImp.rows.filter(r=>r.p!=null).length+' priced). '+d.added+' new, '+d.changed+' price changes, '+d.same+' unchanged, '+d.removed+' no longer on the list.'
+      +(prImp.bad.length?'<br>Skipped '+prImp.bad.length+': '+esc(prImp.bad.slice(0,4).join("; "))+(prImp.bad.length>4?'…':''):'')
+      +'</div><div class="btnrow"><button type="button" class="btn small primary" id="pr-apply">Use this list</button><button type="button" class="btn small" id="pr-cancel">Cancel</button></div>'; }
+  return h+'</section>';
+}
+function diffLists(next,cur){
+  const m={}; cur.forEach(r=>{ m[(r.n+"|"+r.s).toLowerCase()]=r; });
+  let added=0,changed=0,same=0; const keys={};
+  next.forEach(r=>{ const k=(r.n+"|"+r.s).toLowerCase(); keys[k]=1; const o=m[k]; if(!o) added++; else if((o.p==null?null:o.p)!==(r.p==null?null:r.p)) changed++; else same++; });
+  return {added,changed,same,removed:cur.filter(r=>!keys[(r.n+"|"+r.s).toLowerCase()]).length};
+}
+function stageImport(text,name){
+  uiFlags.prErr=""; prImp=null; const r=parsePriceText(text);
+  if(r.err){ uiFlags.prErr=r.err; return; }
+  prImp={rows:r.rows,bad:r.bad,name:name||"pasted list",diff:diffLists(r.rows,PR)};
+}
+function loadXlsx(){ return new Promise((ok,no)=>{ if(window.XLSX) return ok(); const sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"; sc.onload=()=>ok(); sc.onerror=()=>no(new Error("load")); document.head.appendChild(sc); }); }
+async function prFile(f){
+  uiFlags.prErr=""; prImp=null;
+  try{
+    if(/\.xlsx?$/i.test(f.name)){ await loadXlsx(); const wb=XLSX.read(await f.arrayBuffer(),{type:"array"}); const ws=wb.Sheets[wb.SheetNames[0]]; stageImport(XLSX.utils.sheet_to_csv(ws),f.name); }
+    else stageImport(await f.text(),f.name);
+  }catch(err){ uiFlags.prErr=/\.xlsx?$/i.test(f.name)?"Couldn't open the Excel file here (it needs internet the first time). Save it as CSV and try again.":"Couldn't read that file."; }
+  renderPrices();
+}
+async function prSaveList(rows,name){
+  const iv=crypto.getRandomValues(new Uint8Array(12)); const at=todayISO();
+  const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},PRKEY,new TextEncoder().encode(JSON.stringify({rows,name,at})));
+  const tb=a=>btoa(String.fromCharCode.apply(null,new Uint8Array(a)));
+  save(CUSTOM_KEY,{iv:tb(iv),ct:tb(ct)}); PR=rows; PRINFO={name,at}; save(PEDIT_KEY,{});
+}
+function prLock(){ PR=null; PRKEY=null; PRBUILT=null; prImp=null; prErr=""; prQ=""; }
 
 /* ---------- events (new) ---------- */
 
@@ -1792,21 +1871,34 @@ $("#prices").addEventListener("click",async e=>{
   if(qb){ const k=qb.dataset.k, o=prOrder(); const n=Math.max(0,(o[k]||0)+(+qb.dataset.q)); if(n) o[k]=n; else delete o[k]; save(ORD_KEY,o); uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-clear")){ save(ORD_KEY,{}); uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-copy")){
-    const o=prOrder(); let tot=0, ls=[]; PR.forEach(r=>{ const n=o[r.n+"|"+r.s]||0; if(n>0){ const p=prPrice(r); tot+=n*p; ls.push(n+" x "+r.n+" "+r.s+" @ "+money(p)+" = "+money(n*p)); } });
+    const o=prOrder(); let tot=0, ls=[]; PR.forEach(r=>{ const n=o[r.n+"|"+r.s]||0; if(n>0){ const p=prPrice(r); if(p==null){ ls.push(n+" x "+r.n+" "+r.s+" (price TBD)"); } else { tot+=n*p; ls.push(n+" x "+r.n+" "+r.s+" @ "+money(p)+" = "+money(n*p)); } } });
     const txt=ls.join("\n")+"\nTotal: "+money(tot);
     const done=()=>{ uiFlags.prMsg="Order copied."; renderPrices(); };
     try{ navigator.clipboard.writeText(txt).then(done,()=>{ uiFlags.prMsg=txt; renderPrices(); }); }catch(err){ uiFlags.prMsg=txt; renderPrices(); } return; }
-  if(t.closest("#pr-adjgo")){ const pc=parseFloat(($("#pr-adj")||{}).value); if(!isFinite(pc)||pc<=-90||pc>500) return; const ed={}; PR.forEach(r=>{ ed[r.n+"|"+r.s]=Math.round(r.p*(1+pc/100)*100)/100; }); save(PEDIT_KEY,ed); uiFlags.prMsg="All prices adjusted "+(pc>=0?"+":"")+pc+"%."; renderPrices(); return; }
+  if(t.closest("#pr-adjgo")){ const pc=parseFloat(($("#pr-adj")||{}).value); if(!isFinite(pc)||pc<=-90||pc>500) return; const ed={}; PR.forEach(r=>{ if(typeof r.p==="number") ed[r.n+"|"+r.s]=Math.round(r.p*(1+pc/100)*100)/100; }); save(PEDIT_KEY,ed); uiFlags.prMsg="All prices adjusted "+(pc>=0?"+":"")+pc+"%."; renderPrices(); return; }
   if(t.closest("#pr-reset")){ save(PEDIT_KEY,{}); uiFlags.prMsg="Prices reset to the list."; renderPrices(); return; }
 });
 $("#prices").addEventListener("change",e=>{
   const i=e.target.closest&&e.target.closest(".pedit[data-k]"); if(!i||!PR) return;
   const v=parseFloat(i.value); const ed=prEdits(); const r=PR.find(x=>x.n+"|"+x.s===i.dataset.k); if(!r) return;
-  if(isFinite(v)&&v>=0){ if(Math.abs(v-r.p)<0.005) delete ed[i.dataset.k]; else ed[i.dataset.k]=Math.round(v*100)/100; save(PEDIT_KEY,ed); }
+  if(i.value.trim()===""){ delete ed[i.dataset.k]; save(PEDIT_KEY,ed); }
+  else if(isFinite(v)&&v>=0){ if(typeof r.p==="number"&&Math.abs(v-r.p)<0.005) delete ed[i.dataset.k]; else ed[i.dataset.k]=Math.round(v*100)/100; save(PEDIT_KEY,ed); }
   uiFlags.prMsg=""; renderPrices();
 });
 $("#prices").addEventListener("input",e=>{ if(e.target.id==="pr-q"){ prQ=e.target.value; uiFlags.prFocus=true; renderPrices(); } });
 $("#prices").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.id==="pr-pin"){ const b=$("#pr-go"); if(b) b.click(); } });
+
+$("#prices").addEventListener("click",async e=>{
+  const t=e.target; if(!PR) return;
+  if(t.closest("#pr-paste-open")){ uiFlags.prPaste=!uiFlags.prPaste; renderPrices(); return; }
+  if(t.closest("#pr-text-go")){ stageImport(($("#pr-text")||{}).value||"","pasted list"); renderPrices(); return; }
+  if(t.closest("#pr-cancel")){ prImp=null; uiFlags.prErr=""; renderPrices(); return; }
+  if(t.closest("#pr-apply")&&prImp){ try{ await prSaveList(prImp.rows,prImp.name); uiFlags.prMsg="List updated: "+prImp.rows.length+" items. Your old edits were cleared."; prImp=null; uiFlags.prPaste=false; save(ORD_KEY,{}); }catch(err){ uiFlags.prErr="Couldn't save the list."; } renderPrices(); return; }
+  if(t.closest("#pr-builtin")){ try{ localStorage.removeItem(CUSTOM_KEY); }catch(err){} PR=PRBUILT; PRINFO=null; save(PEDIT_KEY,{}); uiFlags.prMsg="Back on the built-in list."; renderPrices(); return; }
+  if(t.closest("#pr-dl")){ const ed=0; const rows=[["Peptide","Size","Price"]].concat(PR.map(r=>{ const p=prPrice(r); return [r.n,r.s,p==null?"":p.toFixed(2)]; })); const csv=rows.map(r=>r.map(c=>/[",\n]/.test(c)?'"'+String(c).replace(/"/g,'""')+'"':c).join(",")).join("\n"); try{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download="price-list-"+todayISO()+".csv"; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); }catch(err){} return; }
+});
+$("#prices").addEventListener("change",e=>{ if(e.target.id==="pr-file"&&PR&&e.target.files&&e.target.files[0]) prFile(e.target.files[0]); });
+
 document.addEventListener("visibilitychange",()=>{ if(document.hidden) prLockAt=Date.now(); else if(PR&&Date.now()-prLockAt>120000){ prLock(); if(app.dataset.view==="prices") renderPrices(); } });
 
 
