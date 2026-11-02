@@ -269,6 +269,12 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 .ordbar{position:sticky;bottom:0;background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
 .ordbar .tot{font-size:1.1rem;font-weight:700}
 @media (prefers-reduced-motion:reduce){.syringe .fill{transition:none}}
+
+.agree{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px}
+.agree .box{background:#fff;color:#111;max-width:480px;max-height:90vh;overflow:auto;border-radius:14px;padding:20px;font-size:15px;line-height:1.45}
+.agree h2{margin:0 0 8px;font-size:19px}.agree ul{padding-left:20px;margin:8px 0}
+.agree button{width:100%;margin-top:12px;padding:14px;font-size:16px;border:0;border-radius:10px;background:#0b6b4f;color:#fff;font-weight:700}
+.legal{font-size:12px;opacity:.75;padding:14px 16px 90px;text-align:center;line-height:1.4}
 </style>
 <style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
 </head>
@@ -300,7 +306,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: open <b>What's new</b> for recent FDA and study updates, with links to the sources. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-11-02a · How to mix button, sync + subscription · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
+    <p class="hint" id="appver">App version 2026-11-02b · Disclaimer, How to mix button, sync + subscription · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
     <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
@@ -2220,6 +2226,19 @@ app.dataset.view="list";
     try{ if(window.caches){ const ks=await caches.keys(); await Promise.all(ks.map(k=>caches.delete(k))); } }catch(e){}
     location.replace(location.pathname+"?r="+Date.now());
   });
+})();
+
+/* Disclaimer: must be accepted once, and stays visible in the footer. */
+(function(){
+  const KEY="pdg:agree1";
+  const TXT='For education and reference only. Not medical advice, diagnosis or treatment. Most compounds here are not FDA-approved and many have no human dosing data. Doses shown come from approved labels, published studies or guidelines where they exist, and can be out of date or wrong. Always check the product label, your protocol and a licensed prescriber. Vendor vials are unverified. You are responsible for every dosing decision. The makers accept no liability for use of this information.';
+  const foot=document.createElement("div"); foot.className="legal"; foot.innerHTML="<strong>Disclaimer:</strong> "+TXT; document.body.appendChild(foot);
+  let ok=false; try{ ok=localStorage.getItem(KEY)==="1"; }catch(e){}
+  if(ok) return;
+  const m=document.createElement("div"); m.className="agree";
+  m.innerHTML='<div class="box"><h2>Before you use this</h2><p>'+TXT+'</p><ul><li>Reference tool for clinicians and informed adults.</li><li>Never use it to replace a prescriber\'s order.</li><li>Check units and concentration before every draw.</li></ul><button type="button">I understand and agree</button></div>';
+  m.querySelector("button").onclick=()=>{ try{localStorage.setItem(KEY,"1");}catch(e){} m.remove(); };
+  document.body.appendChild(m);
 })();
 </script>
 
