@@ -1215,6 +1215,7 @@ function renderDetail(){
   html+='<p class="for-long">'+esc(p.for)+'</p></div>';
   if(p.refOnly){
     html+='<section class="block calc" aria-label="No dose"><h3>Dose</h3><p class="flag '+(p.refTone||"bad")+'">'+esc(p.refMsg||"No published human dose for this route, so the calculator is off for this entry.")+'</p><p class="hint">Need the arithmetic for something else? <button type="button" class="btn small" data-open="custom">Open Any vial (custom)</button></p></section>';
+    html+=studiedHtml(p);
     if(p.notes.length) html+='<section class="block notes"><h3>What to know</h3><ul>'+p.notes.map(n=>'<li>'+esc(n)+'</li>').join("")+'</ul></section>';
     if((p.storage&&p.storage!=="n/a")||p.evidence) html+='<section class="block kv">'+(p.storage&&p.storage!=="n/a"?'<div><span class="k">Storage: </span>'+esc(p.storage)+'</div>':'')+(p.evidence?'<div><span class="k">Evidence: </span>'+esc(p.evidence)+'</div>':'')+'</section>';
     html+=detailNewsHtml(p);
@@ -1253,6 +1254,7 @@ function renderDetail(){
       +(p.ladderNote?'<p class="hint">'+esc(p.ladderNote)+'</p>':'')
       +'<div class="tbl-wrap"><table class="stack"><thead><tr><th>Weeks</th><th>Dose</th><th class="mono">'+(isOral(p)?'Amount':'Units')+'</th><th>Note</th></tr></thead><tbody id="ladder-body"></tbody></table></div></section>';
   }
+  html+=studiedHtml(p);
   if(p.notes.length){
     html+='<section class="block notes"><h3>What to know</h3><ul>'+p.notes.map(n=>'<li>'+esc(n)+'</li>').join("")+'</ul></section>';
   }
@@ -1268,6 +1270,12 @@ function renderDetail(){
   labelTables(detailEl);
 }
 /* "How to mix this vial": from the vial size (mg) and the dose, how much bacteriostatic water makes each dose a round number of syringe units */
+function studiedHtml(p){
+  if(!p.studied||!p.studied.length) return "";
+  const b={label:"approved labels",trial:"published human studies",guideline:"clinical guidelines"}[p.doseBasis]||"published sources";
+  return '<section class="block notes studied"><h3>Doses in '+esc(b)+'</h3><p class="hint">These are what was given in the sources below. They are not a recommendation for you.</p><ul>'
+    +p.studied.map(n=>'<li>'+esc(n)+'</li>').join("")+'</ul>'+(p.caution?'<p class="flag warn">'+esc(p.caution)+'</p>':'')+'</section>';
+}
 function mixHtml(p,c){
   const unit=p.unitSwitch?c.unit:p.unit, doseMg=toMg(c.dose,unit), lab=p.unitLabel||unit;
   if(!(doseMg>0)||!(c.vial>0)) return "";
@@ -1518,6 +1526,9 @@ function cleanEntry(e){
     waterPresets:(Array.isArray(e.waterPresets)&&e.waterPresets.every(posNum)&&e.waterPresets.length)?e.waterPresets.slice(0,6):[1,2,3,5],
     cycle:clip(e.cycle||"",200),notes:strList(e.notes,12,500),storage:clip(e.storage||"",200),evidence:clip(e.evidence||"",300),
     sources:strList(e.sources,8,300).filter(okUrl),_upd:true};
+  const st=strList(e.studied,6,400); if(st.length) out.studied=st;
+  if(typeof e.caution==="string"&&e.caution.trim()) out.caution=clip(e.caution.trim(),300);
+  if(typeof e.doseBasis==="string"&&/^(label|trial|guideline)$/.test(e.doseBasis)) out.doseBasis=e.doseBasis;
   if(typeof e.unitLabel==="string") out.unitLabel=clip(e.unitLabel,20);
   if(typeof e.vialLabel==="string") out.vialLabel=clip(e.vialLabel,40);
   if(posNum(e.useDays)) out.useDays=e.useDays;
