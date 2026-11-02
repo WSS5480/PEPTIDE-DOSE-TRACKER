@@ -235,6 +235,9 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 .logrow .lr-main span{font-size:.8rem;color:var(--muted)}
 .logrow .lr-amt{font-family:var(--font-mono);font-size:.86rem;text-align:right}
 .logrow .x{border:0;background:transparent;color:var(--bad);font-weight:700;padding:4px 8px;font-size:1.1rem;line-height:1}
+.mix{margin-top:12px;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface,#fff)}
+.mix h4{margin:0 0 6px;font-size:.98rem}
+.mixsteps{margin:10px 0 0;padding-left:1.2rem;font-size:.9rem;line-height:1.5}
 .backup textarea{width:100%;min-height:90px;font-family:var(--font-mono);font-size:.76rem;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--ink);padding:8px}
 @media (max-width:640px){
   table.stack thead{display:none}
@@ -297,7 +300,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: open <b>What's new</b> for recent FDA and study updates, with links to the sources. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-11-01k · Sync + subscription · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
+    <p class="hint" id="appver">App version 2026-11-02a · How to mix button, sync + subscription · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
     <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
@@ -1240,6 +1243,8 @@ function renderDetail(){
     +'<input class="num" id="dose" type="number" inputmode="decimal" min="0.001" step="any" value="'+c.dose+'">'
     +(p.unitSwitch?'<button type="button" class="unit-toggle" id="unit-toggle" aria-label="Switch dose unit">'+esc(unit)+' &#8646;</button>':'')+'</div></div>'
     +'<div class="result" id="calc-out"></div>'
+    +(!isOral(p)&&vu(p)==="mg"?'<div class="btnrow"><button type="button" class="btn" id="mix-open" aria-expanded="'+(uiFlags.mix?"true":"false")+'">'+(uiFlags.mix?"Hide mixing help":"How to mix this vial")+'</button></div>':"")
+    +(uiFlags.mix&&!isOral(p)&&vu(p)==="mg"?mixHtml(p,c):"")
     +(uiFlags.form?vialFormHtml(p,c,uiFlags.form==="edit"?v:null):'<div class="btnrow">'+(v?'<button type="button" class="btn" data-edit="'+v.id+'">Edit saved vial</button>':'<button type="button" class="btn primary" id="save-vial">Save this vial &amp; count weeks</button>')+'</div>')
     +'</section>';
   /* ladder */
@@ -1261,6 +1266,26 @@ function renderDetail(){
   detailEl.innerHTML=html;
   renderCalcOut(p);
   labelTables(detailEl);
+}
+/* "How to mix this vial": from the vial size (mg) and the dose, how much bacteriostatic water makes each dose a round number of syringe units */
+function mixHtml(p,c){
+  const unit=p.unitSwitch?c.unit:p.unit, doseMg=toMg(c.dose,unit), lab=p.unitLabel||unit;
+  if(!(doseMg>0)||!(c.vial>0)) return "";
+  const rows=[10,20,25,40,50].map(u=>{ const w=Math.round(u*c.vial/(doseMg*100)*100)/100; return {u:u,w:w,real:unitsFor(doseMg,c.vial,w)}; })
+    .filter(r=>r.w>=0.3&&r.w<=(p.vialMl||5));
+  const rec=rows.filter(r=>r.w>=1&&r.w<=3);
+  let h='<div class="mix" id="mix-panel"><h4>Mixing a '+fmt(c.vial)+' mg vial for '+fmt(c.dose)+' '+esc(lab)+'</h4>';
+  if(rows.length){
+    h+='<p class="hint">Pick how many units on the syringe you want each dose to be. The water amount is what to add to the vial.</p><div class="tbl-wrap"><table class="stack"><thead><tr><th>Each dose is</th><th>Add water</th><th>Doses per vial</th><th></th></tr></thead><tbody>'
+      +rows.map(r=>'<tr><td class="mono">'+r.u+' units</td><td class="mono">'+fmt(r.w,2)+' mL'+(rec.indexOf(r)>=0&&rec[0]===r?' <span class="hint">(good default)</span>':'')+'</td><td class="mono">'+Math.floor(c.vial/doseMg+1e-9)+'</td><td><button type="button" class="btn small" data-mixuse="'+r.w+'">Use '+fmt(r.w,2)+' mL</button></td></tr>').join("")
+      +'</tbody></table></div>';
+  } else h+='<p class="flag warn">No simple mix gives a round syringe number for this dose and vial. Try the water chips above and watch the units shown.</p>';
+  h+='<ol class="mixsteps"><li>Wash hands, wipe both vial tops with an alcohol pad, let them dry.</li>'
+    +'<li>Draw the water amount shown into a syringe. Use bacteriostatic water unless the label says otherwise.</li>'
+    +'<li>Inject it slowly against the inside wall of the vial. Do not squirt it onto the powder.</li>'
+    +'<li>Swirl gently until clear. Do not shake.</li>'
+    +'<li>Write the date on the vial and store as directed'+(p.storage&&p.storage!=="n/a"?': '+esc(String(p.storage).replace(/\.+$/,"")):'')+'.</li></ol></div>';
+  return h;
 }
 function renderCalcOut(p){
   const c=getCalc(p); const r=compute(p,c); const v=vialFor(p.id);
@@ -1389,6 +1414,9 @@ detailEl.addEventListener("click",e=>{
     const inp=$("#"+chip.dataset.set,detailEl); if(inp) inp.value=c[chip.dataset.set];
     save("pdg:calc:"+p.id,c); renderCalcOut(p); return;
   }
+  if(e.target.closest("#mix-open")){ uiFlags.mix=!uiFlags.mix; renderDetail(); const m=$("#mix-panel",detailEl); if(uiFlags.mix&&m) m.scrollIntoView({block:"nearest"}); return; }
+  const mu=e.target.closest("[data-mixuse]");
+  if(mu){ const w=Number(mu.dataset.mixuse); if(w>0){ c.water=w; save("pdg:calc:"+p.id,c); renderDetail(); } return; }
   if(e.target.closest("#unit-toggle")){ c.unit=c.unit==="mg"?"mcg":"mg"; save("pdg:calc:"+p.id,c); renderDetail(); return; }
   if(e.target.closest("#save-vial")){ uiFlags.form="new"; renderDetail(); $("#vform",detailEl)&&$("#vform",detailEl).scrollIntoView({block:"center"}); return; }
   if(e.target.closest("[data-edit]")){ uiFlags.form="edit"; renderDetail(); $("#vform",detailEl)&&$("#vform",detailEl).scrollIntoView({block:"center"}); return; }
