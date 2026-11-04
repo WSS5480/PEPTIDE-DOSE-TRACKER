@@ -306,7 +306,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: open <b>What's new</b> for recent FDA and study updates, with links to the sources. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-11-03d · My price line + customer cart, Disclaimer, How to mix button, sync + subscription · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
+    <p class="hint" id="appver">App version 2026-11-04a · My price line + customer cart, Disclaimer, How to mix button, sync + subscription · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
     <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
@@ -806,7 +806,7 @@ const DATA=[
  unit:"mg",min:0.1,max:10,common:1,freq:"",interval:null,timing:"",ladder:[],vials:[2,5,10,20,50],vialDefault:5,water:2,cycle:"",notes:[],storage:"",evidence:"",sources:[],unitSwitch:true}
 ];
 const CATORDER=CATS.map(c=>c.id).concat(["tool"]);
-DATA.sort((a,b)=>CATORDER.indexOf(a.cat)-CATORDER.indexOf(b.cat));
+DATA.sort((a,b)=>CATORDER.indexOf(a.cat)-CATORDER.indexOf(b.cat)||String(a.name).localeCompare(String(b.name),undefined,{sensitivity:'base',numeric:true}));
 
 /* ---------- helpers ---------- */
 const $=(s,r)=> (r||document).querySelector(s);
@@ -1574,7 +1574,7 @@ function applyUpdates(u){
     if(x.evidence) p.evidence=x.evidence;
     if(x.sources.length) p.sources=p.sources.concat(x.sources.filter(z=>p.sources.indexOf(z)<0)); }
   for(const e of u.peptides){ if(DATA.some(x=>x.id===e.id&&!x._upd)) continue; DATA.push(Object.assign({},e)); if(!CATS.some(c=>c.id===e.cat)) CATS.splice(CATS.length,0,{id:e.cat,label:CATNAME[e.cat]}); }
-  DATA.sort((a,b)=>CATORDER.indexOf(a.cat)-CATORDER.indexOf(b.cat));
+  DATA.sort((a,b)=>CATORDER.indexOf(a.cat)-CATORDER.indexOf(b.cat)||String(a.name).localeCompare(String(b.name),undefined,{sensitivity:'base',numeric:true}));
 }
 function newsDot(){
   const dot=$("#news-dot"); if(!dot) return;
@@ -1841,7 +1841,7 @@ function renderPrices(){
   const ord=prOrder(), ed=prEdits(); const q=prQ.trim().toLowerCase();
   if(uiFlags.prCart){ el.innerHTML=cartHtml(ord); window.scrollTo(0,0); return; }
   const groups=[],gi={}; prAll().forEach(r=>{ let g=gi[r.n]; if(!g){ g={n:r.n,rows:[]}; gi[r.n]=g; groups.push(g); } g.rows.push(r); });
-  groups.sort((a,b)=>a.n.localeCompare(b.n));
+  groups.sort((a,b)=>a.n.localeCompare(b.n,undefined,{sensitivity:'base',numeric:true})); groups.forEach(g=>g.rows.sort((x,y)=>String(x.s).localeCompare(String(y.s),undefined,{numeric:true})));
   const srcOk=r=>prSrc==="all"||(prSrc==="mine"?!r.u:prSrc==="box"?r.u==="box":prSrc==="web"?r.u==="web":r.u==="pc");
   groups.forEach(g=>{ g.all=g.rows; g.rows=g.all.filter(srcOk); });
   const sel=groups.filter(g=>g.rows.length&&(!q||g.n.toLowerCase().indexOf(q)>=0));
