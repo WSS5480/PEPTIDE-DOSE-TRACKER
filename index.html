@@ -284,6 +284,9 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 .agree h2{margin:0 0 8px;font-size:19px}.agree ul{padding-left:20px;margin:8px 0}
 .agree button{width:100%;margin-top:12px;padding:14px;font-size:16px;border:0;border-radius:10px;background:#0b6b4f;color:#fff;font-weight:700}
 .legal{font-size:12px;opacity:.75;padding:14px 16px 90px;text-align:center;line-height:1.4}
+.ptr{position:fixed;top:0;left:0;right:0;height:0;z-index:9998;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;background:var(--accent-soft);color:var(--accent);font-size:.85rem;font-weight:600;transition:height .15s}
+.ptr.on{transition:none}
+.verline{font-size:12px;opacity:.75;padding:0 16px 24px;text-align:center}
 </style>
 <style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
 </head>
@@ -2341,6 +2344,25 @@ app.dataset.view="list";
   m.innerHTML='<div class="box"><h2>Before you use this</h2><p>'+TXT+'</p><ul><li>Reference tool for clinicians and informed adults.</li><li>Never use it to replace a prescriber\'s order.</li><li>Check units and concentration before every draw.</li></ul><button type="button">I understand and agree</button></div>';
   m.querySelector("button").onclick=()=>{ try{localStorage.setItem(KEY,"1");}catch(e){} m.remove(); };
   document.body.appendChild(m);
+})();
+
+/* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
+(function(){
+  const VER="2026-11-05d", BUILT="Nov 5, 2026 5:40 PM CT";
+  const old=document.getElementById("appver"); if(old) old.remove();
+  const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+  const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
+  async function doRefresh(){
+    try{ if("serviceWorker" in navigator){ const rs=await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(r=>r.unregister())); } }catch(e){}
+    try{ if(window.caches){ const ks=await caches.keys(); await Promise.all(ks.map(k=>caches.delete(k))); } }catch(e){}
+    location.replace(location.pathname+"?r="+Date.now());
+  }
+  const bar=document.createElement("div"); bar.className="ptr"; document.body.appendChild(bar);
+  let y0=null, dy=0;
+  const skip=el=>el&&el.closest&&el.closest("input,textarea,select,dialog,.agree");
+  document.addEventListener("touchstart",e=>{ y0=(window.scrollY<=0&&e.touches.length===1&&!skip(e.target))?e.touches[0].clientY:null; dy=0; },{passive:true});
+  document.addEventListener("touchmove",e=>{ if(y0==null) return; dy=e.touches[0].clientY-y0; if(dy>0&&window.scrollY<=0){ bar.classList.add("on"); bar.style.height=Math.min(60,dy/2)+"px"; bar.textContent=dy>110?"Release to refresh":"Pull down to refresh"; } else { bar.style.height="0"; } },{passive:true});
+  document.addEventListener("touchend",()=>{ if(y0==null) return; bar.classList.remove("on"); if(dy>110&&window.scrollY<=0){ bar.style.height="40px"; bar.textContent="Refreshing…"; doRefresh(); } else bar.style.height="0"; y0=null; dy=0; },{passive:true});
 })();
 </script>
 
