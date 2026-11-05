@@ -1041,9 +1041,16 @@ function vItem(v,html){ const p=peptideOf(v), t=trackerState(p,v); const o=uiFla
   return '<details class="pgroup vitem" data-k="'+esc(v.id)+'"'+(o?' open':'')+'><summary><span>'+esc(p.name)+'</span><span class="hint">'+(t.week>0?'week '+t.week:'starts '+fmtDate(v.start))+'</span></summary>'+html+'</details>'; }
 function vGroup(key,title,items,defOpen){ if(!items.length) return ""; const st=uiFlags.vopen&&uiFlags.vopen["g:"+key]; const o=st===undefined?!!defOpen:st;
   return '<details class="pgroup vgroup" data-k="g:'+esc(key)+'"'+(o?' open':'')+'><summary><span>'+esc(title)+'</span><span class="hint">'+items.length+' vial'+(items.length===1?'':'s')+'</span></summary>'+items.join("")+'</details>'; }
+function peopleNames(){ return [...new Set(vials.filter(v=>peptideOf(v)).map(whoOf).filter(Boolean))].sort((a,b)=>a.localeCompare(b)); }
+function whoSel(){ const w=load("pdg:whoSel",""); return (w&&peopleNames().indexOf(w)>=0)?w:""; }
+function whoPickerHtml(){
+  const names=peopleNames(); if(!names.length) return "";
+  const sel=whoSel(); const n=w=>vials.filter(v=>peptideOf(v)&&whoOf(v)===w).length;
+  return '<div class="field"><label>Whose vials</label><select class="num who-pick" aria-label="Whose vials">'+[""].concat(names).map(w=>'<option value="'+esc(w)+'"'+(w===sel?' selected':'')+'>'+esc(w||"Mine")+' ('+n(w)+')</option>').join("")+'</select></div>';
+}
 function othersHtml(){
-  const by={}; vials.forEach(v=>{ const w=whoOf(v); if(w&&peptideOf(v)){ (by[w]=by[w]||[]).push(v); } });
-  return Object.keys(by).sort((a,b)=>a.localeCompare(b)).map(w=>vGroup("w:"+w,w+" (schedule only)",by[w].sort((a,b)=>peptideOf(a).name.localeCompare(peptideOf(b).name)).map(v=>vItem(v,trackCardHtml(v))))).join("");
+  const sel=whoSel(); if(!sel) return "";
+  return vials.filter(v=>peptideOf(v)&&whoOf(v)===sel).sort((a,b)=>peptideOf(a).name.localeCompare(peptideOf(b).name)).map(v=>vItem(v,trackCardHtml(v))).join("")+'<p class="hint">Schedule only for '+esc(sel)+'. Pick Mine above to log your own doses.</p>';
 }
 function clashesFor(v){
   const out=[];
@@ -1075,7 +1082,8 @@ function myVialsHtml(){
       +'</div>';
     items.push({p,html:vItem(v,html)});
   }
-  return vGroup("__me","My vials",items.sort((a,b)=>a.p.name.localeCompare(b.p.name)).map(x=>x.html),true)+othersHtml();
+  const sel=whoSel();
+  return '<div class="cat-label">Vials</div>'+whoPickerHtml()+(sel?othersHtml():items.sort((a,b)=>a.p.name.localeCompare(b.p.name)).map(x=>x.html).join(""));
 }
 function renderList(){
   const items=DATA.filter(matches);
@@ -1209,7 +1217,7 @@ function addVialFormHtml(){
   const opts=DATA.filter(p=>p.id!=="custom"&&!p.refOnly).map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join("")+'<option value="custom">Other / custom vial</option>';
   return '<div class="vform" id="addform"><h3>Add a vial</h3>'
     +'<div class="field"><label for="av-pid">Peptide</label><select class="num" id="av-pid">'+opts+'</select></div>'
-    +'<div class="field"><label for="av-who">Who is it for? (leave empty for you)</label><input class="num" id="av-who" type="text" maxlength="30" list="av-whos" placeholder="e.g. Wife, Daughter" autocomplete="off"><datalist id="av-whos">'+[...new Set(vials.map(whoOf).filter(Boolean))].map(w=>'<option value="'+esc(w)+'">').join("")+'</datalist><span class="hint">Named vials are tracked by schedule only. No dose logging.</span></div>'
+    +'<div class="field"><label for="av-who">Who is it for?</label><select class="num" id="av-whosel"><option value="">Me</option>'+peopleNames().map(w=>'<option value="'+esc(w)+'">'+esc(w)+'</option>').join("")+'<option value="__new">+ Add a person…</option></select><input class="num" id="av-who" type="text" maxlength="30" placeholder="Name, e.g. Paola" autocomplete="off" hidden><span class="hint">Named vials are tracked by schedule only. No dose logging.</span></div>'
     +'<div class="field"><label for="av-vial" id="av-vial-label">Vial size (mg)</label><input class="num" id="av-vial" type="number" inputmode="decimal" step="any" min="0.01"></div>'
     +'<div class="field"><label for="av-water" id="av-water-label">Bacteriostatic water added (mL)</label><input class="num" id="av-water" type="number" inputmode="decimal" step="any" min="0.1"></div>'
     +'<div class="field"><label for="av-mixed" id="av-mixed-label">Date mixed</label><input class="num" id="av-mixed" type="date" value="'+todayISO()+'"></div>'
@@ -1285,7 +1293,7 @@ function renderVials(){
   if(uiFlags.add) html+=addVialFormHtml();
   if(!vials.length&&!uiFlags.add) html+='<p class="empty">No vials yet. Tap + Add vial, or open any peptide and tap "Save this vial &amp; count weeks".</p>';
   else if(uiFlags.manage) html+=manageHtml();
-  else html+='<div class="vgrid">'+'</div>'+vGroup("__me","My vials",vials.filter(v=>!whoOf(v)&&peptideOf(v)).sort((a,b)=>peptideOf(a).name.localeCompare(peptideOf(b).name)).map(v=>vItem(v,vialCardHtml(v))),true)+othersHtml();
+  else html+=whoPickerHtml()+(whoSel()?othersHtml():vials.filter(v=>!whoOf(v)&&peptideOf(v)).sort((a,b)=>peptideOf(a).name.localeCompare(peptideOf(b).name)).map(v=>vItem(v,vialCardHtml(v))).join(""));
   const rows=allEntries();
   html+='<section class="block hist"><div class="vhead"><h3>Dose log · '+rows.length+' entr'+(rows.length===1?'y':'ies')+'</h3>'+(rows.length?'<button type="button" class="btn small" id="export-log">Copy as CSV</button>':'')+'</div>';
   if(uiFlags.exportOpen) html+='<textarea class="export" id="export-text" readonly>'+esc(exportText())+'</textarea><p class="hint">Select all and copy if the button did not work.</p>';
@@ -1501,7 +1509,7 @@ vialsEl.addEventListener("click",e=>{
     const vial=parseFloat($("#av-vial",vialsEl).value), water=parseFloat($("#av-water",vialsEl).value), target=parseFloat($("#av-target",vialsEl).value);
     if(!(vial>0&&water>0&&target>0)) return;
     const v={id:newId("v"),pid,vial,water,mixed:$("#av-mixed",vialsEl).value||todayISO(),start:$("#av-start",vialsEl).value||todayISO(),target,log:[]};
-    const who=(($("#av-who",vialsEl)||{}).value||"").trim().slice(0,30); if(who) v.who=who;
+    const ws=($("#av-whosel",vialsEl)||{}).value; const who=(ws==="__new"?(($("#av-who",vialsEl)||{}).value||""):ws||"").trim().slice(0,30); if(ws==="__new"&&!who) return; if(who) v.who=who;
     vials.push(v); if(who){ uiFlags.add=false; saveVials(); renderAll(); return; } const c=getCalc(p); c.vial=vial; c.water=water; save("pdg:calc:"+pid,c);
     uiFlags.add=false; saveVials(); renderAll(); return;
   }
@@ -1516,7 +1524,7 @@ vialsEl.addEventListener("click",e=>{
   if(del){ const v=vials.find(x=>x.id===del.dataset.delvial); if(v){ v.log=v.log.filter(en=>en.id!==del.dataset.delentry); saveVials(); renderAll(); } return; }
   vialAction(e);
 });
-vialsEl.addEventListener("change",e=>{ if(e.target.id==="av-pid") fillAddDefaults(); const k=e.target.dataset&&e.target.dataset.sel; if(k){ uiFlags.sel=uiFlags.sel||{}; uiFlags.sel[k]=e.target.checked; uiFlags.mgArm=false; const n=Object.keys(uiFlags.sel).filter(x=>uiFlags.sel[x]).length; const b=$("#mg-del",vialsEl); if(b) b.textContent="Delete selected ("+n+")"; } });
+vialsEl.addEventListener("change",e=>{ if(e.target.id==="av-pid") fillAddDefaults(); if(e.target.id==="av-whosel"){ const n=$("#av-who",vialsEl); if(n){ n.hidden=e.target.value!=="__new"; if(!n.hidden) n.focus(); } } const k=e.target.dataset&&e.target.dataset.sel; if(k){ uiFlags.sel=uiFlags.sel||{}; uiFlags.sel[k]=e.target.checked; uiFlags.mgArm=false; const n=Object.keys(uiFlags.sel).filter(x=>uiFlags.sel[x]).length; const b=$("#mg-del",vialsEl); if(b) b.textContent="Delete selected ("+n+")"; } });
 vialsEl.addEventListener("input",e=>{ if(e.target.id&&e.target.id.indexOf("av-")===0) updateAddCalc(); if(e.target.id==="lf-amt"||e.target.id==="lf-date") liveLogAlerts(vialsEl); });
 detailEl.addEventListener("click",e=>{
   if(e.target.closest("#back")){ app.dataset.view="list"; return; }
@@ -2151,6 +2159,7 @@ document.addEventListener("visibilitychange",()=>{ if(document.hidden) prLockAt=
 
 
 document.addEventListener("toggle",e=>{ const d=e.target; if(d&&d.matches&&d.matches("details.vitem,details.vgroup")){ uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen[d.dataset.k]=d.open; } },true);
+document.addEventListener("change",e=>{ const t=e.target; if(t&&t.classList&&t.classList.contains("who-pick")){ save("pdg:whoSel",t.value); renderAll(); } });
 $("#quick-btn").addEventListener("click",()=>{ renderQuick(); app.dataset.view="quick"; window.scrollTo({top:0}); });
 $("#quick").addEventListener("click",e=>{ if(e.target.closest("#q-back")) app.dataset.view="list"; });
 $("#quick").addEventListener("input",e=>{ if(e.target.id&&e.target.id.indexOf("q-")===0&&e.target.id!=="q-pid") paintQuick(); });
@@ -2365,7 +2374,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-05e", BUILT="Nov 5, 2026 5:50 PM CT";
+  const VER="2026-11-05f", BUILT="Nov 5, 2026 6:00 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
