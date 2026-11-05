@@ -248,6 +248,15 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
   table.stack td[colspan]{display:block}
 }
 
+/* quick calculator */
+.app[data-view="quick"] .panes,.app[data-view="quick"] .vials,.app[data-view="quick"] .news,.app[data-view="quick"] .prices{display:none}
+.app[data-view="quick"] .top .search,.app[data-view="quick"] .top .chips,.app[data-view="quick"] .notice{display:none}
+.quick{display:none;flex-direction:column;gap:12px;margin-top:14px;min-width:0;max-width:520px}
+.app[data-view="quick"] .quick{display:flex}
+.qres{border:1px solid var(--accent);background:var(--accent-soft);border-radius:var(--radius);padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.qres .big{font-size:1.9rem;font-weight:700;font-family:var(--font-mono)}
+.qres .sub{font-size:.9rem;color:var(--muted)}
+.qres .warn{color:var(--bad);font-weight:600;font-size:.9rem}
 /* private price list */
 .app[data-view="prices"] .panes,.app[data-view="prices"] .vials,.app[data-view="prices"] .news{display:none}
 .app[data-view="prices"] .top .search,.app[data-view="prices"] .top .chips,.app[data-view="prices"] .notice{display:none}
@@ -284,7 +293,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 <div class="app" id="app" data-view="list">
   <header class="top">
     <div class="brand">
-      <div class="btnrow" style="align-items:center"><h1>Peptide Dose Guide</h1><button type="button" class="btn small primary" id="vials-btn">My vials</button><button type="button" class="btn small" id="prices-btn">Prices</button><button type="button" class="btn small" id="news-btn">What's new<span class="dot" id="news-dot" hidden></span></button><button type="button" class="btn small" id="install-btn" hidden aria-haspopup="dialog"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Install app</button></div>
+      <div class="btnrow" style="align-items:center"><h1>Peptide Dose Guide</h1><button type="button" class="btn small primary" id="vials-btn">My vials</button><button type="button" class="btn small" id="quick-btn">Quick calc</button><button type="button" class="btn small" id="prices-btn">Prices</button><button type="button" class="btn small" id="news-btn">What's new<span class="dot" id="news-dot" hidden></span></button><button type="button" class="btn small" id="install-btn" hidden aria-haspopup="dialog"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Install app</button></div>
       <span class="rev" id="rev">data reviewed 2026-10 · U-100 syringe · BAC water</span>
     </div>
     <input class="search" id="q" type="search" placeholder="Search peptides (reta, bpc, glow…)" autocomplete="off" aria-label="Search peptides">
@@ -294,6 +303,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
   <div class="flag" id="site-notice" hidden></div>
   <section class="vials" id="vials" aria-label="My vials and dose log"></section>
   <section class="news" id="news" aria-label="What's new"></section>
+  <section class="quick" id="quick" aria-label="Quick calculator"></section>
   <section class="prices" id="prices" aria-label="Price list"></section>
   <main class="panes">
     <section class="list" id="list" aria-label="Peptides"></section>
@@ -306,7 +316,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: open <b>What's new</b> for recent FDA and study updates, with links to the sources. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-11-05a · Vials for others (schedule only) · My price line + customer cart, Disclaimer, How to mix button, sync + subscription · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
+    <p class="hint" id="appver">App version 2026-11-05b · Quick calc, live dose math when adding a vial · Vials for others (schedule only) · My price line + customer cart, Disclaimer, How to mix button, sync + subscription · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
     <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
@@ -1154,6 +1164,39 @@ function liveLogAlerts(root){
 }
 
 /* ---------- My vials view ---------- */
+/* live dose math shown while building a vial and in Quick calc */
+function calcResultHtml(vialMg,waterMl,dose,unit){
+  if(!(vialMg>0&&waterMl>0&&dose>0)) return '<p class="hint">Enter the vial size, the water and the dose to see the answer.</p>';
+  const doseMg=toMg(dose,unit==="mcg"?"mcg":"mg"); const units=unitsFor(doseMg,vialMg,waterMl); const ml=units/100;
+  const conc=vialMg/waterMl; const doses=Math.floor(vialMg/doseMg+1e-9);
+  let h='<div class="qres"><span class="big">'+fmt(units,1)+' units</span><span class="sub">on a U-100 syringe for '+fmt(dose)+' '+(unit==="mcg"?"mcg":"mg")+' (= '+fmt(ml,3)+' mL)</span>'
+    +'<span class="sub">Concentration '+fmt(conc)+' mg/mL ('+fmt(conc*1000,0)+' mcg/mL) · about '+doses+' dose'+(doses===1?'':'s')+' per vial</span>';
+  if(units>100) h+='<span class="warn">Over 100 units: more than one syringe. Use less water or a bigger vial.</span>';
+  else if(units<5) h+='<span class="warn">Under 5 units is hard to measure. Add more water.</span>';
+  return h+'</div>';
+}
+function updateAddCalc(){
+  const box=$("#av-calc",vialsEl); if(!box) return;
+  const p=DATA.find(x=>x.id===($("#av-pid",vialsEl)||{}).value)||DATA[0];
+  box.innerHTML=calcResultHtml(parseFloat($("#av-vial",vialsEl).value),parseFloat($("#av-water",vialsEl).value),parseFloat($("#av-target",vialsEl).value),p.unit);
+}
+const QKEY="pdg:quick";
+function renderQuick(){
+  const q=Object.assign({pid:"",vial:5,water:2,dose:250,unit:"mcg"},load(QKEY,{}));
+  const opts='<option value="">Any peptide (type your own numbers)</option>'+DATA.filter(p=>p.id!=="custom"&&!p.refOnly).map(p=>'<option value="'+p.id+'"'+(q.pid===p.id?' selected':'')+'>'+esc(p.name)+'</option>').join("");
+  $("#quick").innerHTML='<div class="vhead"><div><h2>Quick calc</h2><p class="hint">Check a mix fast. Nothing here is saved to your vials.</p></div><button type="button" class="btn small" id="q-back">&larr; Peptides</button></div>'
+    +'<div class="field"><label for="q-pid">Peptide (fills in a typical mix)</label><select class="num" id="q-pid">'+opts+'</select></div>'
+    +'<div class="field"><label for="q-vial">Vial size (mg)</label><input class="num" id="q-vial" type="number" inputmode="decimal" step="any" min="0.01" value="'+q.vial+'"></div>'
+    +'<div class="field"><label for="q-water">Bacteriostatic water added (mL)</label><input class="num" id="q-water" type="number" inputmode="decimal" step="any" min="0.1" value="'+q.water+'"></div>'
+    +'<div class="field"><label for="q-dose">Dose you want</label><div class="inrow"><input class="num" id="q-dose" type="number" inputmode="decimal" step="any" min="0.001" value="'+q.dose+'"><select class="num" id="q-unit" aria-label="Dose unit"><option value="mcg"'+(q.unit==="mcg"?' selected':'')+'>mcg</option><option value="mg"'+(q.unit==="mg"?' selected':'')+'>mg</option></select></div></div>'
+    +'<div id="q-out"></div>';
+  paintQuick();
+}
+function paintQuick(){
+  const g=id=>$("#"+id,$("#quick")); const q={pid:g("q-pid").value,vial:parseFloat(g("q-vial").value),water:parseFloat(g("q-water").value),dose:parseFloat(g("q-dose").value),unit:g("q-unit").value};
+  save(QKEY,{pid:q.pid,vial:q.vial>0?q.vial:5,water:q.water>0?q.water:2,dose:q.dose>0?q.dose:250,unit:q.unit});
+  g("q-out").innerHTML=calcResultHtml(q.vial,q.water,q.dose,q.unit);
+}
 function addVialFormHtml(){
   const opts=DATA.filter(p=>p.id!=="custom"&&!p.refOnly).map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join("")+'<option value="custom">Other / custom vial</option>';
   return '<div class="vform" id="addform"><h3>Add a vial</h3>'
@@ -1164,6 +1207,7 @@ function addVialFormHtml(){
     +'<div class="field"><label for="av-mixed" id="av-mixed-label">Date mixed</label><input class="num" id="av-mixed" type="date" value="'+todayISO()+'"></div>'
     +'<div class="field"><label for="av-start">Plan start (week 1, day 1)</label><input class="num" id="av-start" type="date" value="'+todayISO()+'"></div>'
     +'<div class="field"><label for="av-target" id="av-target-label">Target dose</label><input class="num" id="av-target" type="number" inputmode="decimal" step="any" min="0.001"><span class="hint" id="av-hint"></span></div>'
+    +'<div id="av-calc" aria-live="polite"></div>'
     +'<div class="btnrow"><button type="button" class="btn primary" id="av-save">Save vial</button><button type="button" class="btn" id="av-cancel">Cancel</button></div></div>';
 }
 function fillAddDefaults(){
@@ -1175,6 +1219,7 @@ function fillAddDefaults(){
   $("#av-mixed-label",vialsEl).textContent=isOral(p)?"Date opened":"Date mixed";
   $("#av-target",vialsEl).value=p.ladder.length?p.common:(p.start!=null?p.start:p.common);
   $("#av-target-label",vialsEl).textContent=(p.ladder.length?"Target dose (":"Dose per injection (")+u+")";
+  updateAddCalc();
   $("#av-hint",vialsEl).textContent=p.id==="custom"?"":(p.ladder.length?"Ladder: "+p.ladder.map(s=>fmt(s.dose)).join(" → ")+" "+u+". The plan stops stepping up at your target.":"Typical "+doseRange(p)+". "+p.freq);
 }
 function vialCardHtml(v){
@@ -1447,7 +1492,7 @@ vialsEl.addEventListener("click",e=>{
   vialAction(e);
 });
 vialsEl.addEventListener("change",e=>{ if(e.target.id==="av-pid") fillAddDefaults(); });
-vialsEl.addEventListener("input",e=>{ if(e.target.id==="lf-amt"||e.target.id==="lf-date") liveLogAlerts(vialsEl); });
+vialsEl.addEventListener("input",e=>{ if(e.target.id&&e.target.id.indexOf("av-")===0) updateAddCalc(); if(e.target.id==="lf-amt"||e.target.id==="lf-date") liveLogAlerts(vialsEl); });
 detailEl.addEventListener("click",e=>{
   if(e.target.closest("#back")){ app.dataset.view="list"; return; }
   const p=DATA.find(x=>x.id===current); if(!p) return;
@@ -2078,6 +2123,13 @@ $("#prices").addEventListener("change",e=>{ if(e.target.id==="pr-file"&&PR&&e.ta
 document.addEventListener("visibilitychange",()=>{ if(document.hidden) prLockAt=Date.now(); else if(PR&&Date.now()-prLockAt>120000){ prLock(); if(app.dataset.view==="prices") renderPrices(); } });
 
 
+$("#quick-btn").addEventListener("click",()=>{ renderQuick(); app.dataset.view="quick"; window.scrollTo({top:0}); });
+$("#quick").addEventListener("click",e=>{ if(e.target.closest("#q-back")) app.dataset.view="list"; });
+$("#quick").addEventListener("input",e=>{ if(e.target.id&&e.target.id.indexOf("q-")===0&&e.target.id!=="q-pid") paintQuick(); });
+$("#quick").addEventListener("change",e=>{
+  if(e.target.id==="q-pid"){ const p=DATA.find(x=>x.id===e.target.value); if(p){ const g=id=>$("#"+id,$("#quick")); g("q-vial").value=p.vialDefault||p.vials[0]; g("q-water").value=p.water; g("q-dose").value=(p.start!=null?p.start:p.common); g("q-unit").value=p.unit==="mg"?"mg":"mcg"; } }
+  paintQuick();
+});
 $("#news-btn").addEventListener("click",()=>{ renderNews(); app.dataset.view="news"; window.scrollTo({top:0}); if(UPD&&UPD.news.length) save(NEWS_SEEN,UPD.news[0].date); newsDot(); });
 $("#news").addEventListener("click",e=>{
   if(e.target.closest("#news-back")){ app.dataset.view="list"; return; }
