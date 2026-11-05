@@ -1044,9 +1044,9 @@ function vGroup(key,title,items,defOpen){ if(!items.length) return ""; const st=
 function peopleNames(){ return [...new Set(vials.filter(v=>peptideOf(v)).map(whoOf).filter(Boolean))].sort((a,b)=>a.localeCompare(b)); }
 function whoSel(){ const w=load("pdg:whoSel",""); return (w&&peopleNames().indexOf(w)>=0)?w:""; }
 function whoPickerHtml(){
-  const names=peopleNames(); if(!names.length) return "";
+  const names=peopleNames(); if(!vials.length) return "";
   const sel=whoSel(); const n=w=>vials.filter(v=>peptideOf(v)&&whoOf(v)===w).length;
-  return '<div class="field"><label>Whose vials</label><select class="num who-pick" aria-label="Whose vials">'+[""].concat(names).map(w=>'<option value="'+esc(w)+'"'+(w===sel?' selected':'')+'>'+esc(w||"Mine")+' ('+n(w)+')</option>').join("")+'</select></div>';
+  return '<div class="field"><label>Whose vials</label><select class="num who-pick" aria-label="Whose vials">'+[""].concat(names).map(w=>'<option value="'+esc(w)+'"'+(w===sel?' selected':'')+'>'+esc(w||"Mine")+' ('+n(w)+')</option>').join("")+'<option value="__new">+ Add a person…</option></select>'+(names.length?'':'<span class="hint">Add a person to keep their vials separate from yours. They are tracked by schedule only.</span>')+'</div>';
 }
 function othersHtml(){
   const sel=whoSel(); if(!sel) return "";
@@ -2159,7 +2159,7 @@ document.addEventListener("visibilitychange",()=>{ if(document.hidden) prLockAt=
 
 
 document.addEventListener("toggle",e=>{ const d=e.target; if(d&&d.matches&&d.matches("details.vitem,details.vgroup")){ uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen[d.dataset.k]=d.open; } },true);
-document.addEventListener("change",e=>{ const t=e.target; if(t&&t.classList&&t.classList.contains("who-pick")){ save("pdg:whoSel",t.value); renderAll(); } });
+document.addEventListener("change",e=>{ const t=e.target; if(t&&t.classList&&t.classList.contains("who-pick")){ if(t.value==="__new"){ uiFlags.add=true; uiFlags.addNew=true; uiFlags.logFor=null; renderAll(); app.dataset.view="vials"; const sel=$("#av-whosel",vialsEl); if(sel){ sel.value="__new"; const n=$("#av-who",vialsEl); if(n){ n.hidden=false; n.focus(); } } return; } save("pdg:whoSel",t.value); renderAll(); } });
 $("#quick-btn").addEventListener("click",()=>{ renderQuick(); app.dataset.view="quick"; window.scrollTo({top:0}); });
 $("#quick").addEventListener("click",e=>{ if(e.target.closest("#q-back")) app.dataset.view="list"; });
 $("#quick").addEventListener("input",e=>{ if(e.target.id&&e.target.id.indexOf("q-")===0&&e.target.id!=="q-pid") paintQuick(); });
@@ -2374,7 +2374,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-05f", BUILT="Nov 5, 2026 6:00 PM CT";
+  const VER="2026-11-05g", BUILT="Nov 5, 2026 6:05 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
