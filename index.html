@@ -306,7 +306,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
       <p class="formula">units to draw = dose ÷ vial size × mL of water × 100 (same unit for dose and vial size)</p>
     </details>
     <p>Saved vials and dose logs stay on this device only. Regulatory status changes fast: open <b>What's new</b> for recent FDA and study updates, with links to the sources. Approved drugs are described from their current labels.</p>
-    <p class="hint" id="appver">App version 2026-11-04a · My price line + customer cart, Disclaimer, How to mix button, sync + subscription · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
+    <p class="hint" id="appver">App version 2026-11-05a · Vials for others (schedule only) · My price line + customer cart, Disclaimer, How to mix button, sync + subscription · Prices tab (PIN, Xint list + pens, upload), update feed, live study and FDA lookups, Today strip, backup and restore</p>
     <p class="hint"><button type="button" class="btn small" id="refresh-app">Refresh app</button> Clears the saved copy of the app and reloads it. Your vials and dose log are kept.</p>
   </footer>
 </div>
@@ -853,7 +853,7 @@ let seq=0; const newId=(p)=>p+Date.now().toString(36)+(seq++).toString(36);
 vials.forEach(v=>{ if(!v.id) v.id=newId("v"); if(!Array.isArray(v.log)) v.log=[]; v.log.forEach(e=>{ if(!e.id) e.id=newId("e"); }); v.log.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0); });
 
 function saveVials(){ save("pdg:vials",vials); updateVialsBtn(); if(typeof syTrack==="function"){ syTrack(); syQueue(); } }
-function vialFor(pid){ const m=vials.filter(v=>v.pid===pid); return m.length?m[m.length-1]:null; }
+function vialFor(pid){ const m=vials.filter(v=>v.pid===pid&&!v.who); return m.length?m[m.length-1]:null; }
 function updateVialsBtn(){ if(vialsBtn) vialsBtn.textContent="My vials"+(vials.length?" ("+vials.length+")":""); }
 function peptideOf(v){ return DATA.find(x=>x.id===v.pid)||null; }
 function getCalc(p){
@@ -1000,10 +1000,38 @@ function clashBetween(x,y){
   }
   return null;
 }
+/* Vials tracked for someone else (wife, daughter...): no dose log, just where they should be by the plan */
+function whoOf(v){ return typeof v.who==="string"?v.who.trim().slice(0,30):""; }
+function trackCardHtml(v){
+  const p=peptideOf(v); if(!p) return "";
+  const t=trackerState(p,v); const u=p.unitLabel||p.unit;
+  const clash=clashesFor(v);
+  let nextTxt="";
+  if(p.interval&&t.dayN>=0){ const k=Math.ceil(t.dayN/p.interval); const nd=addDays(v.start,k*p.interval); const inD=daysBetween(t.today,nd); nextTxt=inD===0?"<b>today</b>":fmtDate(nd)+" (in "+inD+"d)"; }
+  else if(t.dayN<0){ nextTxt="starts "+fmtDate(v.start); }
+  return '<div class="vialcard'+(clash.length?' clash':'')+'" data-vial="'+v.id+'">'
+    +'<div class="vrow"><button type="button" class="open" data-open="'+p.id+'">'+esc(p.name)+'</button><span class="badge tone-good">'+(t.week>0?"Should be on week "+t.week:"starts "+fmtDate(v.start))+'</span></div>'
+    +'<div class="vstats">'
+    +'<div>Dose now<b>'+fmt(t.dose)+' '+esc(u)+' = '+volTxt(p,toMg(t.dose,p.unit),v.vial,v.water)+'</b></div>'
+    +'<div>'+(isOral(p)?'Bottle':'Mix')+'<b>'+mixTxt(p,v.vial,v.water)+'</b></div>'
+    +(nextTxt?'<div>Next dose due<b>'+nextTxt+'</b></div>':'')
+    +(t.next&&t.nextDate?'<div>Dose changes<b>'+fmtDate(t.nextDate)+' to '+fmt(t.next.dose)+' '+esc(u)+'</b></div>':'')
+    +'<div>Use by<b>'+fmtDate(t.useBy)+(t.expired?' · expired':' · '+daysBetween(t.today,t.useBy)+'d')+'</b></div>'
+    +'</div>'
+    +(clash.length?clash.map(c=>'<div class="meta"><b style="color:var(--bad)">RED:</b> '+esc(c.text)+'</div>').join(""):'')
+    +'<p class="hint">Schedule only. Doses are not logged for '+esc(whoOf(v))+'.</p>'
+    +confirmHtml(v,u)
+    +'<div class="btnrow"><button type="button" class="btn small" data-newvial="'+v.id+'">'+(isOral(p)?'New bottle':'New vial mixed')+'</button><button type="button" class="btn small danger" data-remove="'+v.id+'">Remove</button></div>'
+    +'</div>';
+}
+function othersHtml(){
+  const by={}; vials.forEach(v=>{ const w=whoOf(v); if(w){ (by[w]=by[w]||[]).push(v); } });
+  return Object.keys(by).sort((a,b)=>a.localeCompare(b)).map(w=>'<div class="cat-label">Tracking for '+esc(w)+'</div>'+by[w].map(trackCardHtml).join("")).join("");
+}
 function clashesFor(v){
   const out=[];
   for(const o of vials){
-    if(o.id===v.id||o.pid===v.pid) continue;
+    if(o.id===v.id||o.pid===v.pid||(o.who||"")!==(v.who||"")) continue;
     const po=peptideOf(o), pv=peptideOf(v); if(!po||!pv) continue;
     if(trackerState(po,o).expired||trackerState(pv,v).expired) continue;
     const why=clashBetween(v.pid,o.pid);
@@ -1013,8 +1041,9 @@ function clashesFor(v){
 }
 function myVialsHtml(){
   if(!vials.length) return "";
-  let html='<div class="cat-label">My vials</div>';
+  let html=vials.some(v=>!whoOf(v))?'<div class="cat-label">My vials</div>':'';
   for(const v of vials){
+    if(whoOf(v)) continue;
     const p=DATA.find(x=>x.id===v.pid); if(!p) continue;
     const t=trackerState(p,v); const u=p.unitLabel||p.unit;
     const clash=clashesFor(v);
@@ -1028,7 +1057,7 @@ function myVialsHtml(){
       +'<div class="btnrow"><button type="button" class="btn small primary" data-log="'+v.id+'">Log dose</button><button type="button" class="btn small" data-open="'+p.id+'">Open</button></div>'
       +'</div>';
   }
-  return html;
+  return html+othersHtml();
 }
 function renderList(){
   const items=DATA.filter(matches);
@@ -1129,6 +1158,7 @@ function addVialFormHtml(){
   const opts=DATA.filter(p=>p.id!=="custom"&&!p.refOnly).map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join("")+'<option value="custom">Other / custom vial</option>';
   return '<div class="vform" id="addform"><h3>Add a vial</h3>'
     +'<div class="field"><label for="av-pid">Peptide</label><select class="num" id="av-pid">'+opts+'</select></div>'
+    +'<div class="field"><label for="av-who">Who is it for? (leave empty for you)</label><input class="num" id="av-who" type="text" maxlength="30" list="av-whos" placeholder="e.g. Wife, Daughter" autocomplete="off"><datalist id="av-whos">'+[...new Set(vials.map(whoOf).filter(Boolean))].map(w=>'<option value="'+esc(w)+'">').join("")+'</datalist><span class="hint">Named vials are tracked by schedule only. No dose logging.</span></div>'
     +'<div class="field"><label for="av-vial" id="av-vial-label">Vial size (mg)</label><input class="num" id="av-vial" type="number" inputmode="decimal" step="any" min="0.01"></div>'
     +'<div class="field"><label for="av-water" id="av-water-label">Bacteriostatic water added (mL)</label><input class="num" id="av-water" type="number" inputmode="decimal" step="any" min="0.1"></div>'
     +'<div class="field"><label for="av-mixed" id="av-mixed-label">Date mixed</label><input class="num" id="av-mixed" type="date" value="'+todayISO()+'"></div>'
@@ -1192,7 +1222,7 @@ function renderVials(){
   html+=syncHtml();
   if(uiFlags.add) html+=addVialFormHtml();
   if(!vials.length&&!uiFlags.add) html+='<p class="empty">No vials yet. Tap + Add vial, or open any peptide and tap "Save this vial &amp; count weeks".</p>';
-  else html+='<div class="vgrid">'+vials.map(vialCardHtml).join("")+'</div>';
+  else html+='<div class="vgrid">'+vials.filter(v=>!whoOf(v)).map(vialCardHtml).join("")+'</div>'+othersHtml();
   const rows=allEntries();
   html+='<section class="block hist"><div class="vhead"><h3>Dose log · '+rows.length+' entr'+(rows.length===1?'y':'ies')+'</h3>'+(rows.length?'<button type="button" class="btn small" id="export-log">Copy as CSV</button>':'')+'</div>';
   if(uiFlags.exportOpen) html+='<textarea class="export" id="export-text" readonly>'+esc(exportText())+'</textarea><p class="hint">Select all and copy if the button did not work.</p>';
@@ -1401,7 +1431,8 @@ vialsEl.addEventListener("click",e=>{
     const vial=parseFloat($("#av-vial",vialsEl).value), water=parseFloat($("#av-water",vialsEl).value), target=parseFloat($("#av-target",vialsEl).value);
     if(!(vial>0&&water>0&&target>0)) return;
     const v={id:newId("v"),pid,vial,water,mixed:$("#av-mixed",vialsEl).value||todayISO(),start:$("#av-start",vialsEl).value||todayISO(),target,log:[]};
-    vials.push(v); const c=getCalc(p); c.vial=vial; c.water=water; save("pdg:calc:"+pid,c);
+    const who=(($("#av-who",vialsEl)||{}).value||"").trim().slice(0,30); if(who) v.who=who;
+    vials.push(v); if(who){ uiFlags.add=false; saveVials(); renderAll(); return; } const c=getCalc(p); c.vial=vial; c.water=water; save("pdg:calc:"+pid,c);
     uiFlags.add=false; saveVials(); renderAll(); return;
   }
   if(e.target.closest("#export-log")){
@@ -1767,7 +1798,7 @@ function restoreFrom(text){
     const ok=v&&typeof v.id==="string"&&typeof v.pid==="string"&&DATA.some(p=>p.id===v.pid)&&posNum(v.vial)&&posNum(v.water)&&posNum(v.target)&&okDate(v.mixed)&&okDate(v.start)&&Array.isArray(v.log)&&v.log.every(e=>e&&typeof e.id==="string"&&okDate(e.d)&&typeof e.dose==="number"&&isFinite(e.dose));
     if(!ok){ skipped++; continue; }
     if(vials.some(x=>x.id===v.id)){ skipped++; continue; }
-    vials.push({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))}); added++;
+    vials.push(Object.assign({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))},whoOf(v)?{who:whoOf(v)}:{})); added++;
   }
   if(added) saveVials();
   uiFlags.bkMsg="Restored "+added+" vial"+(added===1?"":"s")+(skipped?" ("+skipped+" skipped: already here or not readable)":"")+".";
@@ -2092,7 +2123,7 @@ function syTrack(){
 function syClean(v){   /* same checks as restore; anything unreadable is dropped */
   const ok=v&&typeof v.id==="string"&&typeof v.pid==="string"&&DATA.some(p=>p.id===v.pid)&&posNum(v.vial)&&posNum(v.water)&&posNum(v.target)&&okDate(v.mixed)&&okDate(v.start)&&Array.isArray(v.log)&&v.log.every(e=>e&&typeof e.id==="string"&&okDate(e.d)&&typeof e.dose==="number"&&isFinite(e.dose));
   if(!ok) return null;
-  return {id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))};
+  return Object.assign({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))},whoOf(v)?{who:whoOf(v)}:{});
 }
 function syMerge(L,R){
   const del=Object.assign({},R.del||{}); Object.keys(L.del||{}).forEach(k=>{ del[k]=Math.max(del[k]||0,L.del[k]); });
