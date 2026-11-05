@@ -1269,12 +1269,22 @@ function exportText(){
   for(const r of rows) s+=[r.e.d,'"'+r.p.name+'"',r.e.dose,(r.p.unitLabel||r.p.unit),(isOral(r.p)?fmt(r.units/100,2):fmt(r.units,1)),(isOral(r.p)?"mL":"syringe units"),r.v.vial,vu(r.p),r.v.water].join(",")+"\n";
   return s;
 }
+function manageHtml(){
+  const sel=uiFlags.sel||{}; const n=Object.keys(sel).filter(k=>sel[k]).length;
+  const rows=vials.filter(v=>peptideOf(v)).slice().sort((a,b)=>(whoOf(a)||"").localeCompare(whoOf(b)||"")||peptideOf(a).name.localeCompare(peptideOf(b).name));
+  let h='<section class="block"><h3>Delete vials</h3><p class="hint">Tick the ones to remove. Their dose logs go with them. Tap <b>Copy backup</b> at the bottom first if you may want them back.</p>'
+    +'<div class="btnrow"><button type="button" class="btn small" id="mg-all">Select all</button><button type="button" class="btn small" id="mg-none">Select none</button><button type="button" class="btn small danger" id="mg-del">'+(uiFlags.mgArm?'Tap again to delete '+n:'Delete selected ('+n+')')+'</button></div>';
+  if(!rows.length) h+='<p class="empty">No vials.</p>';
+  h+=rows.map(v=>{ const p=peptideOf(v), t=trackerState(p,v); return '<label class="prow" style="cursor:pointer"><span class="pl"><b>'+esc(p.name)+'</b><span class="pp">'+(whoOf(v)?esc(whoOf(v))+' · ':'Mine · ')+(t.week>0?'week '+t.week:'starts '+fmtDate(v.start))+' · mixed '+fmtDate(v.mixed)+(v.log.length?' · '+v.log.length+' logged':'')+(t.expired?' · expired':'')+'</span></span><input type="checkbox" data-sel="'+esc(v.id)+'"'+(sel[v.id]?' checked':'')+' style="width:22px;height:22px"></label>'; }).join("");
+  return h+'</section>';
+}
 function renderVials(){
   let html='<div class="vhead"><div><h2>My vials</h2><p class="hint">Saved on this device. Use Sync across devices below to move them to other devices. Log every dose and the app tracks weeks, what is left, and what is due. A vial turns red when it shares an ingredient or drug class with another active vial. No red does not mean safe: most of these have never been studied together.</p></div>'
-    +'<div class="btnrow"><button type="button" class="btn" id="vials-back">&larr; Peptides</button><button type="button" class="btn primary" id="add-vial">+ Add vial</button></div></div>';
+    +'<div class="btnrow"><button type="button" class="btn" id="vials-back">&larr; Peptides</button><button type="button" class="btn" id="mg-open">'+(uiFlags.manage?'Done':'Delete vials')+'</button><button type="button" class="btn primary" id="add-vial">+ Add vial</button></div></div>';
   html+=syncHtml();
   if(uiFlags.add) html+=addVialFormHtml();
   if(!vials.length&&!uiFlags.add) html+='<p class="empty">No vials yet. Tap + Add vial, or open any peptide and tap "Save this vial &amp; count weeks".</p>';
+  else if(uiFlags.manage) html+=manageHtml();
   else html+='<div class="vgrid">'+'</div>'+vGroup("__me","My vials",vials.filter(v=>!whoOf(v)&&peptideOf(v)).sort((a,b)=>peptideOf(a).name.localeCompare(peptideOf(b).name)).map(v=>vItem(v,vialCardHtml(v))),true)+othersHtml();
   const rows=allEntries();
   html+='<section class="block hist"><div class="vhead"><h3>Dose log · '+rows.length+' entr'+(rows.length===1?'y':'ies')+'</h3>'+(rows.length?'<button type="button" class="btn small" id="export-log">Copy as CSV</button>':'')+'</div>';
@@ -1477,6 +1487,13 @@ listEl.addEventListener("click",e=>{
 vialsBtn.addEventListener("click",()=>{ uiFlags.confirm=null; uiFlags.logFor=null; renderVials(); app.dataset.view="vials"; window.scrollTo({top:0}); });
 vialsEl.addEventListener("click",e=>{
   if(e.target.closest("#vials-back")){ app.dataset.view="list"; return; }
+  if(e.target.closest("#mg-open")){ uiFlags.manage=!uiFlags.manage; uiFlags.sel={}; uiFlags.mgArm=false; renderVials(); return; }
+  if(e.target.closest("#mg-all")){ uiFlags.sel={}; vials.forEach(v=>{ uiFlags.sel[v.id]=true; }); uiFlags.mgArm=false; renderVials(); return; }
+  if(e.target.closest("#mg-none")){ uiFlags.sel={}; uiFlags.mgArm=false; renderVials(); return; }
+  if(e.target.closest("#mg-del")){
+    const ids=Object.keys(uiFlags.sel||{}).filter(k=>uiFlags.sel[k]); if(!ids.length) return;
+    if(!uiFlags.mgArm){ uiFlags.mgArm=true; renderVials(); return; }
+    vials=vials.filter(v=>ids.indexOf(v.id)<0); uiFlags.sel={}; uiFlags.mgArm=false; uiFlags.logFor=null; uiFlags.manage=vials.length>0; saveVials(); renderAll(); return; }
   if(e.target.closest("#add-vial")){ uiFlags.add=true; uiFlags.logFor=null; renderVials(); return; }
   if(e.target.closest("#av-cancel")){ uiFlags.add=false; renderVials(); return; }
   if(e.target.closest("#av-save")){
@@ -1499,7 +1516,7 @@ vialsEl.addEventListener("click",e=>{
   if(del){ const v=vials.find(x=>x.id===del.dataset.delvial); if(v){ v.log=v.log.filter(en=>en.id!==del.dataset.delentry); saveVials(); renderAll(); } return; }
   vialAction(e);
 });
-vialsEl.addEventListener("change",e=>{ if(e.target.id==="av-pid") fillAddDefaults(); });
+vialsEl.addEventListener("change",e=>{ if(e.target.id==="av-pid") fillAddDefaults(); const k=e.target.dataset&&e.target.dataset.sel; if(k){ uiFlags.sel=uiFlags.sel||{}; uiFlags.sel[k]=e.target.checked; uiFlags.mgArm=false; const n=Object.keys(uiFlags.sel).filter(x=>uiFlags.sel[x]).length; const b=$("#mg-del",vialsEl); if(b) b.textContent="Delete selected ("+n+")"; } });
 vialsEl.addEventListener("input",e=>{ if(e.target.id&&e.target.id.indexOf("av-")===0) updateAddCalc(); if(e.target.id==="lf-amt"||e.target.id==="lf-date") liveLogAlerts(vialsEl); });
 detailEl.addEventListener("click",e=>{
   if(e.target.closest("#back")){ app.dataset.view="list"; return; }
@@ -2348,7 +2365,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-05d", BUILT="Nov 5, 2026 5:40 PM CT";
+  const VER="2026-11-05e", BUILT="Nov 5, 2026 5:50 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
