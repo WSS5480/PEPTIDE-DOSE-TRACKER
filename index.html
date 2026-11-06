@@ -919,9 +919,11 @@ function trackerState(p,v,asOf){
   let step=plan.find(s=>week>=s.from&&week<=s.to)||null;
   if(!step&&week>0){ const before=plan.filter(s=>s.from<=week); step=before.length?before[before.length-1]:plan[0]; }
   if(!step) step=plan[0];
-  const next=plan.find(s=>s.from>week&&(s.dose!==step.dose||s.label!==step.label))||null;
-  const nextDate=next?addDays(v.start,(next.from-1)*7):null;
-  const dose=step.dose;
+  let next=plan.find(s=>s.from>week&&(s.dose!==step.dose||s.label!==step.label))||null;
+  let nextDate=next?addDays(v.start,(next.from-1)*7):null;
+  const locked=(v.lock>0);
+  const dose=locked?v.lock:step.dose;
+  if(locked){ next=null; nextDate=null; }
   const units=unitsFor(toMg(dose,p.unit),v.vial,v.water);
   const all=Array.isArray(v.log)?v.log:[];
   const log=all.filter(e=>daysBetween(e.d,today)>=0);    /* entries on or before the as-of date */
@@ -934,7 +936,7 @@ function trackerState(p,v,asOf){
   const last=log.length?log[log.length-1]:null;
   const sinceLast=last?daysBetween(last.d,today):null;
   const dueIn=(last&&p.interval)?p.interval-sinceLast:null;   /* negative = overdue */
-  return {today,dayN,week,plan,step,next,nextDate,dose,units,log,remainingMg,dosesLeft,openDays,useBy,expired,last,sinceLast,dueIn};
+  return {today,dayN,week,plan,step,next,nextDate,dose,units,locked,log,remainingMg,dosesLeft,openDays,useBy,expired,last,sinceLast,dueIn};
 }
 /* over / under dose alerts for a proposed dose (in the peptide's unit) */
 function doseAlerts(p,v,dose){
@@ -1032,7 +1034,7 @@ function trackCardHtml(v){
     +'<div>Use by<b>'+fmtDate(t.useBy)+(t.expired?' · expired':' · '+daysBetween(t.today,t.useBy)+'d')+'</b></div>'
     +'</div>'
     +(clash.length?clash.map(c=>'<div class="meta"><b style="color:var(--bad)">RED:</b> '+esc(c.text)+'</div>').join(""):'')
-    +'<p class="hint">Schedule only. Doses are not logged for '+esc(whoOf(v))+'.</p>'
+    +(v.lock>0?'<p class="hint"><b>Dose locked</b> at '+fmt(v.lock)+' '+esc(u)+'. Step-ups are off.</p><div class="btnrow"><button type="button" class="btn small" data-unlock="'+v.id+'">Unlock dose</button></div>':'')+'<p class="hint">Schedule only. Doses are not logged for '+esc(whoOf(v))+'.</p>'
     +confirmHtml(v,u)
     +'<div class="btnrow"><button type="button" class="btn small" data-newvial="'+v.id+'">'+(isOral(p)?'New bottle':'New vial mixed')+'</button><button type="button" class="btn small danger" data-remove="'+v.id+'">Remove</button></div>'
     +'</div>';
@@ -1191,10 +1193,20 @@ function calcResultHtml(vialMg,waterMl,dose,unit){
   else if(units<5) h+='<span class="warn">Under 5 units is hard to measure. Add more water.</span>';
   return h+'</div>';
 }
+function syncLockBox(p){
+  const mode=$("#av-mode",vialsEl); if(!mode) return;
+  const lk=mode.value==="lock"; $("#av-lockbox",vialsEl).hidden=!lk; if(!lk) return;
+  const inp=$("#av-lock",vialsEl); const u=p.unitLabel||p.unit;
+  $("#av-lock-label",vialsEl).textContent="Locked dose per injection ("+u+")";
+  let planDose=null; try{ const tv={pid:p.id,vial:parseFloat($("#av-vial",vialsEl).value)||p.vials[0],water:parseFloat($("#av-water",vialsEl).value)||p.water,start:$("#av-start",vialsEl).value||todayISO(),target:parseFloat($("#av-target",vialsEl).value)||p.common,log:[]}; const t=trackerState(p,tv); planDose=t.dose; $("#av-lock-hint",vialsEl).textContent=t.week>0?"The plan says "+fmt(t.dose)+" "+u+" for week "+t.week+" of this start date. Change it if you are on a different dose. It stays until you unlock it.":"Plan has not started yet."; }catch(e){}
+  if(!inp.dataset.t&&planDose!=null) inp.value=planDose;
+}
 function updateAddCalc(){
   const box=$("#av-calc",vialsEl); if(!box) return;
   const p=DATA.find(x=>x.id===($("#av-pid",vialsEl)||{}).value)||DATA[0];
-  box.innerHTML=calcResultHtml(parseFloat($("#av-vial",vialsEl).value),parseFloat($("#av-water",vialsEl).value),parseFloat($("#av-target",vialsEl).value),p.unit);
+  syncLockBox(p);
+  const lk=($("#av-mode",vialsEl)||{}).value==="lock";
+  box.innerHTML=calcResultHtml(parseFloat($("#av-vial",vialsEl).value),parseFloat($("#av-water",vialsEl).value),parseFloat(lk?$("#av-lock",vialsEl).value:$("#av-target",vialsEl).value),p.unit);
 }
 const QKEY="pdg:quick";
 function renderQuick(){
@@ -1222,6 +1234,8 @@ function addVialFormHtml(){
     +'<div class="field"><label for="av-water" id="av-water-label">Bacteriostatic water added (mL)</label><input class="num" id="av-water" type="number" inputmode="decimal" step="any" min="0.1"></div>'
     +'<div class="field"><label for="av-mixed" id="av-mixed-label">Date mixed</label><input class="num" id="av-mixed" type="date" value="'+todayISO()+'"></div>'
     +'<div class="field"><label for="av-start">Plan start (week 1, day 1)</label><input class="num" id="av-start" type="date" value="'+todayISO()+'"></div>'
+    +'<div class="field"><label for="av-mode">Dose plan</label><select class="num" id="av-mode"><option value="follow">Follow the plan (steps up on schedule)</option><option value="lock">Lock the dose (I am already at this dose)</option></select>'
+    +'<div id="av-lockbox" hidden><label for="av-lock" id="av-lock-label">Locked dose</label><input class="num" id="av-lock" type="number" inputmode="decimal" step="any" min="0.001"><span class="hint" id="av-lock-hint"></span></div></div>'
     +'<div class="field"><label for="av-target" id="av-target-label">Target dose</label><input class="num" id="av-target" type="number" inputmode="decimal" step="any" min="0.001"><span class="hint" id="av-hint"></span></div>'
     +'<div id="av-calc" aria-live="polite"></div>'
     +'<div class="btnrow"><button type="button" class="btn primary" id="av-save">Save vial</button><button type="button" class="btn" id="av-cancel">Cancel</button></div></div>';
@@ -1259,7 +1273,7 @@ function vialCardHtml(v){
     +'<div class="btnrow"><button type="button" class="btn small primary" data-log="'+v.id+'">Log dose today ('+fmt(t.dose)+' '+esc(u)+')</button>'
     +'<button type="button" class="btn small" data-logcustom="'+v.id+'">Log other</button>'
     +'<button type="button" class="btn small" data-open="'+p.id+'">Open</button>'
-    +'<button type="button" class="btn small" data-newvial="'+v.id+'">'+(isOral(p)?'New bottle':'New vial mixed')+'</button>'
+    +(v.lock>0?'<button type="button" class="btn small" data-unlock="'+v.id+'">Unlock dose ('+fmt(v.lock)+')</button>':'')+'<button type="button" class="btn small" data-newvial="'+v.id+'">'+(isOral(p)?'New bottle':'New vial mixed')+'</button>'
     +'<button type="button" class="btn small danger" data-remove="'+v.id+'">Remove</button></div>'
     +(uiFlags.logFor===v.id?logFormHtml(p,v,t):'')
     +'</div>';
@@ -1495,6 +1509,7 @@ listEl.addEventListener("click",e=>{
 vialsBtn.addEventListener("click",()=>{ uiFlags.confirm=null; uiFlags.logFor=null; renderVials(); app.dataset.view="vials"; window.scrollTo({top:0}); });
 vialsEl.addEventListener("click",e=>{
   if(e.target.closest("#vials-back")){ app.dataset.view="list"; return; }
+  const ul=e.target.closest("[data-unlock]"); if(ul){ const v=vials.find(x=>x.id===ul.dataset.unlock); if(v){ delete v.lock; saveVials(); renderAll(); } return; }
   if(e.target.closest("#mg-open")){ uiFlags.manage=!uiFlags.manage; uiFlags.sel={}; uiFlags.mgArm=false; renderVials(); return; }
   if(e.target.closest("#mg-all")){ uiFlags.sel={}; vials.forEach(v=>{ uiFlags.sel[v.id]=true; }); uiFlags.mgArm=false; renderVials(); return; }
   if(e.target.closest("#mg-none")){ uiFlags.sel={}; uiFlags.mgArm=false; renderVials(); return; }
@@ -1510,6 +1525,7 @@ vialsEl.addEventListener("click",e=>{
     if(!(vial>0&&water>0&&target>0)) return;
     const v={id:newId("v"),pid,vial,water,mixed:$("#av-mixed",vialsEl).value||todayISO(),start:$("#av-start",vialsEl).value||todayISO(),target,log:[]};
     const ws=($("#av-whosel",vialsEl)||{}).value; const who=(ws==="__new"?(($("#av-who",vialsEl)||{}).value||""):ws||"").trim().slice(0,30); if(ws==="__new"&&!who) return; if(who) v.who=who;
+    if((($("#av-mode",vialsEl)||{}).value)==="lock"){ const lk=parseFloat($("#av-lock",vialsEl).value); if(lk>0) v.lock=lk; }
     vials.push(v); if(who){ uiFlags.add=false; saveVials(); renderAll(); return; } const c=getCalc(p); c.vial=vial; c.water=water; save("pdg:calc:"+pid,c);
     uiFlags.add=false; saveVials(); renderAll(); return;
   }
@@ -1524,8 +1540,8 @@ vialsEl.addEventListener("click",e=>{
   if(del){ const v=vials.find(x=>x.id===del.dataset.delvial); if(v){ v.log=v.log.filter(en=>en.id!==del.dataset.delentry); saveVials(); renderAll(); } return; }
   vialAction(e);
 });
-vialsEl.addEventListener("change",e=>{ if(e.target.id==="av-pid") fillAddDefaults(); if(e.target.id==="av-whosel"){ const n=$("#av-who",vialsEl); if(n){ n.hidden=e.target.value!=="__new"; if(!n.hidden) n.focus(); } } const k=e.target.dataset&&e.target.dataset.sel; if(k){ uiFlags.sel=uiFlags.sel||{}; uiFlags.sel[k]=e.target.checked; uiFlags.mgArm=false; const n=Object.keys(uiFlags.sel).filter(x=>uiFlags.sel[x]).length; const b=$("#mg-del",vialsEl); if(b) b.textContent="Delete selected ("+n+")"; } });
-vialsEl.addEventListener("input",e=>{ if(e.target.id&&e.target.id.indexOf("av-")===0) updateAddCalc(); if(e.target.id==="lf-amt"||e.target.id==="lf-date") liveLogAlerts(vialsEl); });
+vialsEl.addEventListener("change",e=>{ if(e.target.id==="av-mode"||e.target.id==="av-start"){ const l=$("#av-lock",vialsEl); if(l&&e.target.id==="av-mode"&&e.target.value==="follow") delete l.dataset.t; updateAddCalc(); } if(e.target.id==="av-pid"){ const l=$("#av-lock",vialsEl); if(l) delete l.dataset.t; } if(e.target.id==="av-pid") fillAddDefaults(); if(e.target.id==="av-whosel"){ const n=$("#av-who",vialsEl); if(n){ n.hidden=e.target.value!=="__new"; if(!n.hidden) n.focus(); } } const k=e.target.dataset&&e.target.dataset.sel; if(k){ uiFlags.sel=uiFlags.sel||{}; uiFlags.sel[k]=e.target.checked; uiFlags.mgArm=false; const n=Object.keys(uiFlags.sel).filter(x=>uiFlags.sel[x]).length; const b=$("#mg-del",vialsEl); if(b) b.textContent="Delete selected ("+n+")"; } });
+vialsEl.addEventListener("input",e=>{ if(e.target.id==="av-lock") e.target.dataset.t="1"; if(e.target.id&&e.target.id.indexOf("av-")===0) updateAddCalc(); if(e.target.id==="lf-amt"||e.target.id==="lf-date") liveLogAlerts(vialsEl); });
 detailEl.addEventListener("click",e=>{
   if(e.target.closest("#back")){ app.dataset.view="list"; return; }
   const p=DATA.find(x=>x.id===current); if(!p) return;
@@ -1878,7 +1894,7 @@ function restoreFrom(text){
     const ok=v&&typeof v.id==="string"&&typeof v.pid==="string"&&DATA.some(p=>p.id===v.pid)&&posNum(v.vial)&&posNum(v.water)&&posNum(v.target)&&okDate(v.mixed)&&okDate(v.start)&&Array.isArray(v.log)&&v.log.every(e=>e&&typeof e.id==="string"&&okDate(e.d)&&typeof e.dose==="number"&&isFinite(e.dose));
     if(!ok){ skipped++; continue; }
     if(vials.some(x=>x.id===v.id)){ skipped++; continue; }
-    vials.push(Object.assign({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))},whoOf(v)?{who:whoOf(v)}:{})); added++;
+    vials.push(Object.assign({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))},whoOf(v)?{who:whoOf(v)}:{},v.lock>0?{lock:+v.lock}:{})); added++;
   }
   if(added) saveVials();
   uiFlags.bkMsg="Restored "+added+" vial"+(added===1?"":"s")+(skipped?" ("+skipped+" skipped: already here or not readable)":"")+".";
@@ -2212,7 +2228,7 @@ function syTrack(){
 function syClean(v){   /* same checks as restore; anything unreadable is dropped */
   const ok=v&&typeof v.id==="string"&&typeof v.pid==="string"&&DATA.some(p=>p.id===v.pid)&&posNum(v.vial)&&posNum(v.water)&&posNum(v.target)&&okDate(v.mixed)&&okDate(v.start)&&Array.isArray(v.log)&&v.log.every(e=>e&&typeof e.id==="string"&&okDate(e.d)&&typeof e.dose==="number"&&isFinite(e.dose));
   if(!ok) return null;
-  return Object.assign({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))},whoOf(v)?{who:whoOf(v)}:{});
+  return Object.assign({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))},whoOf(v)?{who:whoOf(v)}:{},v.lock>0?{lock:+v.lock}:{});
 }
 function syMerge(L,R){
   const del=Object.assign({},R.del||{}); Object.keys(L.del||{}).forEach(k=>{ del[k]=Math.max(del[k]||0,L.del[k]); });
@@ -2374,7 +2390,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-05g", BUILT="Nov 5, 2026 6:05 PM CT";
+  const VER="2026-11-05h", BUILT="Nov 5, 2026 9:05 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
