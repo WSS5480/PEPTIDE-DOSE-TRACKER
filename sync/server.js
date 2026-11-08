@@ -200,6 +200,13 @@ app.post("/api/platform/members/:id", platform, wrap(async (req, res) => {
     await q("update dose_users set disabled = $2 where id = $1", [id, act === "disable"]);
     if (act === "disable") await q("delete from dose_tokens where user_id = $1", [id]);
     stCache.delete(id);
+  } else if (act === "setpin") {
+    const pin = cleanPin(req.body?.pin);
+    if (!/^\d{4}$/.test(pin)) return bad(res, "The PIN must be exactly 4 digits.");
+    const salt = crypto.randomBytes(16).toString("hex");
+    const r = await q("update dose_users set pin_salt = $2, pin_hash = $3 where id = $1", [id, salt, hashPin(pin, salt)]);
+    if (!r.rowCount) return bad(res, "No such login.", 404);
+    await q("delete from dose_tokens where user_id = $1", [id]);
   } else if (act === "plan") stCache.delete(id);
   res.json({ ok: true });
 }));
