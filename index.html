@@ -868,7 +868,11 @@ vials.forEach(v=>{ if(!v.id) v.id=newId("v"); if(!Array.isArray(v.log)) v.log=[]
 function saveVials(){ save("pdg:vials",vials); updateVialsBtn(); if(typeof syTrack==="function"){ syTrack(); syQueue(); } }
 function vialFor(pid){ const m=vials.filter(v=>v.pid===pid&&!v.who); return m.length?m[m.length-1]:null; }
 function updateVialsBtn(){ if(vialsBtn) vialsBtn.textContent="My vials"+(vials.length?" ("+vials.length+")":""); }
-function peptideOf(v){ return DATA.find(x=>x.id===v.pid)||null; }
+const EVERY=[[0,"Default for this peptide"],[1,"Every day"],[2,"Every other day"],[3,"Every 3 days (about 2 times a week)"],[4,"Every 4 days"],[7,"Once a week"],[10,"Every 10 days"],[14,"Every 2 weeks"]];
+function everyTxt(n){ const m=EVERY.find(x=>x[0]===n); return m?m[1]:"Every "+n+" days"; }
+function eff(p,v){ return (p&&v&&v.every>0)?Object.assign({},p,{interval:v.every,freq:everyTxt(v.every)}):p; }
+function everySel(id,cur){ return '<select class="num" id="'+id+'">'+EVERY.map(x=>'<option value="'+x[0]+'"'+((+cur||0)===x[0]?' selected':'')+'>'+x[1]+'</option>').join("")+'</select>'; }
+function peptideOf(v){ return eff(DATA.find(x=>x.id===v.pid)||null,v); }
 function getCalc(p){
   if(calcState[p.id]) return calcState[p.id];
   const saved=load("pdg:calc:"+p.id,null);
@@ -912,6 +916,7 @@ function planFor(p,v){
   return out;
 }
 function trackerState(p,v,asOf){
+  p=eff(p,v);
   const today=asOf||todayISO();
   const dayN=daysBetween(v.start,today);                 /* days since plan start */
   const week=dayN<0?0:Math.floor(dayN/7)+1;
@@ -967,6 +972,7 @@ function timingAlerts(p,t){
   return out;
 }
 function logAlerts(p,v,t,dose){
+  p=eff(p,v);
   const out=doseAlerts(p,v,dose);
   if(t.last&&p.interval){
     if(p.interval>=7&&t.sinceLast<p.interval-2) out.push({level:"bad",text:"OVER: last dose was "+ago(t.sinceLast)+". This is a once-weekly peptide, so another one now stacks on top of it."});
@@ -1129,10 +1135,12 @@ function vialFormHtml(p,c,v){
     +(p.ladder.length?'<div class="chips">'+chipRow("target",targetPresets(p),draft.target,"")+'</div>':'')
     +'<input class="num" id="vf-target" type="number" inputmode="decimal" min="0.001" step="any" value="'+draft.target+'"></div>'
     +(p.ladder.length?'<span class="hint">The ladder stops stepping up once it reaches this.</span>':'')+'</div>'
+    +'<div class="field"><label for="vf-every">How often</label>'+everySel("vf-every",draft.every)+'</div>'
     +'<div class="btnrow"><button type="button" class="btn primary" id="vf-save">'+(v?"Save changes":"Save vial")+'</button><button type="button" class="btn" id="vf-cancel">Cancel</button></div>'
     +'</div>';
 }
 function trackerHtml(p,v){
+  p=eff(p,v);
   const t=trackerState(p,v); const u=p.unitLabel||p.unit;
   const alerts=clashesFor(v).concat(timingAlerts(p,t));
   let html='<section class="block tracker" id="tracker" aria-label="My vial"><h3>My vial · week counter</h3>'
@@ -1235,6 +1243,7 @@ function addVialFormHtml(){
     +'<div class="field"><label for="av-mixed" id="av-mixed-label">Date mixed</label><input class="num" id="av-mixed" type="date" value="'+todayISO()+'"></div>'
     +'<div class="field"><label for="av-start">Plan start (week 1, day 1)</label><input class="num" id="av-start" type="date" value="'+todayISO()+'"></div>'
     +'<div class="field"><label for="av-mode">Dose plan</label><select class="num" id="av-mode"><option value="follow">Follow the plan (steps up on schedule)</option><option value="lock">Lock the dose (I am already at this dose)</option></select>'
+    +'<div class="field"><label for="av-every">How often</label>'+everySel("av-every",0)+'</div>'
     +'<div id="av-lockbox" hidden><label for="av-lock" id="av-lock-label">Locked dose</label><input class="num" id="av-lock" type="number" inputmode="decimal" step="any" min="0.001"><span class="hint" id="av-lock-hint"></span></div></div>'
     +'<div class="field"><label for="av-target" id="av-target-label">Target dose</label><input class="num" id="av-target" type="number" inputmode="decimal" step="any" min="0.001"><span class="hint" id="av-hint"></span></div>'
     +'<div id="av-calc" aria-live="polite"></div>'
@@ -1525,6 +1534,7 @@ vialsEl.addEventListener("click",e=>{
     if(!(vial>0&&water>0&&target>0)) return;
     const v={id:newId("v"),pid,vial,water,mixed:$("#av-mixed",vialsEl).value||todayISO(),start:$("#av-start",vialsEl).value||todayISO(),target,log:[]};
     const ws=($("#av-whosel",vialsEl)||{}).value; const who=(ws==="__new"?(($("#av-who",vialsEl)||{}).value||""):ws||"").trim().slice(0,30); if(ws==="__new"&&!who) return; if(who) v.who=who;
+    const ev=parseInt(($("#av-every",vialsEl)||{}).value,10); if(ev>0) v.every=ev;
     if((($("#av-mode",vialsEl)||{}).value)==="lock"){ const lk=parseFloat($("#av-lock",vialsEl).value); if(lk>0) v.lock=lk; }
     vials.push(v); if(who){ uiFlags.add=false; saveVials(); renderAll(); return; } const c=getCalc(p); c.vial=vial; c.water=water; save("pdg:calc:"+pid,c);
     uiFlags.add=false; saveVials(); renderAll(); return;
@@ -1563,8 +1573,9 @@ detailEl.addEventListener("click",e=>{
   if(e.target.closest("#vf-save")){
     const mixed=($("#vf-mixed",detailEl)||{}).value||todayISO(), start=($("#vf-start",detailEl)||{}).value||todayISO();
     const target=parseFloat(($("#vf-target",detailEl)||{}).value); if(!(target>0)) return;
-    if(v&&uiFlags.form==="edit"){ Object.assign(v,{vial:c.vial,water:c.water,mixed,start,target}); }
-    else { v={id:newId("v"),pid:p.id,vial:c.vial,water:c.water,mixed,start,target,log:[]}; vials.push(v); }
+    const ev=parseInt(($("#vf-every",detailEl)||{}).value,10)||0;
+    if(v&&uiFlags.form==="edit"){ Object.assign(v,{vial:c.vial,water:c.water,mixed,start,target}); if(ev>0) v.every=ev; else delete v.every; }
+    else { v={id:newId("v"),pid:p.id,vial:c.vial,water:c.water,mixed,start,target,log:[]}; if(ev>0) v.every=ev; vials.push(v); }
     uiFlags.form=false; saveVials(); renderAll(); return;
   }
   vialAction(e);
@@ -1894,7 +1905,7 @@ function restoreFrom(text){
     const ok=v&&typeof v.id==="string"&&typeof v.pid==="string"&&DATA.some(p=>p.id===v.pid)&&posNum(v.vial)&&posNum(v.water)&&posNum(v.target)&&okDate(v.mixed)&&okDate(v.start)&&Array.isArray(v.log)&&v.log.every(e=>e&&typeof e.id==="string"&&okDate(e.d)&&typeof e.dose==="number"&&isFinite(e.dose));
     if(!ok){ skipped++; continue; }
     if(vials.some(x=>x.id===v.id)){ skipped++; continue; }
-    vials.push(Object.assign({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))},whoOf(v)?{who:whoOf(v)}:{},v.lock>0?{lock:+v.lock}:{})); added++;
+    vials.push(Object.assign({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))},whoOf(v)?{who:whoOf(v)}:{},v.lock>0?{lock:+v.lock}:{},v.every>0?{every:+v.every}:{})); added++;
   }
   if(added) saveVials();
   uiFlags.bkMsg="Restored "+added+" vial"+(added===1?"":"s")+(skipped?" ("+skipped+" skipped: already here or not readable)":"")+".";
@@ -2228,7 +2239,7 @@ function syTrack(){
 function syClean(v){   /* same checks as restore; anything unreadable is dropped */
   const ok=v&&typeof v.id==="string"&&typeof v.pid==="string"&&DATA.some(p=>p.id===v.pid)&&posNum(v.vial)&&posNum(v.water)&&posNum(v.target)&&okDate(v.mixed)&&okDate(v.start)&&Array.isArray(v.log)&&v.log.every(e=>e&&typeof e.id==="string"&&okDate(e.d)&&typeof e.dose==="number"&&isFinite(e.dose));
   if(!ok) return null;
-  return Object.assign({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))},whoOf(v)?{who:whoOf(v)}:{},v.lock>0?{lock:+v.lock}:{});
+  return Object.assign({id:v.id,pid:v.pid,vial:v.vial,water:v.water,mixed:v.mixed,start:v.start,target:v.target,log:v.log.map(e=>({id:e.id,d:e.d,dose:e.dose,u:typeof e.u==="number"?e.u:undefined}))},whoOf(v)?{who:whoOf(v)}:{},v.lock>0?{lock:+v.lock}:{},v.every>0?{every:+v.every}:{});
 }
 function syMerge(L,R){
   const del=Object.assign({},R.del||{}); Object.keys(L.del||{}).forEach(k=>{ del[k]=Math.max(del[k]||0,L.del[k]); });
@@ -2387,7 +2398,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-08b", BUILT="Nov 8, 2026 11:30 AM CT";
+  const VER="2026-11-08c", BUILT="Nov 8, 2026 12:00 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
