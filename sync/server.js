@@ -132,7 +132,6 @@ app.post("/register", limit("reg", 10, 60 * 60 * 1000), wrap(async (req, res) =>
   const name = cleanName(req.body?.name), pin = cleanPin(req.body?.pin), wa = DIGITS(req.body?.whatsapp);
   if (name.length < 3) return bad(res, "Pick a login name of at least 3 letters.");
   if (!/^\d{4}$/.test(pin)) return bad(res, "The PIN must be exactly 4 digits.");
-  if (wa.length < 8 || wa.length > 15) return bad(res, "Enter your WhatsApp number with the country code, for example 15551234567.");
   const salt = crypto.randomBytes(16).toString("hex");
   try {
     const { rows: [u] } = await q("insert into dose_users(name, name_key, pin_salt, pin_hash, whatsapp) values ($1,$2,$3,$4,$5) returning id, name", [name, nameKey(name), salt, hashPin(pin, salt), wa]);

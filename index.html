@@ -2313,9 +2313,8 @@ function syncHtml(){
       +'<div class="btnrow"><button type="button" class="btn small primary" id="sy-now">Sync now</button><button type="button" class="btn small" id="sy-out">Sign out</button></div>';
   } else if(uiFlags.syForm){
     const mk=uiFlags.syForm==="new";
-    h+='<p class="hint">'+(mk?'Pick a login name and a 4-digit PIN. Use the same name and PIN on your other devices. The first 30 days are free, then $5/month paid on Cash App. Your WhatsApp number is only used to send you the payment reminder.':'Sign in with your login name and 4-digit PIN.')+'</p>'
+    h+='<p class="hint">'+(mk?'Pick a login name and a 4-digit PIN. Use the same name and PIN on your other devices. The first 30 days are free, then $5/month paid on Cash App.':'Sign in with your login name and 4-digit PIN.')+'</p>'
       +'<div class="addform"><label>Login name<input id="sy-name" type="text" autocomplete="username" autocapitalize="off" maxlength="40"></label>'
-      +(mk?'<label>WhatsApp number (with country code, digits only)<input id="sy-wa" type="tel" inputmode="numeric" placeholder="15551234567" autocomplete="tel" maxlength="20"></label>':'')
       +'<label>4-digit PIN<input id="sy-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="'+(mk?'new-password':'current-password')+'"></label></div>'
       +'<div class="btnrow"><button type="button" class="btn small primary" id="sy-go">'+(mk?'Create login':'Sign in')+'</button><button type="button" class="btn small" id="sy-cancel">Cancel</button></div>';
   } else {
@@ -2328,11 +2327,9 @@ async function syAuth(kind){
   const name=(($("#sy-name",vialsEl)||{}).value||"").trim(), pin=(($("#sy-pin",vialsEl)||{}).value||"").trim();
   if(name.length<3){ uiFlags.syErr="Enter your login name (at least 3 letters)."; uiFlags.syMsg=""; syRefresh(); return; }
   if(!/^\d{4}$/.test(pin)){ uiFlags.syErr="The PIN is exactly 4 digits."; uiFlags.syMsg=""; syRefresh(); return; }
-  const wa=String((($("#sy-wa",vialsEl)||{}).value)||"").replace(/\D/g,"");
-  if(kind==="new"&&(wa.length<8||wa.length>15)){ uiFlags.syErr="Enter your WhatsApp number with the country code, digits only (for example 15551234567)."; uiFlags.syMsg=""; syRefresh(); return; }
   uiFlags.syErr=""; uiFlags.syMsg="Working… (the first try can take up to a minute while the server wakes up)"; syRefresh();
   try{
-    const r=await syCall(kind==="new"?"/register":"/login",{method:"POST",body:JSON.stringify({name:name,pin:pin,whatsapp:wa})});
+    const r=await syCall(kind==="new"?"/register":"/login",{method:"POST",body:JSON.stringify({name:name,pin:pin})});
     if(!r.ok){ uiFlags.syMsg=""; uiFlags.syErr=(r.j&&r.j.error)||"That did not work. Try again."; syRefresh(); return; }
     SY={token:r.j.token,name:r.j.name,last:0,account:r.j.account||null}; save("pdg:sync",SY); uiFlags.syForm=""; uiFlags.syMsg=""; uiFlags.syErr="";
     await syncNow(true); renderVials();
@@ -2390,7 +2387,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-08a", BUILT="Nov 8, 2026 11:00 AM CT";
+  const VER="2026-11-08b", BUILT="Nov 8, 2026 11:30 AM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
