@@ -287,6 +287,59 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 .ptr{position:fixed;top:0;left:0;right:0;height:0;z-index:9998;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;background:var(--accent-soft);color:var(--accent);font-size:.85rem;font-weight:600;transition:height .15s}
 .ptr.on{transition:none}
 .verline{font-size:12px;opacity:.75;padding:0 16px 24px;text-align:center}
+
+/* ---- v2026-11-11 clean-up: menu, colour, vial icons, folds ---- */
+:root{--c-wl:#e8590c;--c-heal:#2f9e44;--c-gh:#1971c2;--c-hormone:#9c36b5;--c-brain:#5f3dc4;--c-immune:#c2255c;--c-skin:#e67700;--c-research:#6b7785;--c-tool:#495057}
+.top{padding-block:10px 8px;gap:8px}
+.brand{flex-wrap:nowrap;align-items:center;gap:8px}
+.brand h1{font-size:1.05rem;flex:1;min-width:0;display:flex;align-items:center;gap:8px}
+.brand h1 svg{flex:none}
+.brand .btn{white-space:nowrap}
+.rev{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.68rem}
+.menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px;border:1px solid var(--line);border-radius:var(--radius);background:var(--field)}
+.menu .btn{display:flex;align-items:center;gap:8px;justify-content:flex-start;padding:10px 12px;font-size:.9rem}
+.menu .btn svg{flex:none}
+.menu .btn.small{padding:10px 12px;font-size:.9rem}
+.chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;flex:none}
+.catgrp{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--cc,var(--accent));border-radius:var(--radius);overflow:hidden}
+.catgrp>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:10px 12px;font-weight:700;font-size:.98rem}
+.catgrp>summary::-webkit-details-marker{display:none}
+.catgrp>summary .nm{flex:1;min-width:0}
+.catgrp>summary .ct{font-weight:600;font-size:.76rem;color:var(--cc,var(--accent));background:color-mix(in srgb,var(--cc,var(--accent)) 14%,transparent);border-radius:999px;padding:2px 9px}
+.catgrp>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .15s;flex:none;margin-right:4px}
+.catgrp[open]>summary::after{transform:rotate(-135deg)}
+.catgrp[open]>summary{border-bottom:1px solid var(--line)}
+.catgrp .catbody{display:flex;flex-direction:column;gap:8px;padding:10px}
+.card{border-left:4px solid var(--cc,var(--line));display:flex;gap:10px;align-items:flex-start}
+.card .cbody{flex:1;min-width:0}
+.card .vi{flex:none;margin-top:2px}
+.shelf{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:10px 12px}
+.shelf .shrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.shelfv{display:flex;flex-direction:column;align-items:center;gap:2px;border:1px solid var(--line);background:var(--field);border-radius:10px;padding:8px 6px 6px;width:84px;font-size:.7rem;line-height:1.2;text-align:center}
+.shelfv b{font-size:.74rem;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.shelfv span{color:var(--muted)}
+.shelfv:hover{border-color:var(--cc,var(--accent))}
+.pgroup.vitem{border-left:5px solid var(--cc,var(--accent))}
+.pgroup.vitem>summary{align-items:center;gap:10px}
+.pgroup.vitem>summary .vname{flex:1;min-width:0;display:flex;align-items:center;gap:10px}
+.pgroup.vitem>summary .vname b{font-weight:700}
+.pgroup.vitem>summary .vname small{display:block;color:var(--muted);font-weight:400;font-size:.74rem}
+.pgroup.vitem>*:not(summary){margin:0 12px 12px}
+details.fold{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+details.fold>summary{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 14px;font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+details.fold>summary .hint{text-transform:none;letter-spacing:0;font-weight:400}
+details.fold>.foldbody{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px}
+details.fold>.foldbody>section.block{border:0;padding:0;box-shadow:none}
+details.sy.ok{border-left:5px solid var(--good)}
+details.sy.off{border-left:5px solid var(--warn)}
+.syform{display:flex;flex-direction:column;gap:12px}
+.syform label{display:flex;flex-direction:column;gap:5px;font-size:.8rem;font-weight:600;color:var(--muted)}
+.syform input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);font:inherit;font-size:1.05rem}
+.syform input#sy-pin{letter-spacing:.5em;text-align:center;font-size:1.3rem;max-width:200px}
+.vhead h2{display:flex;align-items:center;gap:8px}
+@media(min-width:880px){.menu{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
 <style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
 </head>
@@ -296,9 +349,10 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 <div class="app" id="app" data-view="list">
   <header class="top">
     <div class="brand">
-      <div class="btnrow" style="align-items:center"><h1>Peptide Dose Guide</h1><button type="button" class="btn small primary" id="vials-btn">My vials</button><button type="button" class="btn small" id="quick-btn">Quick calc</button><button type="button" class="btn small" id="prices-btn">Prices</button><button type="button" class="btn small" id="news-btn">What's new<span class="dot" id="news-dot" hidden></span></button><button type="button" class="btn small" id="install-btn" hidden aria-haspopup="dialog"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Install app</button></div>
-      <span class="rev" id="rev">data reviewed 2026-10 · U-100 syringe · BAC water</span>
+      <h1><svg width="22" height="30" viewBox="0 0 20 30" aria-hidden="true"><rect x="6" y="1" width="8" height="4" rx="1" fill="#0b6a86"/><rect x="7" y="5" width="6" height="3" fill="#cfe3ec"/><rect x="3" y="8" width="14" height="20" rx="3.5" fill="#eaf4f8" stroke="#0b6a86" stroke-width="1.6"/><rect x="4.6" y="16" width="10.8" height="10.4" rx="2.4" fill="#0b6a86" opacity=".55"/></svg><span>Peptide Dose Guide</span></h1><button type="button" class="btn small primary" id="vials-btn">My vials</button><button type="button" class="btn small" id="menu-btn" aria-expanded="false" aria-controls="menu"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg> Menu</button>
     </div>
+    <nav class="menu" id="menu" hidden aria-label="Menu"><button type="button" class="btn small" id="quick-btn"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2"/></svg>Quick calc</button><button type="button" class="btn small" id="prices-btn"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>Prices</button><button type="button" class="btn small" id="news-btn"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8M10 20a2 2 0 004 0"/></svg>What's new<span class="dot" id="news-dot" hidden></span></button><button type="button" class="btn small" id="sync-btn"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 01-15 6.7L3 16M3 12a9 9 0 0115-6.7L21 8M3 21v-5h5M21 3v5h-5"/></svg>Sync &amp; login</button><button type="button" class="btn small" id="install-btn" hidden aria-haspopup="dialog"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Install app</button></nav>
+    <span class="rev" id="rev">data reviewed 2026-10 · U-100 syringe · BAC water</span>
     <input class="search" id="q" type="search" placeholder="Search peptides (reta, bpc, glow…)" autocomplete="off" aria-label="Search peptides">
     <div class="chips" id="cats" role="group" aria-label="Category"></div>
   </header>
@@ -345,6 +399,17 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 "use strict";
 const CATS=[{id:"all",label:"All"},{id:"wl",label:"Weight loss"},{id:"heal",label:"Healing"},{id:"gh",label:"GH & anti-aging"},{id:"hormone",label:"Hormones"},{id:"brain",label:"Brain & sleep"},{id:"immune",label:"Immune & mito"},{id:"skin",label:"Skin & sexual"}];
 const CATNAME={wl:"Weight loss / GLP-1 class",heal:"Healing & recovery",gh:"GH & anti-aging",hormone:"Hormones, fertility & bone",brain:"Brain, mood & sleep",immune:"Immune, mitochondria & repair",skin:"Skin, tanning & sexual",research:"Research-only · no human dose",tool:"Tools"};
+const CATCOL={wl:"var(--c-wl)",heal:"var(--c-heal)",gh:"var(--c-gh)",hormone:"var(--c-hormone)",brain:"var(--c-brain)",immune:"var(--c-immune)",skin:"var(--c-skin)",research:"var(--c-research)",tool:"var(--c-tool)"};
+function catCol(c){ return CATCOL[c]||"var(--accent)"; }
+function vialSvg(pct,col,w){
+  pct=Math.max(0,Math.min(1,isFinite(pct)?pct:1)); const h=Math.round((w||20)*1.5), fh=Math.max(pct>0?1.5:0,10.4*(pct)), fy=26.4-fh;
+  return '<svg class="vi" width="'+(w||20)+'" height="'+h+'" viewBox="0 0 20 30" aria-hidden="true" focusable="false"><rect x="6" y="1" width="8" height="4" rx="1" fill="'+col+'"/><rect x="7" y="5" width="6" height="3" fill="'+col+'" opacity=".25"/><rect x="3" y="8" width="14" height="20" rx="3.5" fill="var(--surface)" stroke="'+col+'" stroke-width="1.6"/><rect x="4.6" y="'+fy.toFixed(1)+'" width="10.8" height="'+fh.toFixed(1)+'" rx="2" fill="'+col+'" opacity=".6"/><path d="M6 12v9" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".7"/></svg>';
+}
+function vialFill(v,p,t){
+  if(!v||!(v.vial>0)) return 1;
+  if(t&&t.log&&t.log.length) return Math.max(0,Math.min(1,t.remainingMg/v.vial));
+  const days=(p&&p.useDays)||28, left=t?daysBetween(t.today,t.useBy):days; return Math.max(0.08,Math.min(1,left/days));
+}
 const STATUS={
   approved:{label:"FDA-approved",tone:"good"},
   trials:{label:"Phase 3 / FDA review",tone:"info"},
@@ -1045,8 +1110,9 @@ function trackCardHtml(v){
     +'<div class="btnrow"><button type="button" class="btn small" data-newvial="'+v.id+'">'+(isOral(p)?'New bottle':'New vial mixed')+'</button><button type="button" class="btn small danger" data-remove="'+v.id+'">Remove</button></div>'
     +'</div>';
 }
-function vItem(v,html){ const p=peptideOf(v), t=trackerState(p,v); const o=uiFlags.vopen&&uiFlags.vopen[v.id];
-  return '<details class="pgroup vitem" data-k="'+esc(v.id)+'"'+(o?' open':'')+'><summary><span>'+esc(p.name)+'</span><span class="hint">'+(t.week>0?'week '+t.week:'starts '+fmtDate(v.start))+'</span></summary>'+html+'</details>'; }
+function vItem(v,html){ const p=peptideOf(v), t=trackerState(p,v); const o=uiFlags.vopen&&uiFlags.vopen[v.id]; const col=catCol(p.cat);
+  const sub=(whoOf(v)?whoOf(v)+" · ":"")+(t.expired?"expired":(t.dueIn!=null&&t.dueIn<=0?"due now":(t.last?"last "+ago(t.sinceLast):"no doses yet")));
+  return '<details class="pgroup vitem" data-k="'+esc(v.id)+'" style="--cc:'+col+'"'+(o?' open':'')+'><summary><span class="vname">'+vialSvg(vialFill(v,p,t),col,18)+'<span><b>'+esc(p.name)+'</b><small>'+esc(sub)+'</small></span></span><span class="badge tone-'+(t.expired?'bad':'neutral')+'">'+(t.week>0?'week '+t.week:'starts '+fmtDate(v.start))+'</span></summary>'+html+'</details>'; }
 function vGroup(key,title,items,defOpen){ if(!items.length) return ""; const st=uiFlags.vopen&&uiFlags.vopen["g:"+key]; const o=st===undefined?!!defOpen:st;
   return '<details class="pgroup vgroup" data-k="g:'+esc(key)+'"'+(o?' open':'')+'><summary><span>'+esc(title)+'</span><span class="hint">'+items.length+' vial'+(items.length===1?'':'s')+'</span></summary>'+items.join("")+'</details>'; }
 function peopleNames(){ return [...new Set(vials.filter(v=>peptideOf(v)).map(whoOf).filter(Boolean))].sort((a,b)=>a.localeCompare(b)); }
@@ -1093,19 +1159,27 @@ function myVialsHtml(){
   const sel=whoSel();
   return '<div class="cat-label">Vials</div>'+whoPickerHtml()+(sel?othersHtml():items.sort((a,b)=>a.p.name.localeCompare(b.p.name)).map(x=>x.html).join(""));
 }
+function shelfHtml(){
+  const mine=vials.filter(v=>!whoOf(v)&&peptideOf(v)); if(!mine.length) return "";
+  return '<div class="shelf"><div class="vhead"><h3>My vials · '+mine.length+'</h3><button type="button" class="btn small" id="shelf-open">Open all</button></div><div class="shrow">'
+    +mine.sort((a,b)=>peptideOf(a).name.localeCompare(peptideOf(b).name)).map(v=>{ const p=peptideOf(v), t=trackerState(p,v), col=catCol(p.cat);
+      return '<button type="button" class="shelfv" data-id="'+p.id+'" style="--cc:'+col+'" aria-label="'+esc(p.name)+'">'+vialSvg(vialFill(v,p,t),col,24)+'<b>'+esc(p.name.split(" (")[0].split(" / ")[0])+'</b><span>'+(t.week>0?'wk '+t.week:'soon')+'</span></button>'; }).join("")+'</div></div>';
+}
 function renderList(){
   const items=DATA.filter(matches);
-  let html=(q||cat!=="all")?"":(syBannerHtml()+introHtml()+todayHtml()+myVialsHtml());
+  let html=(q||cat!=="all")?"":(syBannerHtml()+introHtml()+todayHtml()+shelfHtml());
   if(!items.length){ listEl.innerHTML=html+'<p class="empty">Nothing matches that. Try a shorter name or an alias.</p>'; return; }
-  let lastCat=null;
-  for(const p of items){
-    if(cat==="all"&&p.cat!==lastCat){ html+='<div class="cat-label">'+esc(CATNAME[p.cat])+'</div>'; lastCat=p.cat; }
-    const st=statusOf(p);
-    html+='<button type="button" class="card" data-id="'+p.id+'" aria-current="'+(current===p.id)+'">'
-      +'<div class="row1"><span class="name">'+esc(p.name)+'</span>'+(st?'<span class="badge tone-'+st.tone+'">'+esc(st.label)+'</span>':'')+'</div>'
+  const cardHtml=p=>{ const st=statusOf(p), col=catCol(p.cat);
+    return '<button type="button" class="card" data-id="'+p.id+'" style="--cc:'+col+'" aria-current="'+(current===p.id)+'">'+vialSvg(1,col,16)
+      +'<span class="cbody"><div class="row1"><span class="name">'+esc(p.name)+'</span>'+(st?'<span class="badge tone-'+st.tone+'">'+esc(st.label)+'</span>':'')+'</div>'
       +'<div class="for">'+esc(p.for.split(". ")[0].replace(/\.$/,""))+'</div>'
       +(p.freq?'<div class="dose"><span class="mono">'+esc(doseRange(p))+'</span> · '+esc(p.freq.split(";")[0].split(" (")[0])+'</div>':(p.refOnly?'<div class="dose">'+esc(p.refShort||"Reference only · no human dose for this route")+'</div>':''))
-      +'</button>';
+      +'</span></button>'; };
+  const groups=[]; for(const p of items){ let g=groups[groups.length-1]; if(!g||g.c!==p.cat){ g={c:p.cat,items:[]}; groups.push(g); } g.items.push(p); }
+  const ORD=Object.keys(CATNAME); groups.sort((x,y)=>ORD.indexOf(x.c)-ORD.indexOf(y.c));
+  for(const g of groups){
+    const k="c:"+g.c, st=uiFlags.vopen&&uiFlags.vopen[k], open=(q||cat!=="all")?true:(st===true||g.items.some(p=>p.id===current&&window.matchMedia("(min-width:880px)").matches));
+    html+='<details class="catgrp" data-k="'+k+'" style="--cc:'+catCol(g.c)+'"'+(open?' open':'')+'><summary><span class="nm">'+esc(CATNAME[g.c])+'</span><span class="ct">'+g.items.length+'</span></summary><div class="catbody">'+g.items.map(cardHtml).join("")+'</div></details>';
   }
   listEl.innerHTML=html;
 }
@@ -1310,7 +1384,7 @@ function manageHtml(){
   return h+'</section>';
 }
 function renderVials(){
-  let html='<div class="vhead"><div><h2>My vials</h2><p class="hint">Saved on this device. Use Sync across devices below to move them to other devices. Log every dose and the app tracks weeks, what is left, and what is due. A vial turns red when it shares an ingredient or drug class with another active vial. No red does not mean safe: most of these have never been studied together.</p></div>'
+  let html='<div class="vhead"><div><h2><svg width="18" height="27" viewBox="0 0 20 30" aria-hidden="true"><rect x="6" y="1" width="8" height="4" rx="1" fill="#0b6a86"/><rect x="7" y="5" width="6" height="3" fill="#cfe3ec"/><rect x="3" y="8" width="14" height="20" rx="3.5" fill="#eaf4f8" stroke="#0b6a86" stroke-width="1.6"/><rect x="4.6" y="16" width="10.8" height="10.4" rx="2.4" fill="#0b6a86" opacity=".55"/></svg>My vials</h2><p class="hint">Saved on this device. Log doses and the app tracks weeks, what is left, and what is due. Red means two active vials share an ingredient or drug class. No red does not mean safe.</p></div>'
     +'<div class="btnrow"><button type="button" class="btn" id="vials-back">&larr; Peptides</button><button type="button" class="btn" id="mg-open">'+(uiFlags.manage?'Done':'Delete vials')+'</button><button type="button" class="btn primary" id="add-vial">+ Add vial</button></div></div>';
   html+=syncHtml();
   if(uiFlags.add) html+=addVialFormHtml();
@@ -1318,15 +1392,15 @@ function renderVials(){
   else if(uiFlags.manage) html+=manageHtml();
   else html+=whoPickerHtml()+(whoSel()?othersHtml():vials.filter(v=>!whoOf(v)&&peptideOf(v)).sort((a,b)=>peptideOf(a).name.localeCompare(peptideOf(b).name)).map(v=>vItem(v,vialCardHtml(v))).join(""));
   const rows=allEntries();
-  html+='<section class="block hist"><div class="vhead"><h3>Dose log · '+rows.length+' entr'+(rows.length===1?'y':'ies')+'</h3>'+(rows.length?'<button type="button" class="btn small" id="export-log">Copy as CSV</button>':'')+'</div>';
+  html+='<details class="fold" data-k="log"'+(uiFlags.vopen&&uiFlags.vopen.log?' open':'')+'><summary><span>Dose log</span><span class="hint">'+rows.length+' entr'+(rows.length===1?'y':'ies')+'</span></summary><div class="foldbody"><section class="block hist"><div class="vhead">'+(rows.length?'':'<span></span>')+(rows.length?'<button type="button" class="btn small" id="export-log">Copy as CSV</button>':'')+'</div>';
   if(uiFlags.exportOpen) html+='<textarea class="export" id="export-text" readonly>'+esc(exportText())+'</textarea><p class="hint">Select all and copy if the button did not work.</p>';
   if(rows.length){
     html+='<div class="logcards">'
       +rows.slice(0,100).map(r=>'<div class="logrow"><div class="lr-main"><b>'+esc(r.p.name)+'</b><span>'+fmtDate(r.e.d)+'</span></div><div class="lr-amt">'+fmt(r.e.dose)+' '+esc(r.p.unitLabel||r.p.unit)+'<br>'+(isOral(r.p)?fmt(r.units/100,2)+' mL':fmt(r.units,1)+' units')+'</div><button type="button" class="x" data-delentry="'+r.e.id+'" data-delvial="'+r.v.id+'" aria-label="Delete entry">&times;</button></div>').join("")
       +'</div>'+(rows.length>100?'<p class="hint">Showing the latest 100.</p>':'');
   } else html+='<p class="hint">Nothing logged yet.</p>';
-  html+='</section>';
-  html+=backupHtml();
+  html+='</section></div></details>';
+  html+='<details class="fold" data-k="backup"'+(uiFlags.vopen&&uiFlags.vopen.backup?' open':'')+'><summary><span>Backup &amp; restore</span><span class="hint">copy your vials</span></summary><div class="foldbody">'+backupHtml().replace('<h3>Backup</h3>','')+'</div></details>';
   vialsEl.innerHTML=html;
   if(uiFlags.add) fillAddDefaults();
   liveLogAlerts(vialsEl);
@@ -2185,7 +2259,7 @@ $("#prices").addEventListener("change",e=>{ if(e.target.id==="pr-file"&&PR&&e.ta
 document.addEventListener("visibilitychange",()=>{ if(document.hidden) prLockAt=Date.now(); else if(PR&&Date.now()-prLockAt>120000){ prLock(); if(app.dataset.view==="prices") renderPrices(); } });
 
 
-document.addEventListener("toggle",e=>{ const d=e.target; if(d&&d.matches&&d.matches("details.vitem,details.vgroup")){ uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen[d.dataset.k]=d.open; } },true);
+document.addEventListener("toggle",e=>{ const d=e.target; if(d&&d.matches&&d.matches("details.vitem,details.vgroup,details.catgrp,details.sy,details.fold")){ uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen[d.dataset.k]=d.open; } },true);
 document.addEventListener("change",e=>{ const t=e.target; if(t&&t.classList&&t.classList.contains("who-pick")){ if(t.value==="__new"){ uiFlags.add=true; uiFlags.addNew=true; uiFlags.logFor=null; renderAll(); app.dataset.view="vials"; const sel=$("#av-whosel",vialsEl); if(sel){ sel.value="__new"; const n=$("#av-who",vialsEl); if(n){ n.hidden=false; n.focus(); } } return; } save("pdg:whoSel",t.value); renderAll(); } });
 $("#quick-btn").addEventListener("click",()=>{ renderQuick(); app.dataset.view="quick"; window.scrollTo({top:0}); });
 $("#quick").addEventListener("click",e=>{ if(e.target.closest("#q-back")) app.dataset.view="list"; });
@@ -2259,7 +2333,7 @@ function syMerge(L,R){
 }
 const syCanon=(vs)=>JSON.stringify(vs.slice().sort((x,y)=>x.id<y.id?-1:1).map(v=>Object.assign({},v,{log:v.log.slice().sort((x,y)=>x.id<y.id?-1:1)})));
 async function syCall(path,opt){
-  const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),70000);   /* the free server can take about a minute to wake up */
+  const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),45000);
   try{
     const r=await fetch(SYNC_URL+path,Object.assign({signal:ctl.signal,headers:Object.assign({"Content-Type":"application/json"},SY?{Authorization:"Bearer "+SY.token}:{})},opt||{}));
     let j={}; try{ j=await r.json(); }catch(e){}
@@ -2317,38 +2391,42 @@ function syBannerHtml(){
 }
 function syMsgHtml(){ return (uiFlags.syMsg?'<p class="flag good">'+esc(uiFlags.syMsg)+'</p>':'')+(uiFlags.syErr?'<p class="flag bad">'+esc(uiFlags.syErr)+'</p>':''); }
 function syncHtml(){
-  let h='<section class="block backup" id="sync-card"><h3>Sync across devices</h3>';
+  const st=uiFlags.vopen&&uiFlags.vopen.sync, forced=!!(uiFlags.syForm||uiFlags.syErr||uiFlags.syMsg), open=forced||st===true;
+  const sum=SY?'Signed in as '+esc(SY.name):'Not signed in';
+  let h='<details class="pgroup sy '+(SY?'ok':'off')+'" id="sync-card" data-k="sync"'+(open?' open':'')+'><summary><span>Sync across devices</span><span class="hint">'+sum+'</span></summary><div class="foldbody" style="padding:0 14px 14px;display:flex;flex-direction:column;gap:12px">';
   if(SY){
     const t=SY.last?new Date(SY.last).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):"";
-    h+='<p class="hint">Signed in as <b>'+esc(SY.name)+'</b>'+(t?' · last synced '+esc(t):'')+'. Vials and dose logs follow you to every device where you sign in.</p>'+syLine(syAcct())
+    h+='<p class="hint">'+(t?'Last synced '+esc(t)+'. ':'')+'Vials and dose logs follow you to every device where you sign in.</p>'+syLine(syAcct())
       +'<div class="btnrow"><button type="button" class="btn small primary" id="sy-now">Sync now</button><button type="button" class="btn small" id="sy-out">Sign out</button></div>';
   } else if(uiFlags.syForm){
-    const mk=uiFlags.syForm==="new";
-    h+='<p class="hint">'+(mk?'Pick a login name and a 4-digit PIN. Use the same name and PIN on your other devices. The first 30 days are free, then $5/month paid on Cash App.':'Sign in with your login name and 4-digit PIN.')+'</p>'
-      +'<div class="addform"><label>Login name<input id="sy-name" type="text" autocomplete="username" autocapitalize="off" maxlength="40"></label>'
+    const mk=uiFlags.syForm==="new", ln=(function(){ try{ return localStorage.getItem("pdg:lastName")||""; }catch(e){ return ""; } })();
+    h+='<p class="hint">'+(mk?'Pick a login name and a 4-digit PIN. Use the same ones on your other devices. First 30 days free, then $5/month on Cash App.':'Sign in with your login name and 4-digit PIN.')+'</p>'
+      +'<div class="syform"><label>Login name<input id="sy-name" type="text" autocomplete="username" autocapitalize="off" maxlength="40" value="'+esc(uiFlags.syName||ln)+'"></label>'
       +'<label>4-digit PIN<input id="sy-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="'+(mk?'new-password':'current-password')+'"></label></div>'
-      +'<div class="btnrow"><button type="button" class="btn small primary" id="sy-go">'+(mk?'Create login':'Sign in')+'</button><button type="button" class="btn small" id="sy-cancel">Cancel</button></div>';
+      +'<div class="btnrow"><button type="button" class="btn primary" id="sy-go">'+(mk?'Create login':'Sign in')+'</button><button type="button" class="btn" id="sy-cancel">Cancel</button></div>';
   } else {
-    h+='<p class="hint">Move your vials between your phone, tablet and computer. Make a login with a name and a 4-digit PIN. Free for 30 days, then $5/month. Nothing syncs until you do.</p>'
+    h+='<p class="hint">Move your vials between your phone, tablet and computer. Free for 30 days, then $5/month. Nothing syncs until you sign in.</p>'
       +'<div class="btnrow"><button type="button" class="btn small primary" id="sy-new">Create login</button><button type="button" class="btn small" id="sy-in">Sign in</button></div>';
   }
-  return h+'<div id="sync-msg">'+syMsgHtml()+'</div></section>';
+  return h+'<div id="sync-msg">'+syMsgHtml()+'</div></div></details>';
 }
 async function syAuth(kind){
   const name=(($("#sy-name",vialsEl)||{}).value||"").trim(), pin=(($("#sy-pin",vialsEl)||{}).value||"").trim();
   if(name.length<3){ uiFlags.syErr="Enter your login name (at least 3 letters)."; uiFlags.syMsg=""; syRefresh(); return; }
   if(!/^\d{4}$/.test(pin)){ uiFlags.syErr="The PIN is exactly 4 digits."; uiFlags.syMsg=""; syRefresh(); return; }
-  uiFlags.syErr=""; uiFlags.syMsg="Working… (the first try can take up to a minute while the server wakes up)"; syRefresh();
+  uiFlags.syErr=""; uiFlags.syName=name; uiFlags.syMsg="Connecting…"; syRefresh(); const slow=setTimeout(()=>{ if(uiFlags.syMsg==="Connecting…"){ uiFlags.syMsg="Still trying. The server can take up to 40 seconds to wake up."; syRefresh(); } },6000);
   try{
     const r=await syCall(kind==="new"?"/register":"/login",{method:"POST",body:JSON.stringify({name:name,pin:pin})});
-    if(!r.ok){ uiFlags.syMsg=""; uiFlags.syErr=(r.j&&r.j.error)||"That did not work. Try again."; syRefresh(); return; }
+    clearTimeout(slow);
+    if(!r.ok){ uiFlags.syMsg=""; uiFlags.syErr=r.status>=500?"The sync server is down right now (it is still being set up on the owner's side). Your vials are safe on this phone. Try again later.":((r.j&&r.j.error)||"That did not work. Try again."); syRefresh(); return; }
+    try{ localStorage.setItem("pdg:lastName",name); }catch(e){}
     SY={token:r.j.token,name:r.j.name,last:0,account:r.j.account||null}; save("pdg:sync",SY); uiFlags.syForm=""; uiFlags.syMsg=""; uiFlags.syErr="";
     await syncNow(true); renderVials();
-  }catch(e){ uiFlags.syMsg=""; uiFlags.syErr="Could not reach the sync server. Check your internet and try again."; syRefresh(); }
+  }catch(e){ clearTimeout(slow); uiFlags.syMsg=""; uiFlags.syErr="Could not reach the sync server. If your internet is fine, the server is down (owner setup unfinished). Your vials are safe on this phone."; syRefresh(); }
 }
 vialsEl.addEventListener("click",e=>{
-  if(e.target.closest("#sy-new")){ uiFlags.syForm="new"; uiFlags.syErr=""; renderVials(); const n=$("#sy-name",vialsEl); if(n) n.focus(); return; }
-  if(e.target.closest("#sy-in")){ uiFlags.syForm="in"; uiFlags.syErr=""; renderVials(); const n=$("#sy-name",vialsEl); if(n) n.focus(); return; }
+  if(e.target.closest("#sy-new")){ uiFlags.syForm="new"; uiFlags.syErr=""; uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen.sync=true; renderVials(); const n=$("#sy-name",vialsEl); if(n) n.focus(); return; }
+  if(e.target.closest("#sy-in")){ uiFlags.syForm="in"; uiFlags.syErr=""; uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen.sync=true; renderVials(); const n=$("#sy-name",vialsEl); if(n) n.focus(); return; }
   if(e.target.closest("#sy-cancel")){ uiFlags.syForm=""; uiFlags.syErr=""; uiFlags.syMsg=""; renderVials(); return; }
   if(e.target.closest("#sy-go")){ syAuth(uiFlags.syForm); return; }
   if(e.target.closest("#sy-now")){ syncNow(true); return; }
@@ -2363,6 +2441,17 @@ document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&SY) sync
 window.addEventListener("online",()=>{ if(SY) syncNow(false); });
 syTrack();
 if(SY) setTimeout(()=>syncNow(false),800);
+
+/* menu */
+{ const mb=$("#menu-btn"), mn=$("#menu");
+  const closeMenu=()=>{ mn.hidden=true; mb.setAttribute("aria-expanded","false"); };
+  mb.addEventListener("click",()=>{ const o=mn.hidden; mn.hidden=!o; mb.setAttribute("aria-expanded",String(o)); });
+  mn.addEventListener("click",e=>{ if(e.target.closest("button")) closeMenu(); });
+  $("#sync-btn").addEventListener("click",()=>{ uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen.sync=true; vialsBtn.click(); });
+  vialsBtn.addEventListener("click",closeMenu);
+  listEl.addEventListener("click",e=>{ if(e.target.closest("#shelf-open")) vialsBtn.click(); });
+}
+
 
 /* ---------- boot ---------- */
 { const cu=cleanUpdates(load(UPD_KEY,null)); if(cu){ UPD=cu; applyUpdates(cu); } }
@@ -2398,7 +2487,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-08c", BUILT="Nov 8, 2026 12:00 PM CT";
+  const VER="2026-11-11a", BUILT="Nov 11, 2026 2:30 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
