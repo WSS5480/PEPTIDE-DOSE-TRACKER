@@ -69,6 +69,8 @@ create table if not exists dose_users (
 );
 alter table dose_users add column if not exists whatsapp text not null default '';
 alter table dose_users add column if not exists disabled boolean not null default false;
+alter table dose_users add column if not exists can_price boolean not null default false;
+create table if not exists dose_prices (id int primary key, data jsonb not null default '[]'::jsonb, updated timestamptz not null default now());
 create table if not exists dose_tokens (
   token_hash text primary key,
   user_id int not null references dose_users(id) on delete cascade,
@@ -174,6 +176,36 @@ app.put("/vials", auth, wrap(async (req, res) => {
   if (json.length > 1500000) return bad(res, "Too much data.", 413);
   await q("insert into dose_data(user_id, data, updated) values ($1,$2::jsonb, now()) on conflict (user_id) do update set data = excluded.data, updated = now()", [req.user.id, json]);
   res.json({ ok: true, account });
+}));
+/* Owner tools: the login named Owner lists users and decides who may see Owner's prices (prices only, never cost). */
+const owner = (req, res, next) => (nameKey(req.user.name) === "owner" ? next() : bad(res, "Owner only.", 403));
+app.get("/owner/users", auth, owner, wrap(async (req, res) => {
+  const { rows } = await q(`select u.id, u.name, u.created, u.disabled, u.can_price, coalesce(jsonb_array_length(d.data->'vials'), 0) vials
+    from dose_users u left join dose_data d on d.user_id = u.id where u.name_key <> 'owner' order by u.created desc`);
+  res.json({ users: rows });
+}));
+app.post("/owner/users/:id", auth, owner, wrap(async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!id || typeof req.body?.can_price !== "boolean") return bad(res, "Bad request.");
+  const r = await q("update dose_users set can_price = $2 where id = $1 and name_key <> 'owner'", [id, req.body.can_price]);
+  if (!r.rowCount) return bad(res, "No such login.", 404);
+  res.json({ ok: true });
+}));
+app.put("/owner/prices", auth, owner, wrap(async (req, res) => {
+  const a = Array.isArray(req.body?.items) ? req.body.items : null;
+  if (!a || a.length > 2000) return bad(res, "Bad data.");
+  const items = a.map((x) => ({ n: String(x?.n || "").slice(0, 60), s: String(x?.s || "").slice(0, 20), p: Number(x?.p) })).filter((x) => x.n && isFinite(x.p) && x.p >= 0);
+  await q("insert into dose_prices(id, data, updated) values (1, $1::jsonb, now()) on conflict (id) do update set data = excluded.data, updated = now()", [JSON.stringify(items)]);
+  res.json({ ok: true, count: items.length });
+}));
+/* Anyone signed in may ask. Only Owner and checked users get items back. Cost is never stored here. */
+app.get("/prices", auth, wrap(async (req, res) => {
+  const isOwner = nameKey(req.user.name) === "owner";
+  const { rows: [u] } = await q("select can_price from dose_users where id = $1", [req.user.id]);
+  const allowed = isOwner || !!(u && u.can_price);
+  if (!allowed) return res.json({ allowed: false, owner: false, items: [] });
+  const { rows: [r] } = await q("select data, updated from dose_prices where id = 1");
+  res.json({ allowed: true, owner: isOwner, items: r ? r.data : [], updated: r ? r.updated : null });
 }));
 app.post("/logout", auth, wrap(async (req, res) => {
   await q("delete from dose_tokens where token_hash = $1", [req.tokenHash]);

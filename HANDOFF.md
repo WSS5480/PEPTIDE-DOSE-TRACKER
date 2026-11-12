@@ -49,3 +49,10 @@ Update this file in the same commit as every change.
 
 ## 2026-11-12g — login name defaults to "Owner"
 - Steve's login name: Owner (prefilled when none remembered). PIN is his own (set when he creates the login). Claude can't reach the sync server from its sandbox, so he creates the login himself in the app. sw pdg-v30.
+
+## 2026-11-12h — Owner user list + price access checkboxes
+- Login named "Owner" (name_key owner) is the owner. Prices page shows "Users & price access" for Owner: list of other logins with a checkbox per person (dose_users.can_price).
+- Server (sync/server.js): GET /owner/users, POST /owner/users/:id {can_price}, PUT /owner/prices, GET /prices. Owner publishes only n/size/price (NEVER cost) to table dose_prices when items change. Checked users see read-only "Prices from Owner" fold on the Prices page.
+- Risk: whoever registers the name "Owner" first is owner. Steve must create Owner BEFORE anyone else tries it.
+- Tested client with mocked server (Owner / allowed user / not allowed). Server endpoints syntax-checked only; verify live after deploy. sw pdg-v31.
+- Not built: users entering their own price against Owner's price (earlier reseller idea).

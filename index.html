@@ -1999,7 +1999,33 @@ const ITEMS_KEY="pdg:items", CART_KEY="pdg:cart";
 const money=n=>{ if(n==null||!isFinite(n)) return "$0"; const r=Math.round(n*100)/100; return "$"+(Math.abs(r-Math.round(r))<0.005?String(Math.round(r)):r.toFixed(2)); };
 let prQ="", prDel=null;
 function invItems(){ const a=load(ITEMS_KEY,null); return Array.isArray(a)?a.filter(x=>x&&typeof x.id==="string"&&typeof x.n==="string"):[]; }
-function invSave(a){ save(ITEMS_KEY,a); }
+function invSave(a){ save(ITEMS_KEY,a); ownerPublish(); }
+/* Owner only: publish your PRICES (never cost) so users you check can see them */
+const isOwner=()=>!!(typeof SY!=="undefined"&&SY&&String(SY.name||"").trim().toLowerCase()==="owner");
+let pubT=null;
+function ownerPublish(){ if(!isOwner()) return; clearTimeout(pubT); pubT=setTimeout(()=>{ const items=invItems().filter(x=>typeof x.price==="number").map(x=>({n:x.n,s:x.s,p:x.price})); syCall("/owner/prices",{method:"PUT",body:JSON.stringify({items:items})}).catch(()=>{}); },1200); }
+async function prAccess(){
+  if(typeof SY==="undefined"||!SY) return;
+  try{ const r=await syCall("/prices"); if(r.ok){ save("pdg:ownerPrices",{allowed:!!r.j.allowed,owner:!!r.j.owner,items:r.j.items||[]}); if(app.dataset.view==="prices"&&!uiFlags.prCart&&!uiFlags.prUsers) renderPrices(); } }catch(e){}
+}
+async function prLoadUsers(){
+  uiFlags.prUsersErr=""; try{ const r=await syCall("/owner/users"); if(r.ok) uiFlags.prUsersData=r.j.users||[]; else uiFlags.prUsersErr=(r.j&&r.j.error)||"Could not load users."; }catch(e){ uiFlags.prUsersErr="Could not reach the server."; }
+  if(uiFlags.prUsers) renderPrices();
+}
+function usersHtml(){
+  const U=uiFlags.prUsersData;
+  let h='<div class="vhead"><div><h2>Users</h2><p class="hint">Check a person to let them see your prices. They see your price only, never your cost.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-users-close">&larr; Inventory</button></div></div>';
+  if(uiFlags.prUsersErr) h+='<p class="flag bad">'+esc(uiFlags.prUsersErr)+'</p>';
+  if(!U) return h+'<p class="empty">Loading…</p>';
+  if(!U.length) return h+'<p class="empty">No one else has created a login yet.</p>';
+  return h+'<section class="block">'+U.map(u=>'<label class="prow" style="align-items:center;gap:12px;cursor:pointer"><input type="checkbox" data-uid="'+u.id+'"'+(u.can_price?' checked':'')+' style="width:22px;height:22px;flex:none"><div class="pl"><b>'+esc(u.name)+'</b><span class="pp">'+u.vials+' vial'+(u.vials===1?'':'s')+' · joined '+esc(String(u.created).slice(0,10))+(u.disabled?' · turned off':'')+'</span></div></label>').join("")+'</section>';
+}
+function ownerPricesHtml(){
+  const O=load("pdg:ownerPrices",null); if(!O||!O.allowed||O.owner) return "";
+  const g={}; (O.items||[]).forEach(x=>{ (g[x.n]=g[x.n]||[]).push(x); });
+  const names=Object.keys(g).sort((a,b)=>a.localeCompare(b));
+  return '<details class="fold" id="own-prices"><summary><span>Prices from Owner</span><span class="hint">'+(O.items||[]).length+' items</span></summary><div class="foldbody">'+(names.length?names.map(n=>'<div class="prow"><div class="pl"><b>'+esc(n)+'</b><span class="pp">'+g[n].map(x=>esc(x.s||"each")+' '+money(x.p)).join(" · ")+'</span></div></div>').join(""):'<p class="empty">No prices posted yet.</p>')+'</div></details>';
+}
 function invCart(){ const c=load(CART_KEY,{}); return (c&&typeof c==="object"&&!Array.isArray(c))?c:{}; }
 /* one-time carry-over of what you typed before (your own cost, price, stock); the old price list itself is not kept */
 (function(){
@@ -2016,13 +2042,14 @@ function renderPrices(){
   const el=$("#prices"); if(!el) return;
   const items=invItems(), cart=invCart(), q=prQ.trim().toLowerCase();
   if(uiFlags.prCart){ el.innerHTML=cartHtml(items,cart); window.scrollTo(0,0); return; }
+  if(uiFlags.prUsers){ el.innerHTML=usersHtml(); return; }
     let cn=0,ct=0; items.forEach(x=>{ const n=cart[x.id]||0; if(n){ cn+=n; ct+=n*(x.price||0); } });
   const groups=[],gi={}; items.forEach(x=>{ const k=x.n.toLowerCase(); let g=gi[k]; if(!g){ g={n:x.n,rows:[]}; gi[k]=g; groups.push(g); } g.rows.push(x); });
   groups.sort((a,b)=>a.n.localeCompare(b.n,undefined,{sensitivity:"base",numeric:true})); groups.forEach(g=>g.rows.sort((a,b)=>String(a.s).localeCompare(String(b.s),undefined,{numeric:true})));
   const sel=groups.filter(g=>!q||g.n.toLowerCase().indexOf(q)>=0);
   const keep=[...el.querySelectorAll("details.pgroup[open]")].map(d=>d.dataset.g), addOpen=el.querySelector("#inv-add")?el.querySelector("#inv-add").open:!items.length, pos=window.scrollY;
   const names=[...new Set(DATA.map(p=>p.name.split(" (")[0]))].sort((a,b)=>a.localeCompare(b));
-  let h='<div class="vhead"><div><h2>My inventory</h2><p class="hint">You type in what you carry, what it costs you and what you charge. It stays on this device. There is no outside price list in this app.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-back">&larr; Peptides</button></div></div>'
+  let h='<div class="vhead"><div><h2>My inventory</h2><p class="hint">You type in what you carry, what it costs you and what you charge. It stays on this device. There is no outside price list in this app.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-back">&larr; Peptides</button>'+(isOwner()?'<button type="button" class="btn small primary" id="pr-users">Users &amp; price access</button>':'')+'</div></div>'+ownerPricesHtml()
    +'<details class="fold" id="inv-add"'+(addOpen?' open':'')+'><summary><span>Add an item</span><span class="hint">name, size, cost, price</span></summary><div class="foldbody"><div class="syform">'
    +'<label>Peptide<input id="ia-n" list="ia-names" autocomplete="off" placeholder="Start typing a name"><datalist id="ia-names">'+names.map(n=>'<option value="'+esc(n)+'">').join("")+'</datalist></label>'
    +'<label>Size<input id="ia-s" placeholder="10 mg"></label>'
@@ -2061,10 +2088,12 @@ function cartHtml(items,cart){
 }
 
 /* ---------- events (inventory) ---------- */
-$("#prices-btn").addEventListener("click",()=>{ uiFlags.prCart=false; renderPrices(); app.dataset.view="prices"; window.scrollTo({top:0}); });
+$("#prices-btn").addEventListener("click",()=>{ uiFlags.prCart=false; uiFlags.prUsers=false; prAccess(); ownerPublish(); renderPrices(); app.dataset.view="prices"; window.scrollTo({top:0}); });
 $("#prices").addEventListener("click",e=>{
   const t=e.target; uiFlags.prFocus=false;
   if(t.closest("#pr-back")){ app.dataset.view="list"; return; }
+  if(t.closest("#pr-users")){ uiFlags.prUsers=true; uiFlags.prUsersData=null; renderPrices(); prLoadUsers(); return; }
+  if(t.closest("#pr-users-close")){ uiFlags.prUsers=false; renderPrices(); return; }
   if(t.closest("#pr-cart-open")){ uiFlags.prCart=true; uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-cart-close")){ uiFlags.prCart=false; uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-expand")||t.closest("#pr-collapse")){ const o=!!t.closest("#pr-expand"); $("#prices").querySelectorAll("details.pgroup").forEach(d=>{ d.open=o; }); return; }
@@ -2081,7 +2110,9 @@ $("#prices").addEventListener("click",e=>{
   if(t.closest("#pr-copy")){ const txt=cartText(invItems(),invCart()); const done=()=>{ uiFlags.prMsg="Order copied."; renderPrices(); };
     try{ navigator.clipboard.writeText(txt).then(done,()=>{ uiFlags.prMsg=txt; renderPrices(); }); }catch(err){ uiFlags.prMsg=txt; renderPrices(); } return; }
 });
-$("#prices").addEventListener("change",e=>{
+$("#prices").addEventListener("change",async e=>{
+  const cb=e.target.closest&&e.target.closest("input[data-uid]");
+  if(cb){ const on=cb.checked; try{ const r=await syCall("/owner/users/"+cb.dataset.uid,{method:"POST",body:JSON.stringify({can_price:on})}); if(!r.ok){ cb.checked=!on; uiFlags.prUsersErr=(r.j&&r.j.error)||"Could not save."; renderPrices(); } else { const u=(uiFlags.prUsersData||[]).find(x=>String(x.id)===cb.dataset.uid); if(u) u.can_price=on; } }catch(err){ cb.checked=!on; } return; }
   const i=e.target.closest&&e.target.closest(".pedit[data-id]"); if(!i) return;
   const a=invItems(), x=a.find(y=>y.id===i.dataset.id); if(!x) return; const v=parseFloat(i.value), blank=i.value.trim()==="", f=i.dataset.f;
   if(blank||!isFinite(v)||v<0) delete x[f]; else x[f]=f==="qty"?Math.floor(v):Math.round(v*100)/100;
@@ -2291,7 +2322,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12g", BUILT="Nov 12, 2026 5:45 PM CT";
+  const VER="2026-11-12h", BUILT="Nov 12, 2026 6:10 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
