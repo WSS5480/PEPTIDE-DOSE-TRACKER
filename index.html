@@ -2024,11 +2024,11 @@ function mergeOwner(){
 }
 function usersHtml(){
   const U=uiFlags.prUsersData;
-  let h='<div class="vhead"><div><h2>Users</h2><p class="hint">Check a person to let them see your prices. They see your price only, never your cost.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-users-close">&larr; Inventory</button></div></div>';
+  let h='<div class="vhead"><div><h2>Users</h2><p class="hint">Check a person to let them see your prices. They see your price only, never your cost. Delete removes their login, vials and dose log for good.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-users-close">&larr; Inventory</button></div></div>';
   if(uiFlags.prUsersErr) h+='<p class="flag bad">'+esc(uiFlags.prUsersErr)+'</p>';
   if(!U) return h+'<p class="empty">Loading…</p>';
   if(!U.length) return h+'<p class="empty">No one else has created a login yet.</p>';
-  return h+'<section class="block">'+U.map(u=>'<label class="prow" style="align-items:center;gap:12px;cursor:pointer"><input type="checkbox" data-uid="'+u.id+'"'+(u.can_price?' checked':'')+' style="width:22px;height:22px;flex:none"><div class="pl"><b>'+esc(u.name)+'</b><span class="pp">'+u.vials+' vial'+(u.vials===1?'':'s')+' · joined '+esc(String(u.created).slice(0,10))+(u.disabled?' · turned off':'')+'</span></div></label>').join("")+'</section>';
+  return h+'<section class="block">'+U.map(u=>'<label class="prow" style="align-items:center;gap:12px;cursor:pointer"><input type="checkbox" data-uid="'+u.id+'"'+(u.can_price?' checked':'')+' style="width:22px;height:22px;flex:none"><div class="pl"><b>'+esc(u.name)+'</b><span class="pp">'+u.vials+' vial'+(u.vials===1?'':'s')+' · joined '+esc(String(u.created).slice(0,10))+(u.disabled?' · turned off':'')+'</span></div><button type="button" class="btn small" data-udel="'+u.id+'">'+(uiFlags.prUdel===String(u.id)?'Tap again: delete forever':'Delete')+'</button></label>').join("")+'</section>';
 }
 function ownerPricesHtml(){
   const O=load("pdg:ownerPrices",null); return "";
@@ -2108,6 +2108,9 @@ $("#prices").addEventListener("click",e=>{
   if(t.closest("#pr-back")){ app.dataset.view="list"; return; }
   if(t.closest("#pr-wipe")){ if(uiFlags.prWipe){ uiFlags.prWipe=false; invSave([]); save(CART_KEY,{}); } else uiFlags.prWipe=true; renderPrices(); return; }
   if(t.closest("#pr-users")){ uiFlags.prUsers=true; uiFlags.prUsersData=null; renderPrices(); prLoadUsers(); return; }
+  const ud=t.closest("[data-udel]"); if(ud){ e.preventDefault(); const id=ud.dataset.udel;
+    if(uiFlags.prUdel!==id){ uiFlags.prUdel=id; renderPrices(); return; }
+    uiFlags.prUdel=null; syCall("/owner/users/"+id,{method:"DELETE"}).then(r=>{ if(r.ok){ uiFlags.prUsersData=(uiFlags.prUsersData||[]).filter(u=>String(u.id)!==id); uiFlags.prUsersErr=""; } else uiFlags.prUsersErr=(r.j&&r.j.error)||"Could not delete."; renderPrices(); }).catch(()=>{ uiFlags.prUsersErr="Could not reach the server."; renderPrices(); }); return; }
   if(t.closest("#pr-users-close")){ uiFlags.prUsers=false; renderPrices(); return; }
   if(t.closest("#pr-cart-open")){ uiFlags.prCart=true; uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-cart-close")){ uiFlags.prCart=false; uiFlags.prMsg=""; renderPrices(); return; }
@@ -2338,7 +2341,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12k", BUILT="Nov 12, 2026 7:20 PM CT";
+  const VER="2026-11-12l", BUILT="Nov 12, 2026 7:40 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);

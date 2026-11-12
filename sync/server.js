@@ -88,7 +88,7 @@ app.disable("x-powered-by");
 app.use((req, res, next) => {
   const o = req.headers.origin;
   if (o === ORIGIN || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o || "")) {
-    res.set({ "Access-Control-Allow-Origin": o, "Vary": "Origin", "Access-Control-Allow-Headers": "Authorization, Content-Type", "Access-Control-Allow-Methods": "GET, PUT, POST, OPTIONS", "Access-Control-Max-Age": "86400" });
+    res.set({ "Access-Control-Allow-Origin": o, "Vary": "Origin", "Access-Control-Allow-Headers": "Authorization, Content-Type", "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE, OPTIONS", "Access-Control-Max-Age": "86400" });
   }
   res.set("Cache-Control", "no-store");
   if (req.method === "OPTIONS") return res.sendStatus(204);
@@ -189,6 +189,14 @@ app.post("/owner/users/:id", auth, owner, wrap(async (req, res) => {
   if (!id || typeof req.body?.can_price !== "boolean") return bad(res, "Bad request.");
   const r = await q("update dose_users set can_price = $2 where id = $1 and name_key <> 'owner'", [id, req.body.can_price]);
   if (!r.rowCount) return bad(res, "No such login.", 404);
+  res.json({ ok: true });
+}));
+app.delete("/owner/users/:id", auth, owner, wrap(async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!id) return bad(res, "Bad id.");
+  const r = await q("delete from dose_users where id = $1 and name_key <> 'owner'", [id]);   /* tokens and data go with it (cascade) */
+  if (!r.rowCount) return bad(res, "No such login.", 404);
+  stCache.delete(id);
   res.json({ ok: true });
 }));
 app.put("/owner/prices", auth, owner, wrap(async (req, res) => {

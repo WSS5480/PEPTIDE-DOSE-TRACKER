@@ -66,3 +66,6 @@ Update this file in the same commit as every change.
 
 ## 2026-11-12k — qty back
 - Steve asked "qty?": per-item Qty box restored next to My cost and My price, and Sold (cart) reduces qty. sw pdg-v34.
+
+## 2026-11-12l — Owner can delete users
+- Users page: Delete button per login (two taps), server DELETE /owner/users/:id removes login, tokens, data (cascade); Owner row can't be deleted. CORS allows DELETE. sw pdg-v35.
