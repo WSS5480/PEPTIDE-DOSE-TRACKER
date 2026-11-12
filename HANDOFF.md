@@ -79,3 +79,7 @@ Update this file in the same commit as every change.
 ## 2026-11-12o — never keep Owner-list copies unless signed in as a checked guest
 - Steve saw duplicates (his own item + an o:1 copy with Owner price as cost) on his Owner device. On every load, o:1 items are removed unless the device is signed in as a checked guest. sw pdg-v38.
 - Steve login deletion: must be done from Owner > Users page (DB blocks outside connections; MCP query tool can't reach it).
+
+## 2026-11-12p — inventory is per LOGIN
+- Bug: inventory lived in the browser, so a checked user (tom) signing in on Steve's browser saw Steve's cost/price/qty. Now switching login swaps lists (`pdg:items:<name>`, `pdg:itemsFor`); first sign-in on a device with an unclaimed list files it under "owner". Guests start with only Owner-price rows (cost locked) and their own price/qty. Signed-out state uses an empty list. sw pdg-v39.
+- Known limit: lists are still per device, not synced across devices (only Owner's published prices sync).

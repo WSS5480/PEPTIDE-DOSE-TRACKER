@@ -2014,6 +2014,17 @@ async function prLoadUsers(){
 }
 /* Allowed users: Owner's price becomes their locked "My cost"; they type their own price. */
 function dropOwnerItems(){ try{ localStorage.removeItem("pdg:ownerPrices"); const a=invItems(); if(a.some(x=>x.o)) save(ITEMS_KEY,a.filter(x=>!x.o)); }catch(e){} }
+/* Inventory belongs to a LOGIN, not the browser: switching login swaps in that login's own list. */
+function invSwitch(){
+  try{
+    const nk=(typeof SY!=="undefined"&&SY&&SY.name)?String(SY.name).trim().toLowerCase():"";
+    let cur=localStorage.getItem("pdg:itemsFor");
+    if(cur===null){ if(nk===""||nk==="owner"){ localStorage.setItem("pdg:itemsFor",nk); return; } cur="owner"; }   /* first sign-in: the list already here is Steve's */
+    if(cur===nk) return;
+    save("pdg:items:"+cur,invItems().filter(x=>!x.o)); save(ITEMS_KEY,load("pdg:items:"+nk,[])); save(CART_KEY,{});
+    localStorage.setItem("pdg:itemsFor",nk);
+  }catch(e){}
+}
 function isGuest(){ const O=load("pdg:ownerPrices",null); return !!(O&&O.allowed&&!O.owner&&SY); }
 function mergeOwner(){
   const O=load("pdg:ownerPrices",null); if(!O) return; let a=invItems();
@@ -2206,7 +2217,7 @@ async function syncNow(manual){
   try{
     syTrack();
     const g=await syCall("/vials");
-    if(g.status===401){ SY=null; save("pdg:sync",null); dropOwnerItems(); uiFlags.syErr="Signed out. Sign in again to keep syncing."; return; }
+    if(g.status===401){ SY=null; save("pdg:sync",null); dropOwnerItems(); invSwitch(); uiFlags.syErr="Signed out. Sign in again to keep syncing."; return; }
     if(g.status===402){ SY.account=(g.j&&g.j.account)||SY.account; save("pdg:sync",SY); uiFlags.syErr=""; uiFlags.syMsg=""; renderList(); return; }
     if(!g.ok) throw new Error("get");
     if(g.j&&g.j.account){ SY.account=g.j.account; save("pdg:sync",SY); }
@@ -2280,7 +2291,7 @@ async function syAuth(kind){
     clearTimeout(slow);
     if(!r.ok){ uiFlags.syMsg=""; uiFlags.syErr=r.status>=500?"The sync server is down right now (it is still being set up on the owner's side). Your vials are safe on this phone. Try again later.":((r.j&&r.j.error)||"That did not work. Try again."); syRefresh(); return; }
     try{ localStorage.setItem("pdg:lastName",name); }catch(e){}
-    SY={token:r.j.token,name:r.j.name,last:0,account:r.j.account||null}; save("pdg:sync",SY); uiFlags.syForm=""; uiFlags.syMsg=""; uiFlags.syErr="";
+    SY={token:r.j.token,name:r.j.name,last:0,account:r.j.account||null}; save("pdg:sync",SY); invSwitch(); uiFlags.syForm=""; uiFlags.syMsg=""; uiFlags.syErr="";
     await syncNow(true); renderVials();
   }catch(e){ clearTimeout(slow); uiFlags.syMsg=""; uiFlags.syErr="Could not reach the sync server. If your internet is fine, the server is down (owner setup unfinished). Your vials are safe on this phone."; syRefresh(); }
 }
@@ -2291,7 +2302,7 @@ vialsEl.addEventListener("click",e=>{
   if(e.target.closest("#sy-go")){ syAuth(uiFlags.syForm); return; }
   if(e.target.closest("#sy-now")){ syncNow(true); return; }
   if(e.target.closest("#sy-out")){
-    const tok=SY&&SY.token; SY=null; save("pdg:sync",null); dropOwnerItems(); uiFlags.syMsg="Signed out. Your vials stay on this device."; uiFlags.syErr="";
+    const tok=SY&&SY.token; SY=null; save("pdg:sync",null); dropOwnerItems(); invSwitch(); uiFlags.syMsg="Signed out. Your vials stay on this device."; uiFlags.syErr="";
     if(tok) fetch(SYNC_URL+"/logout",{method:"POST",headers:{Authorization:"Bearer "+tok}}).catch(()=>{});
     renderVials(); return;
   }
@@ -2347,7 +2358,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12o", BUILT="Nov 12, 2026 8:30 PM CT";
+  const VER="2026-11-12p", BUILT="Nov 12, 2026 8:45 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
