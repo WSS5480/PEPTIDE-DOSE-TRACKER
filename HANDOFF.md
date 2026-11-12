@@ -89,3 +89,8 @@ Update this file in the same commit as every change.
 
 ## 2026-11-12r — recover saved lists
 - Steve's list "vanished" after deleting tom (signed-out state uses an empty list; his list was filed under pdg:items:owner). Added "Saved lists on this device" fold on Prices: lists every pdg:items:* stash with count and a Bring back button. sw pdg-v41.
+
+## 2026-11-12s — never lose a list (reviewer findings)
+- Reviewer found invSwitch hid lists (swapped in an empty list for a new login) and the fresh1 wipe had no backup. Fixes: rolling snapshots (last 5, `pdg:items:snap-<ts>`) before any swap/wipe/clear-all; never overwrite a non-empty stash with an empty list; Owner's first sign-in keeps the list already typed on the device; banner "Your list is saved... Bring back" when the live list is empty.
+- Privacy: Saved-lists/Bring back is hidden for any signed-in non-Owner (a checked user could have copied Owner's cost/qty). sw pdg-v42.
+- Rule: use ONLY the Owner login on Steve's devices.
