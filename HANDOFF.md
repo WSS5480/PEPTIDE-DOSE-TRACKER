@@ -40,3 +40,6 @@ Update this file in the same commit as every change.
 - Cart shows customer total + profit; Sold button reduces stock. sw cache pdg-v27.
 - Old blob still exists in git history and in old cached copies on devices (history rewrite = destructive, needs Steve's OK).
 - Dropped: publishing prices to resellers (his latest messages imply it; not confirmed).
+
+## 2026-11-12e — inventory simplified
+- Steve: only "My cost" and "My price" side by side per item. Removed On hand, stock totals and Sold button. Cart (+/-, customer total, profit) stays. sw pdg-v28.
