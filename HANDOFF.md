@@ -72,3 +72,6 @@ Update this file in the same commit as every change.
 
 ## 2026-11-12m — owner-list items removed on sign-out / 401
 - Steve had two logins (steve and Owner). Owner-list items (o:1) are dropped from the device inventory when signed out or when the login is rejected/deleted. sw pdg-v36.
+
+## 2026-11-12n — restore Owner prices from server
+- Steve was signed in as "steve" (guest) on his device; deleting that login dropped the copied Owner list locally. Server still holds the published prices (dose_prices). Added Owner-only "Restore prices from server" button (restores name/size/price; cost and qty were never on the server). sw pdg-v37.
