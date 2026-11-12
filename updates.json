@@ -1,8 +1,16 @@
 {
  "version": 1,
- "updated": "2026-11-08",
+ "updated": "2026-11-12",
  "notice": "",
  "news": [
+  {
+   "date": "2026-11-12",
+   "kind": "new",
+   "title": "Lipo-C Fat Blaster (LC526) added to the vial calculator",
+   "summary": "Pre-mixed 10 mL vial, 526 mg total per mL. The calculator converts mL to units. No published dose exists; the range shown is common clinic practice.",
+   "url": "",
+   "tags": []
+  },
   {
    "date": "2026-11-08",
    "kind": "new",
@@ -1936,29 +1944,44 @@
    ],
    "status": "none",
    "for": "A vendor-coded lipotropic blend. Per the vendor sheet: L-carnitine, methionine, inositol, choline, B12, B6 and NADH. Sold as a 'fat-burning' shot.",
-   "refShort": "Reference only · no published human dose found",
-   "refMsg": "No dose from an approved label, a published human study or a clinical guideline was found, so the calculator stays off. Facts and links below.",
    "notes": [
-    "Ingredients per vendor sheet (unverified): L-carnitine 300 mg, methionine 25 mg, inositol 50 mg, choline 50 mg, B12 1 mg, B6 50 mg, NADH 50 mg. Per-mL or per-vial basis not stated.",
-    "Identity: LC526 is a vendor code. No matching approved product was found.",
-    "US status: no FDA-approved lipotropic blend or NADH injection was found. No FDA statement about this product found.",
-    "Human evidence: no trials of this blend for fat loss were found.",
-    "Harms: nonsterile compounded lipotropic injections have been recalled for sterility lapses (FDA recall D-0271-2017). Levocarnitine injection label lists arrhythmia, seizures and allergic reactions (PDR).",
-    "Anti-doping: none of the listed ingredients is named in the WADA sections I checked."
+    "It arrives pre-mixed, so the 10 mL in the app is the vial's own volume. Nothing is added.",
+    "One seller's 10 mL listing (not for human use) gives per mL: L-carnitine 300 mg, methionine 25 mg, inositol 50 mg, choline 50 mg, B12 1 mg, B6 50 mg, NADH 50 mg. That adds up to 526 mg per mL, which matches the code in the name, so the calculator uses 5,260 mg for the whole vial. Check your own label and COA, because sellers' formulas differ.",
+    "No injection dose appears on that listing, and I found no label, trial or guideline for this blend. The 0.5 to 1 mL range here is common clinic practice from memory, not a sourced dose. Your prescriber sets it.",
+    "Per 0.5 mL: L-carnitine 150 mg, methionine 12.5 mg, inositol 25 mg, choline 25 mg, B12 0.5 mg, B6 25 mg, NADH 25 mg.",
+    "Storage: that listing says crystals can form and are normal, and not to refrigerate. Follow your own label.",
+    "Possible problems: injection-site pain, allergic reaction, and with levocarnitine injection arrhythmia and seizures are on the label (PDR). Nonsterile compounded lipotropic injections have been recalled for sterility lapses (FDA recall D-0271-2017).",
+    "No FDA-approved lipotropic blend or NADH injection was found. Anti-doping: none of the ingredients is named in the WADA sections I checked."
    ],
-   "evidence": "None: blend not studied; ingredient lists unverified.",
+   "evidence": "None: blend not studied; ingredient list from one seller and unverified.",
    "sources": [
     "https://api.ai-analytics.org/recall/D-0271-2017",
     "https://www.pdr.net/drug-summary/Carnitor-Injection-levocarnitine-1644",
     "https://www.fda.gov/inspections-compliance-enforcement-and-criminal-investigations/warning-letters/royal-peptides-llc-734884-08242026",
     "https://www.segas.gr/wp-content/uploads/2025/11/2026list_en_final_clean_september_2025.pdf"
    ],
-   "lookup": [
-    "lipotropic injection NADH carnitine",
-    "methionine inositol choline"
+   "unit": "mg",
+   "unitLabel": "mg total",
+   "min": 263,
+   "max": 526,
+   "common": 526,
+   "freq": "1 mL once or twice a week (about 526 mg total per mL). 0.5 mL is the low end. Typical clinic practice, not from a label or trial.",
+   "interval": 7,
+   "timing": "Pre-mixed liquid: do NOT add water. The app's 'mix' line only shows strength: 526 mg total per mL, so 1 mL = 100 units on a U-100 syringe. Usually given into the muscle or under the skin; follow your prescriber.",
+   "ladder": [],
+   "vials": [
+    5260
    ],
-   "refOnly": true,
-   "caution": "Component identities unverified; no dose given."
+   "vialDefault": 5260,
+   "vialLabel": "Vial total (mg)",
+   "water": 10,
+   "waterPresets": [
+    10
+   ],
+   "useDays": 28,
+   "cycle": "No published cycle",
+   "storage": "Room temperature per one seller; do not refrigerate. Follow your label.",
+   "caution": "Dose is not from a label or trial. Ingredient amounts per mL come from one seller listing."
   },
   {
    "id": "rp226",
