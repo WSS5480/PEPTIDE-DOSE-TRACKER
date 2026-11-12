@@ -94,3 +94,6 @@ Update this file in the same commit as every change.
 - Reviewer found invSwitch hid lists (swapped in an empty list for a new login) and the fresh1 wipe had no backup. Fixes: rolling snapshots (last 5, `pdg:items:snap-<ts>`) before any swap/wipe/clear-all; never overwrite a non-empty stash with an empty list; Owner's first sign-in keeps the list already typed on the device; banner "Your list is saved... Bring back" when the live list is empty.
 - Privacy: Saved-lists/Bring back is hidden for any signed-in non-Owner (a checked user could have copied Owner's cost/qty). sw pdg-v42.
 - Rule: use ONLY the Owner login on Steve's devices.
+
+## 2026-11-12t — never publish an empty price list
+- Likely cause of Owner's "Nothing new to restore": an empty inventory got published (PUT /owner/prices with []) and wiped the server copy. ownerPublish now returns early on an empty list. Prices a checked user's device still holds (pdg:ownerPrices) are the only other copy. sw pdg-v43.

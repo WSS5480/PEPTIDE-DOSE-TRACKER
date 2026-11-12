@@ -2003,7 +2003,7 @@ function invSave(a){ save(ITEMS_KEY,a); ownerPublish(); }
 /* Owner only: publish your PRICES (never cost) so users you check can see them */
 const isOwner=()=>!!(typeof SY!=="undefined"&&SY&&String(SY.name||"").trim().toLowerCase()==="owner");
 let pubT=null;
-function ownerPublish(){ if(!isOwner()) return; clearTimeout(pubT); pubT=setTimeout(()=>{ const items=invItems().filter(x=>typeof x.price==="number").map(x=>({n:x.n,s:x.s,p:x.price})); syCall("/owner/prices",{method:"PUT",body:JSON.stringify({items:items})}).catch(()=>{}); },1200); }
+function ownerPublish(){ if(!isOwner()) return; clearTimeout(pubT); pubT=setTimeout(()=>{ const items=invItems().filter(x=>!x.o&&typeof x.price==="number").map(x=>({n:x.n,s:x.s,p:x.price})); if(!items.length) return;   /* never publish an empty list: it would wipe the prices your users see */ syCall("/owner/prices",{method:"PUT",body:JSON.stringify({items:items})}).catch(()=>{}); },1200); }
 async function prAccess(){
   if(typeof SY==="undefined"||!SY) return;
   try{ const r=await syCall("/prices"); if(r.ok){ save("pdg:ownerPrices",{allowed:!!r.j.allowed,owner:!!r.j.owner,items:r.j.items||[]}); mergeOwner(); if(app.dataset.view==="prices"&&!uiFlags.prCart&&!uiFlags.prUsers) renderPrices(); } }catch(e){}
@@ -2378,7 +2378,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12s", BUILT="Nov 12, 2026 9:45 PM CT";
+  const VER="2026-11-12t", BUILT="Nov 12, 2026 10:00 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
