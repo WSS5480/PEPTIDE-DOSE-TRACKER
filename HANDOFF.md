@@ -24,6 +24,7 @@ Update this file in the same commit as every change.
 - Separate doctor/nurse "recommended dosing" app: not started. App-store points to raise first (in-app purchase vs Cash App, developer accounts, review risk).
 
 ## Change log
+- 2026-11-12: Prices > My inventory: + Mine on each item, own cost / price / on-hand per item, margin, cart profit uses own cost, "Sold" button reduces stock. Stored in `pdg:inv` (price uses existing `pdg:custPrice`).
 - 2026-11-12: Lipo-C Fat Blaster (LC526) calculator: pre-mixed 10 mL, 526 mg/mL, 1 mL = 100 units. Dose range is clinic practice, not sourced. Fixed squashed category groups on desktop.
 - 2026-11-11: Menu, collapsible categories, category colors, vial icons, My vials shelf, readable sign-in with server-down message.
 - 2026-11-08: Dosing section from labels/studies for 47 reference peptides; per-vial "How often"; WhatsApp removed from login (PIN only); sync `setpin` action.
