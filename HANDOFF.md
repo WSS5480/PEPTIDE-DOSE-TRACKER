@@ -63,3 +63,6 @@ Update this file in the same commit as every change.
 
 ## 2026-11-12j — clean slate
 - Steve: remove all previous pricing, he enters his own. Old pricing keys purged on every load; one-time wipe of pdg:items (flag pdg:fresh1) so carried-over entries are gone; added "Clear all my prices" (two taps; hidden for Owner-list guests). sw pdg-v33.
+
+## 2026-11-12k — qty back
+- Steve asked "qty?": per-item Qty box restored next to My cost and My price, and Sold (cart) reduces qty. sw pdg-v34.

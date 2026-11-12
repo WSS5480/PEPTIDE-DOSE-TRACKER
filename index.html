@@ -2068,7 +2068,7 @@ function renderPrices(){
    +'<label>Size<input id="ia-s" placeholder="10 mg"></label>'
    +'<label>My cost (each)<input id="ia-c" inputmode="decimal" placeholder="0.00"></label>'
    +'<label>My price (each)<input id="ia-p" inputmode="decimal" placeholder="0.00"></label>'
-   +'</div>'
+   +'<label>Qty<input id="ia-q" inputmode="numeric" placeholder="0"></label></div>'
    +'<div class="btnrow"><button type="button" class="btn primary" id="ia-go">Add to my inventory</button></div>'+(uiFlags.prErr?'<p class="flag bad">'+esc(uiFlags.prErr)+'</p>':'')+'</div></details>';
   if(items.length&&!isGuest()) h+='<div class="btnrow"><button type="button" class="btn small" id="pr-wipe">'+(uiFlags.prWipe?'Tap again: erase ALL my prices':'Clear all my prices')+'</button></div>';
   if(items.length) h+='<input id="pr-q" class="search" type="search" placeholder="Search my inventory" value="'+esc(prQ)+'" aria-label="Search my inventory"><div class="btnrow"><button type="button" class="btn small" id="pr-expand">Open all</button><button type="button" class="btn small" id="pr-collapse">Close all</button></div>';
@@ -2077,7 +2077,7 @@ function renderPrices(){
       return '<div class="prow"><div class="pl"><b>'+esc(x.s||"each")+'</b><span class="pp">'+(mg!=null?'Margin '+money(mg)+' ('+Math.round(mg/x.price*100)+'%)':'Enter cost and price for margin')+'</span></div>'
        +'<div class="invrow" style="border:0;padding:0;flex:0 0 auto"><label>My cost'+(x.o?' <span class="hint">(Owner price)</span>':'')+'<input class="pedit" inputmode="decimal" '+(x.o?'readonly ':'')+'data-id="'+x.id+'" data-f="cost" value="'+(x.cost!=null?x.cost.toFixed(2):'')+'" placeholder="0.00" aria-label="My cost"></label>'
        +'<label>My price<input class="pedit" inputmode="decimal" data-id="'+x.id+'" data-f="price" value="'+(x.price!=null?x.price.toFixed(2):'')+'" placeholder="0.00" aria-label="My price"></label>'
-       +'</div>'
+       +'<label>Qty<input class="pedit" inputmode="numeric" data-id="'+x.id+'" data-f="qty" value="'+(x.qty!=null?x.qty:'')+'" placeholder="0" aria-label="Quantity on hand"></label></div>'
        +'<div class="qty"><button type="button" data-q="-1" data-id="'+x.id+'" aria-label="Less in order">&minus;</button><span>'+c+'</span><button type="button" data-q="1" data-id="'+x.id+'" aria-label="More in order">+</button></div>'
        +(isGuest()?'':'<button type="button" class="btn small" data-del="'+x.id+'">'+(prDel===x.id?'Tap again to delete':'Delete')+'</button>')+'</div>'; }).join("")+'</details>').join("");
   if(items.length&&!sel.length) h+='<p class="empty">No match.</p>';
@@ -2096,7 +2096,7 @@ function cartHtml(items,cart){
     return '<div class="prow"><div class="pl"><b>'+esc(x.n)+'</b><span class="pp">'+esc(x.s||"each")+' · '+(p?money(p)+' each · line '+money(l.n*p):'<b>no price yet</b>')+'</span>'+(x.cost!=null?'<span class="pp">your cost '+money(x.cost)+' each</span>':'')+'</div>'
      +'<div class="qty"><button type="button" data-q="-1" data-id="'+x.id+'" aria-label="Less">&minus;</button><span>'+l.n+'</span><button type="button" data-q="1" data-id="'+x.id+'" aria-label="More">+</button></div><button type="button" class="btn small" data-rm="'+x.id+'">Remove</button></div>'; }).join("")+'</section>'
     +'<div class="ordbar"><div class="tot">Customer total: '+money(total)+'</div>'+(cc?'<p class="hint">Only you see this: cost '+money(cost)+', profit '+money(prof)+' on '+cc+' item'+(cc===1?'':'s')+'.</p>':'')
-    +'<div class="btnrow"><button type="button" class="btn small primary" id="pr-copy">Copy order</button>'+(navigator.share?'<button type="button" class="btn small" id="pr-share">Share</button>':'')+'<button type="button" class="btn small" id="pr-clear">Clear cart</button></div>'
+    +'<div class="btnrow"><button type="button" class="btn small primary" id="pr-copy">Copy order</button>'+(navigator.share?'<button type="button" class="btn small" id="pr-share">Share</button>':'')+'<button type="button" class="btn small" id="pr-clear">Clear cart</button></div><div class="btnrow"><button type="button" class="btn small" id="pr-sold">Sold: take out of my qty</button></div>'
     +''+(uiFlags.prMsg?'<p class="hint" style="white-space:pre-wrap">'+esc(uiFlags.prMsg)+'</p>':'')+'</div>';
   return h;
 }
@@ -2113,13 +2113,14 @@ $("#prices").addEventListener("click",e=>{
   if(t.closest("#pr-cart-close")){ uiFlags.prCart=false; uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-expand")||t.closest("#pr-collapse")){ const o=!!t.closest("#pr-expand"); $("#prices").querySelectorAll("details.pgroup").forEach(d=>{ d.open=o; }); return; }
   if(t.closest("#ia-go")){
-    const n=($("#ia-n").value||"").trim().slice(0,60), s=($("#ia-s").value||"").trim().slice(0,20)||"each", c=parseFloat($("#ia-c").value), p=parseFloat($("#ia-p").value);
+    const n=($("#ia-n").value||"").trim().slice(0,60), s=($("#ia-s").value||"").trim().slice(0,20)||"each", c=parseFloat($("#ia-c").value), p=parseFloat($("#ia-p").value), qn=parseInt($("#ia-q").value,10);
     if(!n){ uiFlags.prErr="Type the peptide name."; renderPrices(); return; }
-    const it={id:newId("i"),n:n,s:s}; if(isFinite(c)&&c>=0) it.cost=Math.round(c*100)/100; if(isFinite(p)&&p>=0) it.price=Math.round(p*100)/100;
+    const it={id:newId("i"),n:n,s:s}; if(isFinite(c)&&c>=0) it.cost=Math.round(c*100)/100; if(isFinite(p)&&p>=0) it.price=Math.round(p*100)/100; if(isFinite(qn)&&qn>=0) it.qty=qn;
     const a=invItems(); a.push(it); invSave(a); uiFlags.prErr=""; renderPrices(); return; }
   const dl=t.closest("[data-del]"); if(dl&&!isGuest()){ if(prDel===dl.dataset.del){ invSave(invItems().filter(x=>x.id!==prDel)); const c=invCart(); delete c[prDel]; save(CART_KEY,c); prDel=null; } else prDel=dl.dataset.del; renderPrices(); return; }
   const rm=t.closest("[data-rm]"); if(rm){ const c=invCart(); delete c[rm.dataset.rm]; save(CART_KEY,c); renderPrices(); return; }
   const qb=t.closest("[data-q]"); if(qb){ const c=invCart(), k=qb.dataset.id, n=Math.max(0,(c[k]||0)+(+qb.dataset.q)); if(n) c[k]=n; else delete c[k]; save(CART_KEY,c); uiFlags.prMsg=""; renderPrices(); return; }
+  if(t.closest("#pr-sold")){ const c=invCart(), a=invItems(); let n=0; a.forEach(x=>{ if(c[x.id]&&typeof x.qty==="number"){ x.qty=Math.max(0,x.qty-c[x.id]); n++; } }); invSave(a); save(CART_KEY,{}); uiFlags.prMsg="Sale recorded. Qty reduced on "+n+" item"+(n===1?"":"s")+"."; uiFlags.prCart=false; renderPrices(); return; }
   if(t.closest("#pr-clear")){ save(CART_KEY,{}); uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-share")){ try{ navigator.share({title:"Order",text:cartText(invItems(),invCart())}); }catch(err){} return; }
   if(t.closest("#pr-copy")){ const txt=cartText(invItems(),invCart()); const done=()=>{ uiFlags.prMsg="Order copied."; renderPrices(); };
@@ -2337,7 +2338,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12j", BUILT="Nov 12, 2026 7:00 PM CT";
+  const VER="2026-11-12k", BUILT="Nov 12, 2026 7:20 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
