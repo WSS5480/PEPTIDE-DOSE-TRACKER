@@ -2203,7 +2203,7 @@ function syncHtml(){
     h+='<p class="hint">'+(t?'Last synced '+esc(t)+'. ':'')+'Vials and dose logs follow you to every device where you sign in.</p>'+syLine(syAcct())
       +'<div class="btnrow"><button type="button" class="btn small primary" id="sy-now">Sync now</button><button type="button" class="btn small" id="sy-out">Sign out</button></div>';
   } else if(uiFlags.syForm){
-    const mk=uiFlags.syForm==="new", ln=(function(){ try{ return localStorage.getItem("pdg:lastName")||""; }catch(e){ return ""; } })();
+    const mk=uiFlags.syForm==="new", ln=(function(){ try{ return localStorage.getItem("pdg:lastName")||"Owner"; }catch(e){ return "Owner"; } })();
     h+='<p class="hint">'+(mk?'Pick a login name and a 4-digit PIN. Use the same ones on your other devices. First 30 days free, then $5/month on Cash App.':'Sign in with your login name and 4-digit PIN.')+'</p>'
       +'<div class="syform"><label>Login name<input id="sy-name" name="pdg-login" type="text" autocomplete="username" autocapitalize="off" maxlength="40" value="'+esc(uiFlags.syName||ln)+'"></label>'
       +'<label>4-digit PIN<input id="sy-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="'+(mk?'new-password':'current-password')+'"></label></div>'
@@ -2291,7 +2291,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12f", BUILT="Nov 12, 2026 5:30 PM CT";
+  const VER="2026-11-12g", BUILT="Nov 12, 2026 5:45 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);

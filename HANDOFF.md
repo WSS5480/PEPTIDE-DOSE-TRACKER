@@ -46,3 +46,6 @@ Update this file in the same commit as every change.
 
 ## 2026-11-12f — search box autofill bug
 - Browser autofilled the saved login name ("steve") into the peptide search box, so the list showed "Nothing matches". Fix: search input name/autocomplete off, and clear any autofilled value shortly after load. sw pdg-v29.
+
+## 2026-11-12g — login name defaults to "Owner"
+- Steve's login name: Owner (prefilled when none remembered). PIN is his own (set when he creates the login). Claude can't reach the sync server from its sandbox, so he creates the login himself in the app. sw pdg-v30.
