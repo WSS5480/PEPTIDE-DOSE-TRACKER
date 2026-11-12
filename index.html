@@ -303,6 +303,7 @@ textarea.export{width:100%;min-height:120px;font-family:var(--font-mono);font-si
 .chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{white-space:nowrap;flex:none}
+.list>*{flex:none}
 .catgrp{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--cc,var(--accent));border-radius:var(--radius);overflow:hidden}
 .catgrp>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:10px 12px;font-weight:700;font-size:.98rem}
 .catgrp>summary::-webkit-details-marker{display:none}
@@ -2487,7 +2488,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-11a", BUILT="Nov 11, 2026 2:30 PM CT";
+  const VER="2026-11-12a", BUILT="Nov 12, 2026 11:00 AM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
