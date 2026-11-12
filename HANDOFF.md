@@ -83,3 +83,6 @@ Update this file in the same commit as every change.
 ## 2026-11-12p — inventory is per LOGIN
 - Bug: inventory lived in the browser, so a checked user (tom) signing in on Steve's browser saw Steve's cost/price/qty. Now switching login swaps lists (`pdg:items:<name>`, `pdg:itemsFor`); first sign-in on a device with an unclaimed list files it under "owner". Guests start with only Owner-price rows (cost locked) and their own price/qty. Signed-out state uses an empty list. sw pdg-v39.
 - Known limit: lists are still per device, not synced across devices (only Owner's published prices sync).
+
+## 2026-11-12q — list swap also runs at load
+- v p only swapped lists on sign-in; a login already signed in (tom) kept Steve's list. invSwitch() now also runs on every load. sw pdg-v40.

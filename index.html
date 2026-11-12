@@ -2035,7 +2035,7 @@ function mergeOwner(){
   invSave(a);
 }
 /* on every load: copied Owner-list items only belong to a signed-in, checked guest; anyone else never keeps them */
-setTimeout(()=>{ try{ if(!isGuest()&&invItems().some(x=>x.o)){ dropOwnerItems(); if(app.dataset.view==="prices") renderPrices(); } }catch(e){} },0);
+setTimeout(()=>{ try{ invSwitch(); mergeOwner(); if(app.dataset.view==="prices") renderPrices(); }catch(e){} try{ if(!isGuest()&&invItems().some(x=>x.o)){ dropOwnerItems(); if(app.dataset.view==="prices") renderPrices(); } }catch(e){} },0);
 function usersHtml(){
   const U=uiFlags.prUsersData;
   let h='<div class="vhead"><div><h2>Users</h2><p class="hint">Check a person to let them see your prices. They see your price only, never your cost. Delete removes their login, vials and dose log for good.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-users-close">&larr; Inventory</button></div></div>';
@@ -2358,7 +2358,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12p", BUILT="Nov 12, 2026 8:45 PM CT";
+  const VER="2026-11-12q", BUILT="Nov 12, 2026 9:05 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
