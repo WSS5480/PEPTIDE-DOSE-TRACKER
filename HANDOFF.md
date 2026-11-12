@@ -86,3 +86,6 @@ Update this file in the same commit as every change.
 
 ## 2026-11-12q — list swap also runs at load
 - v p only swapped lists on sign-in; a login already signed in (tom) kept Steve's list. invSwitch() now also runs on every load. sw pdg-v40.
+
+## 2026-11-12r — recover saved lists
+- Steve's list "vanished" after deleting tom (signed-out state uses an empty list; his list was filed under pdg:items:owner). Added "Saved lists on this device" fold on Prices: lists every pdg:items:* stash with count and a Bring back button. sw pdg-v41.
