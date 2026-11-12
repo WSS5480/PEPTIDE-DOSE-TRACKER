@@ -43,3 +43,6 @@ Update this file in the same commit as every change.
 
 ## 2026-11-12e — inventory simplified
 - Steve: only "My cost" and "My price" side by side per item. Removed On hand, stock totals and Sold button. Cart (+/-, customer total, profit) stays. sw pdg-v28.
+
+## 2026-11-12f — search box autofill bug
+- Browser autofilled the saved login name ("steve") into the peptide search box, so the list showed "Nothing matches". Fix: search input name/autocomplete off, and clear any autofilled value shortly after load. sw pdg-v29.
