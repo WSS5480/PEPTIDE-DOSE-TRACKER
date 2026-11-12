@@ -2006,11 +2006,21 @@ let pubT=null;
 function ownerPublish(){ if(!isOwner()) return; clearTimeout(pubT); pubT=setTimeout(()=>{ const items=invItems().filter(x=>typeof x.price==="number").map(x=>({n:x.n,s:x.s,p:x.price})); syCall("/owner/prices",{method:"PUT",body:JSON.stringify({items:items})}).catch(()=>{}); },1200); }
 async function prAccess(){
   if(typeof SY==="undefined"||!SY) return;
-  try{ const r=await syCall("/prices"); if(r.ok){ save("pdg:ownerPrices",{allowed:!!r.j.allowed,owner:!!r.j.owner,items:r.j.items||[]}); if(app.dataset.view==="prices"&&!uiFlags.prCart&&!uiFlags.prUsers) renderPrices(); } }catch(e){}
+  try{ const r=await syCall("/prices"); if(r.ok){ save("pdg:ownerPrices",{allowed:!!r.j.allowed,owner:!!r.j.owner,items:r.j.items||[]}); mergeOwner(); if(app.dataset.view==="prices"&&!uiFlags.prCart&&!uiFlags.prUsers) renderPrices(); } }catch(e){}
 }
 async function prLoadUsers(){
   uiFlags.prUsersErr=""; try{ const r=await syCall("/owner/users"); if(r.ok) uiFlags.prUsersData=r.j.users||[]; else uiFlags.prUsersErr=(r.j&&r.j.error)||"Could not load users."; }catch(e){ uiFlags.prUsersErr="Could not reach the server."; }
   if(uiFlags.prUsers) renderPrices();
+}
+/* Allowed users: Owner's price becomes their locked "My cost"; they type their own price. */
+function isGuest(){ const O=load("pdg:ownerPrices",null); return !!(O&&O.allowed&&!O.owner&&SY); }
+function mergeOwner(){
+  const O=load("pdg:ownerPrices",null); if(!O) return; let a=invItems();
+  if(!O.allowed||O.owner){ if(a.some(x=>x.o)){ a=a.filter(x=>!x.o); invSave(a); } return; }
+  const want={}; (O.items||[]).forEach(x=>{ want[x.n+"|"+x.s]=x; });
+  a=a.filter(x=>!x.o||want[x.n+"|"+x.s]);
+  Object.keys(want).forEach(k=>{ const w=want[k], f=a.find(x=>x.o&&x.n===w.n&&x.s===w.s); if(f) f.cost=w.p; else a.push({id:newId("o"),n:w.n,s:w.s,cost:w.p,o:1}); });
+  invSave(a);
 }
 function usersHtml(){
   const U=uiFlags.prUsersData;
@@ -2021,7 +2031,7 @@ function usersHtml(){
   return h+'<section class="block">'+U.map(u=>'<label class="prow" style="align-items:center;gap:12px;cursor:pointer"><input type="checkbox" data-uid="'+u.id+'"'+(u.can_price?' checked':'')+' style="width:22px;height:22px;flex:none"><div class="pl"><b>'+esc(u.name)+'</b><span class="pp">'+u.vials+' vial'+(u.vials===1?'':'s')+' · joined '+esc(String(u.created).slice(0,10))+(u.disabled?' · turned off':'')+'</span></div></label>').join("")+'</section>';
 }
 function ownerPricesHtml(){
-  const O=load("pdg:ownerPrices",null); if(!O||!O.allowed||O.owner) return "";
+  const O=load("pdg:ownerPrices",null); return "";
   const g={}; (O.items||[]).forEach(x=>{ (g[x.n]=g[x.n]||[]).push(x); });
   const names=Object.keys(g).sort((a,b)=>a.localeCompare(b));
   return '<details class="fold" id="own-prices"><summary><span>Prices from Owner</span><span class="hint">'+(O.items||[]).length+' items</span></summary><div class="foldbody">'+(names.length?names.map(n=>'<div class="prow"><div class="pl"><b>'+esc(n)+'</b><span class="pp">'+g[n].map(x=>esc(x.s||"each")+' '+money(x.p)).join(" · ")+'</span></div></div>').join(""):'<p class="empty">No prices posted yet.</p>')+'</div></details>';
@@ -2061,11 +2071,11 @@ function renderPrices(){
   h+=sel.map(g=>'<details class="pgroup" data-g="'+esc(g.n)+'"'+(q?' open':'')+'><summary><span>'+esc(g.n)+'</span><span class="hint">'+g.rows.map(x=>esc(x.s)).slice(0,6).join(" · ")+'</span></summary>'
     +g.rows.map(x=>{ const mg=(x.cost!=null&&x.price!=null&&x.price>0)?x.price-x.cost:null, c=cart[x.id]||0;
       return '<div class="prow"><div class="pl"><b>'+esc(x.s||"each")+'</b><span class="pp">'+(mg!=null?'Margin '+money(mg)+' ('+Math.round(mg/x.price*100)+'%)':'Enter cost and price for margin')+'</span></div>'
-       +'<div class="invrow" style="border:0;padding:0;flex:0 0 auto"><label>My cost<input class="pedit" inputmode="decimal" data-id="'+x.id+'" data-f="cost" value="'+(x.cost!=null?x.cost.toFixed(2):'')+'" placeholder="0.00" aria-label="My cost"></label>'
+       +'<div class="invrow" style="border:0;padding:0;flex:0 0 auto"><label>My cost'+(x.o?' <span class="hint">(Owner price)</span>':'')+'<input class="pedit" inputmode="decimal" '+(x.o?'readonly ':'')+'data-id="'+x.id+'" data-f="cost" value="'+(x.cost!=null?x.cost.toFixed(2):'')+'" placeholder="0.00" aria-label="My cost"></label>'
        +'<label>My price<input class="pedit" inputmode="decimal" data-id="'+x.id+'" data-f="price" value="'+(x.price!=null?x.price.toFixed(2):'')+'" placeholder="0.00" aria-label="My price"></label>'
        +'</div>'
        +'<div class="qty"><button type="button" data-q="-1" data-id="'+x.id+'" aria-label="Less in order">&minus;</button><span>'+c+'</span><button type="button" data-q="1" data-id="'+x.id+'" aria-label="More in order">+</button></div>'
-       +'<button type="button" class="btn small" data-del="'+x.id+'">'+(prDel===x.id?'Tap again to delete':'Delete')+'</button></div>'; }).join("")+'</details>').join("");
+       +(isGuest()?'':'<button type="button" class="btn small" data-del="'+x.id+'">'+(prDel===x.id?'Tap again to delete':'Delete')+'</button>')+'</div>'; }).join("")+'</details>').join("");
   if(items.length&&!sel.length) h+='<p class="empty">No match.</p>';
   if(!items.length) h+='<p class="empty">Nothing here yet. Add the first item above.</p>';
   h+='<div class="ordbar"><div class="tot">Order: '+cn+' item'+(cn===1?'':'s')+' · '+money(ct)+'</div><div class="btnrow"><button type="button" class="btn small primary" id="pr-cart-open">View cart'+(cn?' ('+cn+')':'')+'</button></div></div>';
@@ -2102,7 +2112,7 @@ $("#prices").addEventListener("click",e=>{
     if(!n){ uiFlags.prErr="Type the peptide name."; renderPrices(); return; }
     const it={id:newId("i"),n:n,s:s}; if(isFinite(c)&&c>=0) it.cost=Math.round(c*100)/100; if(isFinite(p)&&p>=0) it.price=Math.round(p*100)/100;
     const a=invItems(); a.push(it); invSave(a); uiFlags.prErr=""; renderPrices(); return; }
-  const dl=t.closest("[data-del]"); if(dl){ if(prDel===dl.dataset.del){ invSave(invItems().filter(x=>x.id!==prDel)); const c=invCart(); delete c[prDel]; save(CART_KEY,c); prDel=null; } else prDel=dl.dataset.del; renderPrices(); return; }
+  const dl=t.closest("[data-del]"); if(dl&&!isGuest()){ if(prDel===dl.dataset.del){ invSave(invItems().filter(x=>x.id!==prDel)); const c=invCart(); delete c[prDel]; save(CART_KEY,c); prDel=null; } else prDel=dl.dataset.del; renderPrices(); return; }
   const rm=t.closest("[data-rm]"); if(rm){ const c=invCart(); delete c[rm.dataset.rm]; save(CART_KEY,c); renderPrices(); return; }
   const qb=t.closest("[data-q]"); if(qb){ const c=invCart(), k=qb.dataset.id, n=Math.max(0,(c[k]||0)+(+qb.dataset.q)); if(n) c[k]=n; else delete c[k]; save(CART_KEY,c); uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-clear")){ save(CART_KEY,{}); uiFlags.prMsg=""; renderPrices(); return; }
@@ -2114,7 +2124,7 @@ $("#prices").addEventListener("change",async e=>{
   const cb=e.target.closest&&e.target.closest("input[data-uid]");
   if(cb){ const on=cb.checked; try{ const r=await syCall("/owner/users/"+cb.dataset.uid,{method:"POST",body:JSON.stringify({can_price:on})}); if(!r.ok){ cb.checked=!on; uiFlags.prUsersErr=(r.j&&r.j.error)||"Could not save."; renderPrices(); } else { const u=(uiFlags.prUsersData||[]).find(x=>String(x.id)===cb.dataset.uid); if(u) u.can_price=on; } }catch(err){ cb.checked=!on; } return; }
   const i=e.target.closest&&e.target.closest(".pedit[data-id]"); if(!i) return;
-  const a=invItems(), x=a.find(y=>y.id===i.dataset.id); if(!x) return; const v=parseFloat(i.value), blank=i.value.trim()==="", f=i.dataset.f;
+  const a=invItems(), x=a.find(y=>y.id===i.dataset.id); if(!x||(x.o&&i.dataset.f==="cost")) return; const v=parseFloat(i.value), blank=i.value.trim()==="", f=i.dataset.f;
   if(blank||!isFinite(v)||v<0) delete x[f]; else x[f]=f==="qty"?Math.floor(v):Math.round(v*100)/100;
   invSave(a); uiFlags.prMsg=""; renderPrices();
 });
@@ -2322,7 +2332,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12h", BUILT="Nov 12, 2026 6:10 PM CT";
+  const VER="2026-11-12i", BUILT="Nov 12, 2026 6:40 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
