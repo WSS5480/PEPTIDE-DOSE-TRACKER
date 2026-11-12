@@ -60,3 +60,6 @@ Update this file in the same commit as every change.
 ## 2026-11-12i — guests see Owner price as locked cost
 - Users Owner has checked: Owner's price list is merged into their inventory (items flagged o:1). Owner price shows as their "My cost" (read-only, refreshed from server); they type their own "My price". No Delete button for these users. Replaced the read-only "Prices from Owner" fold. sw pdg-v32.
 - Unchecked users still use their own typed inventory with Delete.
+
+## 2026-11-12j — clean slate
+- Steve: remove all previous pricing, he enters his own. Old pricing keys purged on every load; one-time wipe of pdg:items (flag pdg:fresh1) so carried-over entries are gone; added "Clear all my prices" (two taps; hidden for Owner-list guests). sw pdg-v33.

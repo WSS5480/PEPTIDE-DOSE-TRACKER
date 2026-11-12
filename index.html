@@ -2039,7 +2039,8 @@ function ownerPricesHtml(){
 function invCart(){ const c=load(CART_KEY,{}); return (c&&typeof c==="object"&&!Array.isArray(c))?c:{}; }
 /* one-time carry-over of what you typed before (your own cost, price, stock); the old price list itself is not kept */
 (function(){
-  if(load(ITEMS_KEY,null)!==null) return;
+  const OLD=["pdg:priceList","pdg:priceEdits","pdg:order","pdg:myLines","pdg:inv","pdg:custPrice"];
+  if(load(ITEMS_KEY,null)!==null){ OLD.forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} }); return; }
   const out=[]; let id=0; const mk=(n,s)=>({id:"i"+Date.now().toString(36)+(id++),n:n,s:s||"each"});
   const L=load("pdg:myLines",[]), inv=load("pdg:inv",{}), cp=load("pdg:custPrice",{});
   (Array.isArray(L)?L:[]).forEach(x=>{ if(x&&x.n&&typeof x.p==="number"){ const it=mk(String(x.n).slice(0,60),String(x.s||"each").slice(0,20)); it.price=x.p; out.push(it); } });
@@ -2048,6 +2049,8 @@ function invCart(){ const c=load(CART_KEY,{}); return (c&&typeof c==="object"&&!
   save(ITEMS_KEY,out);
   ["pdg:priceList","pdg:priceEdits","pdg:order","pdg:myLines","pdg:inv","pdg:custPrice"].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
 })();
+/* one-time clean slate (Steve: remove all previous pricing; he types his own) */
+(function(){ try{ if(!localStorage.getItem("pdg:fresh1")){ localStorage.setItem("pdg:fresh1","1"); save(ITEMS_KEY,[]); save(CART_KEY,{}); } }catch(e){} })();
 function renderPrices(){
   const el=$("#prices"); if(!el) return;
   const items=invItems(), cart=invCart(), q=prQ.trim().toLowerCase();
@@ -2067,6 +2070,7 @@ function renderPrices(){
    +'<label>My price (each)<input id="ia-p" inputmode="decimal" placeholder="0.00"></label>'
    +'</div>'
    +'<div class="btnrow"><button type="button" class="btn primary" id="ia-go">Add to my inventory</button></div>'+(uiFlags.prErr?'<p class="flag bad">'+esc(uiFlags.prErr)+'</p>':'')+'</div></details>';
+  if(items.length&&!isGuest()) h+='<div class="btnrow"><button type="button" class="btn small" id="pr-wipe">'+(uiFlags.prWipe?'Tap again: erase ALL my prices':'Clear all my prices')+'</button></div>';
   if(items.length) h+='<input id="pr-q" class="search" type="search" placeholder="Search my inventory" value="'+esc(prQ)+'" aria-label="Search my inventory"><div class="btnrow"><button type="button" class="btn small" id="pr-expand">Open all</button><button type="button" class="btn small" id="pr-collapse">Close all</button></div>';
   h+=sel.map(g=>'<details class="pgroup" data-g="'+esc(g.n)+'"'+(q?' open':'')+'><summary><span>'+esc(g.n)+'</span><span class="hint">'+g.rows.map(x=>esc(x.s)).slice(0,6).join(" · ")+'</span></summary>'
     +g.rows.map(x=>{ const mg=(x.cost!=null&&x.price!=null&&x.price>0)?x.price-x.cost:null, c=cart[x.id]||0;
@@ -2102,6 +2106,7 @@ $("#prices-btn").addEventListener("click",()=>{ uiFlags.prCart=false; uiFlags.pr
 $("#prices").addEventListener("click",e=>{
   const t=e.target; uiFlags.prFocus=false;
   if(t.closest("#pr-back")){ app.dataset.view="list"; return; }
+  if(t.closest("#pr-wipe")){ if(uiFlags.prWipe){ uiFlags.prWipe=false; invSave([]); save(CART_KEY,{}); } else uiFlags.prWipe=true; renderPrices(); return; }
   if(t.closest("#pr-users")){ uiFlags.prUsers=true; uiFlags.prUsersData=null; renderPrices(); prLoadUsers(); return; }
   if(t.closest("#pr-users-close")){ uiFlags.prUsers=false; renderPrices(); return; }
   if(t.closest("#pr-cart-open")){ uiFlags.prCart=true; uiFlags.prMsg=""; renderPrices(); return; }
@@ -2332,7 +2337,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12i", BUILT="Nov 12, 2026 6:40 PM CT";
+  const VER="2026-11-12j", BUILT="Nov 12, 2026 7:00 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
