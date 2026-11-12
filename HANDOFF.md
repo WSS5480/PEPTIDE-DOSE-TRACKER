@@ -75,3 +75,7 @@ Update this file in the same commit as every change.
 
 ## 2026-11-12n — restore Owner prices from server
 - Steve was signed in as "steve" (guest) on his device; deleting that login dropped the copied Owner list locally. Server still holds the published prices (dose_prices). Added Owner-only "Restore prices from server" button (restores name/size/price; cost and qty were never on the server). sw pdg-v37.
+
+## 2026-11-12o — never keep Owner-list copies unless signed in as a checked guest
+- Steve saw duplicates (his own item + an o:1 copy with Owner price as cost) on his Owner device. On every load, o:1 items are removed unless the device is signed in as a checked guest. sw pdg-v38.
+- Steve login deletion: must be done from Owner > Users page (DB blocks outside connections; MCP query tool can't reach it).
