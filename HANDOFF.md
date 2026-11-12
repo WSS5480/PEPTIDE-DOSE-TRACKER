@@ -69,3 +69,6 @@ Update this file in the same commit as every change.
 
 ## 2026-11-12l — Owner can delete users
 - Users page: Delete button per login (two taps), server DELETE /owner/users/:id removes login, tokens, data (cascade); Owner row can't be deleted. CORS allows DELETE. sw pdg-v35.
+
+## 2026-11-12m — owner-list items removed on sign-out / 401
+- Steve had two logins (steve and Owner). Owner-list items (o:1) are dropped from the device inventory when signed out or when the login is rejected/deleted. sw pdg-v36.

@@ -2013,6 +2013,7 @@ async function prLoadUsers(){
   if(uiFlags.prUsers) renderPrices();
 }
 /* Allowed users: Owner's price becomes their locked "My cost"; they type their own price. */
+function dropOwnerItems(){ try{ localStorage.removeItem("pdg:ownerPrices"); const a=invItems(); if(a.some(x=>x.o)) save(ITEMS_KEY,a.filter(x=>!x.o)); }catch(e){} }
 function isGuest(){ const O=load("pdg:ownerPrices",null); return !!(O&&O.allowed&&!O.owner&&SY); }
 function mergeOwner(){
   const O=load("pdg:ownerPrices",null); if(!O) return; let a=invItems();
@@ -2200,7 +2201,7 @@ async function syncNow(manual){
   try{
     syTrack();
     const g=await syCall("/vials");
-    if(g.status===401){ SY=null; save("pdg:sync",null); uiFlags.syErr="Signed out. Sign in again to keep syncing."; return; }
+    if(g.status===401){ SY=null; save("pdg:sync",null); dropOwnerItems(); uiFlags.syErr="Signed out. Sign in again to keep syncing."; return; }
     if(g.status===402){ SY.account=(g.j&&g.j.account)||SY.account; save("pdg:sync",SY); uiFlags.syErr=""; uiFlags.syMsg=""; renderList(); return; }
     if(!g.ok) throw new Error("get");
     if(g.j&&g.j.account){ SY.account=g.j.account; save("pdg:sync",SY); }
@@ -2285,7 +2286,7 @@ vialsEl.addEventListener("click",e=>{
   if(e.target.closest("#sy-go")){ syAuth(uiFlags.syForm); return; }
   if(e.target.closest("#sy-now")){ syncNow(true); return; }
   if(e.target.closest("#sy-out")){
-    const tok=SY&&SY.token; SY=null; save("pdg:sync",null); uiFlags.syMsg="Signed out. Your vials stay on this device."; uiFlags.syErr="";
+    const tok=SY&&SY.token; SY=null; save("pdg:sync",null); dropOwnerItems(); uiFlags.syMsg="Signed out. Your vials stay on this device."; uiFlags.syErr="";
     if(tok) fetch(SYNC_URL+"/logout",{method:"POST",headers:{Authorization:"Bearer "+tok}}).catch(()=>{});
     renderVials(); return;
   }
@@ -2341,7 +2342,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12l", BUILT="Nov 12, 2026 7:40 PM CT";
+  const VER="2026-11-12m", BUILT="Nov 12, 2026 8:00 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
