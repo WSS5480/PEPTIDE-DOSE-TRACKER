@@ -366,7 +366,7 @@ details.sy.off{border-left:5px solid var(--warn)}
   <section class="vials" id="vials" aria-label="My vials and dose log"></section>
   <section class="news" id="news" aria-label="What's new"></section>
   <section class="quick" id="quick" aria-label="Quick calculator"></section>
-  <section class="prices" id="prices" aria-label="Price list"></section>
+  <section class="prices" id="prices" aria-label="My inventory"></section>
   <main class="panes">
     <section class="list" id="list" aria-label="Peptides"></section>
     <section class="detail" id="detail" aria-live="polite"></section>
@@ -1992,328 +1992,105 @@ function restoreFrom(text){
 function download(name,text){ try{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type:"application/json"})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); }catch(e){} }
 
 
-/* ---------- private price list (encrypted; unlocks with a PIN) ---------- */
-const PRICE_BLOB={"s":"iBis3qE2nIkhRLkUPnlcwQ==","iv":"s5Bs0qC/sq4Q6lGJ","ct":"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"};
-const ORD_KEY="pdg:order", PEDIT_KEY="pdg:priceEdits";
-const CUSTOM_KEY="pdg:priceList"; let PRKEY=null, PRBUILT=null, PRINFO=null, prImp=null;
-let prSrc="all";
-let PR=null, prLockAt=0, prErr="", prFails=0, prWait=0, prQ="", prAdj=0;
-const b64=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
-async function prUnlock(pin){
-  if(!window.crypto||!crypto.subtle) throw new Error("nocrypto");
-  const km=await crypto.subtle.importKey("raw",new TextEncoder().encode(pin),"PBKDF2",false,["deriveKey"]);
-  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(PRICE_BLOB.s),iterations:200000,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt","encrypt"]);
-  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(PRICE_BLOB.iv)},key,b64(PRICE_BLOB.ct));
-  let rows=JSON.parse(new TextDecoder().decode(pt)).rows; PRKEY=key; PRBUILT=rows; PRINFO=null;
-  const c=load(CUSTOM_KEY,null);
-  if(c&&c.ct){ try{ const p2=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(c.iv)},key,b64(c.ct)); const j=JSON.parse(new TextDecoder().decode(p2)); if(Array.isArray(j.rows)&&j.rows.length){ rows=j.rows.some(r=>r.u)?j.rows:j.rows.concat(rows.filter(r=>r.u)); PRINFO={name:j.name||"uploaded list",at:j.at||""}; } }catch(e){} }
-  return rows;
-}
-const prKey=r=>r.n+"|"+r.s+(r.u?"|"+r.u:"")+(r.c?"|"+r.c:"");
-const XALIAS={"aod9604":"AOD-9604","ara290(cibinetide)":"ARA-290","bpc157":"BPC-157","bpc1575mg+tb5005mg":"BPC-157 + TB-500 (5 mg / 5 mg)","bpc15710mg+tb50010mg":"BPC-157 + TB-500 (10 mg / 10 mg)","bpc15710mg+ghk-cu50mg+tb50010mg":"GLOW: BPC-157 + GHK-Cu + TB-500 (10 / 50 / 10 mg)","bpc15710mg+tb50010mg+ghkcu50mg+kpv10mg":"KLOW: BPC-157 + GHK-Cu + TB-500 + KPV (10 / 50 / 10 / 10 mg)","tb500cthymosinb4acetate":"TB-500","ghk-cu":"GHK-Cu","ahk-cu":"AHK-Cu","pt141":"PT-141","selank":"Selank","semax":"Semax","kisspetin-10":"Kisspeptin-10","ll375":"LL-37","cjc1295withdac":"CJC-1295 with DAC","cjc1295withoutdac":"CJC-1295 without DAC","cjc1295(withoutdac)5mg+ipa5mg":"CJC-1295 without DAC + Ipamorelin (5 mg / 5 mg)","fst344":"Follistatin 344","thymosinalpha1":"Thymosin Alpha-1","thymalin/thymulin":"Thymalin","ghrp-2":"GHRP-2 Acetate","ghrp-6":"GHRP-6","dsip(disp)":"DSIP","melanotanii":"Melanotan II","melanotani":"Melanotan I","tesa10+ip5":"Tesamorelin + Ipamorelin (10 mg / 5 mg)","tesa10+ip3":"Tesamorelin + Ipamorelin (10 mg / 3 mg)","tesa13+ip3":"Tesamorelin + Ipamorelin (13 mg / 3 mg)","retatrutide20mg+trizepatide40mg(10ml)":"Retatrutide 20 mg + Tirzepatide 40 mg (10 ml)","semax5mg+selank5mg":"Semax + Selank (5 mg / 5 mg)","semax10mg+selank10mg":"Semax + Selank (10 mg / 10 mg)","ghk-cu50mg+kpv10mg":"GHK-Cu + KPV (50 mg / 10 mg)","cagri+sema(2.5mg+2.5mg)":"Cagrilintide + Semaglutide (2.5 mg / 2.5 mg)","cagrilintide5mg+semaglutide5mg":"Cagrilintide + Semaglutide (5 mg / 5 mg)","bacwaterwac":"BAC water","benzylalcohol0.9%bac":"Benzyl Alcohol 0.9% water","aseticacidwater0.6%aa":"Acetic Acid water 0.6%","asetic acid water 0.6%aa":"Acetic Acid water 0.6%","mic(lipocwithb12)":"MIC (Lipo-C with B12)","triptorelln acetate":"Triptorelin Acetate","adipotide/fttp":"Adipotide (FTTP)","5amino/mq":"5-Amino-1MQ","demorphin":"Dermorphin"};
-function xinName(raw){
-  let n=String(raw||"").replace(/[　-鿿＀-￯]/g,m=>m==="（"?"(":m==="）"?")":"").replace(/\s+/g," ").trim();
-  const k=n.toLowerCase().replace(/\s+/g,"").replace(/\(\)/g,"");
-  const k2=n.toLowerCase().replace(/\s+/g," ").trim();
-  return XALIAS[k]||XALIAS[k2]||n;
-}
-function xinSize(spec){
-  const m=String(spec||"").match(/(\d+(?:\.\d+)?)\s*(mg|mcg|iu|ml|g)\b/i);
-  return m?(m[1]+" "+(m[2].toLowerCase()==="iu"?"IU":m[2].toLowerCase())):String(spec||"").trim();
-}
-function parseXin(rows){
-  const hi=rows.findIndex(r=>r.some(c=>/product/i.test(String(c||"")))&&r.some(c=>/^spec/i.test(String(c||"").trim())));
-  if(hi<0) return null;
-  const out=[],bad=[]; let last="", lastRaw="";
-  for(const r of rows.slice(hi+1)){
-    const nameRaw=String(r[1]==null?"":r[1]).trim(), code=String(r[2]==null?"":r[2]).trim(), spec=String(r[3]==null?"":r[3]).trim(), pr=String(r[4]==null?"":r[4]).replace(/[$,\s]/g,"");
-    if(nameRaw) lastRaw=nameRaw;
-    if(!spec&&!pr) continue;
-    const price=parseFloat(pr); if(!isFinite(price)||!/\d/.test(spec)){ bad.push((nameRaw||lastRaw)+" "+spec); continue; }
-    const pcSpec=/pcs?\b/i.test(spec); const pv=pcSpec?Math.round(price*100)/100:Math.round(price);
-    const nm=xinName(nameRaw||lastRaw); const pc=/pcs?\b/i.test(spec);
-    let it;
-    if(pc){ const grp=/pen/i.test(nm); it={n:grp?"Pens":nm,s:grp?(nm+(code?" ("+code+")":"")):(code||"each"),p:pv,u:"pc"}; }
-    else { it={n:nm,s:xinSize(spec),p:pv,u:"box"}; if(code){ if(/[\n]/.test(code)||code.length>16) it.t=code.replace(/\s*\n\s*/g,", ").slice(0,300); else it.c=code.replace(/\s+/g," ").slice(0,20); } }
-    out.push(it);
-  }
-  const seen={},res=[];
-  for(const it of out){ const k=[it.n,it.s,it.u,it.c||""].join("|").toLowerCase(); if(seen[k]!==undefined){ if(seen[k]===it.p) continue; it.s+=" (2nd price)"; } else seen[k]=it.p; res.push(it); }
-  return {rows:res,bad};
-}
-const money=n=>{ if(n==null) return "no price"; const r=Math.round(n*100)/100; return "$"+(Math.abs(r-Math.round(r))<0.005?String(Math.round(r)):r.toFixed(2)); };
-function prEdits(){ return load(PEDIT_KEY,{}); }
-function prPrice(r){ const e=prEdits(); const k=prKey(r); return typeof e[k]==="number"?e[k]:(typeof r.p==="number"?r.p:null); }
-function prOrder(){ return load(ORD_KEY,{}); }
-const CUST_KEY="pdg:custPrice", LINES_KEY="pdg:myLines";
-function prAll(){ const L=load(LINES_KEY,[]); return PR.concat((Array.isArray(L)?L:[]).filter(x=>x&&x.n&&typeof x.p==="number").map(x=>({n:x.n,s:x.s||"each",p:x.p,my:1}))); }
-function custPrice(r){ const m=load(CUST_KEY,{}); const v=m[prKey(r)]; if(typeof v==="number") return v; return r.my?prPrice(r):null; }
-const INV_KEY="pdg:inv";
-function invMap(){ const m=load(INV_KEY,{}); return (m&&typeof m==="object"&&!Array.isArray(m))?m:{}; }
-function invHas(r){ return !!r.my||Object.prototype.hasOwnProperty.call(invMap(),prKey(r)); }
-function invCount(){ return prAll().filter(invHas).length; }
-function myCost(r){ const e=invMap()[prKey(r)]; return (e&&typeof e.cost==="number")?e.cost:costEach(r); }
-function invFx(k,f){ const m=invMap(); const e=Object.assign({},m[k]||{}); f(e); m[k]=e; save(INV_KEY,m); }
-function costEach(r){ const p=prPrice(r); if(p==null||!r.u) return null; return r.u==="box"?p/10:p; }
-function invRowHtml(r,k){
-  if(prSrc!=="inv"){ if(r.my) return ""; return '<button type="button" class="btn small'+(invHas(r)?' primary':'')+'" data-inv="'+esc(k)+'" aria-pressed="'+invHas(r)+'">'+(invHas(r)?'\u2713 Mine':'+ Mine')+'</button>'; }
-  const e=invMap()[k]||{}, c=myCost(r), p=custPrice(r), mg=(c!=null&&p!=null&&p>0)?p-c:null;
-  return '<div class="invrow"><label>My cost<input class="pedit pinv" inputmode="decimal" data-ki="'+esc(k)+'" data-f="cost" placeholder="0.00" value="'+(c==null?'':c.toFixed(2))+'" aria-label="My cost for '+esc(r.n+' '+r.s)+'"></label>'
-    +'<label>On hand<input class="pedit pinv" inputmode="numeric" data-ki="'+esc(k)+'" data-f="qty" placeholder="0" value="'+(typeof e.qty==="number"?e.qty:'')+'" aria-label="On hand for '+esc(r.n+' '+r.s)+'"></label>'
-    +(mg!=null?'<span class="pp invm">Margin '+money(mg)+' ('+Math.round(mg/p*100)+'%)</span>':'<span class="pp invm">Set cost and price to see margin</span>')
-    +(r.my?'':'<button type="button" class="btn small" data-invx="'+esc(k)+'">Remove</button>')+'</div>';
-}
+/* ---------- my inventory and pricing (you type it all in; nothing is preloaded) ---------- */
+const ITEMS_KEY="pdg:items", CART_KEY="pdg:cart";
+const money=n=>{ if(n==null||!isFinite(n)) return "$0"; const r=Math.round(n*100)/100; return "$"+(Math.abs(r-Math.round(r))<0.005?String(Math.round(r)):r.toFixed(2)); };
+let prQ="", prDel=null;
+function invItems(){ const a=load(ITEMS_KEY,null); return Array.isArray(a)?a.filter(x=>x&&typeof x.id==="string"&&typeof x.n==="string"):[]; }
+function invSave(a){ save(ITEMS_KEY,a); }
+function invCart(){ const c=load(CART_KEY,{}); return (c&&typeof c==="object"&&!Array.isArray(c))?c:{}; }
+/* one-time carry-over of what you typed before (your own cost, price, stock); the old price list itself is not kept */
+(function(){
+  if(load(ITEMS_KEY,null)!==null) return;
+  const out=[]; let id=0; const mk=(n,s)=>({id:"i"+Date.now().toString(36)+(id++),n:n,s:s||"each"});
+  const L=load("pdg:myLines",[]), inv=load("pdg:inv",{}), cp=load("pdg:custPrice",{});
+  (Array.isArray(L)?L:[]).forEach(x=>{ if(x&&x.n&&typeof x.p==="number"){ const it=mk(String(x.n).slice(0,60),String(x.s||"each").slice(0,20)); it.price=x.p; out.push(it); } });
+  Object.keys(inv&&typeof inv==="object"?inv:{}).forEach(k=>{ const p=k.split("|"); if(p.length<2) return; const e=inv[k]||{}, it=mk(p[0].slice(0,60),p[1].slice(0,20));
+    if(typeof e.cost==="number") it.cost=e.cost; if(typeof e.qty==="number") it.qty=e.qty; if(typeof cp[k]==="number") it.price=cp[k]; if(it.cost!=null||it.qty!=null||it.price!=null) out.push(it); });
+  save(ITEMS_KEY,out);
+  ["pdg:priceList","pdg:priceEdits","pdg:order","pdg:myLines","pdg:inv","pdg:custPrice"].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+})();
 function renderPrices(){
   const el=$("#prices"); if(!el) return;
-  if(!PR){
-    el.innerHTML='<div class="pinbox"><h2>Price list</h2><p class="hint">Private. Enter the PIN to view.</p><input id="pr-pin" type="password" inputmode="numeric" autocomplete="off" maxlength="12" aria-label="PIN"><button type="button" class="btn primary" id="pr-go">Unlock</button>'+(prErr?'<p class="flag bad">'+esc(prErr)+'</p>':'')+'<button type="button" class="btn small" id="pr-back">&larr; Peptides</button></div>';
-    const i=$("#pr-pin"); if(i&&!prErr) i.focus(); return;
-  }
-  const ord=prOrder(), ed=prEdits(); const q=prQ.trim().toLowerCase();
-  if(uiFlags.prCart){ el.innerHTML=cartHtml(ord); window.scrollTo(0,0); return; }
-  const groups=[],gi={}; prAll().forEach(r=>{ let g=gi[r.n]; if(!g){ g={n:r.n,rows:[]}; gi[r.n]=g; groups.push(g); } g.rows.push(r); });
-  groups.sort((a,b)=>a.n.localeCompare(b.n,undefined,{sensitivity:'base',numeric:true})); groups.forEach(g=>g.rows.sort((x,y)=>String(x.s).localeCompare(String(y.s),undefined,{numeric:true})));
-  const srcOk=r=>prSrc==="all"||(prSrc==="inv"?invHas(r):false)||(prSrc==="mine"?!r.u:prSrc==="box"?r.u==="box":prSrc==="web"?r.u==="web":r.u==="pc");
-  groups.forEach(g=>{ g.all=g.rows; g.rows=g.all.filter(srcOk); });
-  const sel=groups.filter(g=>g.rows.length&&(!q||g.n.toLowerCase().indexOf(q)>=0));
-  let total=0,count=0,unpriced=0;
-  prAll().forEach(r=>{ const n=ord[prKey(r)]||0; if(n>0){ const pp=custPrice(r); if(pp==null) unpriced+=n; else total+=n*pp; count+=n; } });
-  let h='<div class="vhead"><div><h2>Price list</h2><p class="hint">Per vial. Tap a peptide, set quantities to build an order. Edits to a price stay on this phone.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-back">&larr; Peptides</button><button type="button" class="btn small" id="pr-lock">Lock</button></div></div>'
-   +'<input id="pr-q" class="search" type="search" placeholder="Search price list" value="'+esc(prQ)+'" aria-label="Search price list">'
-   +'<div class="chips" role="group" aria-label="Which prices">'+[["inv","My inventory ("+invCount()+")"],["all","All"],["mine","My price list"],["box","Xint list (price for 10)"],["web","Xint website"],["pen","Pens"]].map(a=>'<button type="button" class="chip" data-src="'+a[0]+'" aria-pressed="'+(prSrc===a[0])+'">'+a[1]+'</button>').join("")+'</div>'
-   +'<div class="btnrow" style="align-items:center"><span class="hint"><b>'+prAll().length+' items</b> ('+prAll().filter(r=>prPrice(r)!=null).length+' priced) in '+groups.length+' peptides'+(q?' · showing '+sel.length:'')+'. Sizes of one peptide share a card.</span><button type="button" class="btn small" id="pr-expand">Open all</button><button type="button" class="btn small" id="pr-collapse">Close all</button></div>';
-  h+=sel.map(g=>{ const inOrd=g.rows.reduce((a,r)=>a+(ord[prKey(r)]||0),0);
-    return '<details class="pgroup"'+(q?' open':'')+' data-g="'+esc(g.n)+'"><summary><span>'+esc(g.n)+'</span><span class="hint">'+[...new Set(g.rows.map(r=>r.s))].slice(0,8).map(esc).join(" · ")+(g.rows.length>8?' …':'')+(inOrd?' · <b>'+inOrd+' in order</b>':'')+'</span></summary>'
-     +g.rows.map(r=>{ const k=prKey(r), n=ord[k]||0; return '<div class="prow"><div class="pl"><b>'+esc(r.s)+'</b>'+(r.u==="box"?'<span class="pp">Xint list, price for 10 vials'+(r.c?' · '+esc(r.c):'')+'</span>':r.u==="web"?'<span class="pp">Xint website, per vial'+(r.c?' · listed as '+esc(r.c):'')+'</span>':r.u==="pc"?'<span class="pp">each, Xint list</span>':'')+prCmp(r)+(r.t?'<span class="pp">'+esc(r.t)+'</span>':'')+'<span class="pp">'+(typeof ed[k]==="number"?'edited · '+(r.p==null?'no list price':'was '+money(r.p)):(r.p==null?'no price listed':'list '+money(r.p)))+'</span></div>'
-       +(!r.my?'<input class="pedit pcust" inputmode="decimal" placeholder="my price" title="Your customer price per vial" value="'+(custPrice(r)==null?'0.00':custPrice(r).toFixed(2))+'" data-kc="'+esc(k)+'" aria-label="My customer price for '+esc(r.n+' '+r.s)+'">':'')+(r.my?'<button type="button" class="btn small" data-mydel="'+esc(r.n+'|'+r.s)+'">Delete</button>':'')
-       +((r.u||r.my)?'<input class="pedit" inputmode="decimal" placeholder="price" value="'+(prPrice(r)==null?(r.u?'':'0.00'):prPrice(r).toFixed(2))+'" data-k="'+esc(k)+'" aria-label="Price for '+esc(r.n+' '+r.s)+'">':'')
-       +'<div class="qty"><button type="button" data-q="-1" data-k="'+esc(k)+'" aria-label="Less">&minus;</button><span>'+n+'</span><button type="button" data-q="1" data-k="'+esc(k)+'" aria-label="More">+</button></div>'+invRowHtml(r,k)+'</div>'; }).join("")+'</details>'; }).join("");
-  if(!sel.length) h+='<p class="empty">'+(prSrc==='inv'&&!q?'Your inventory is empty. Tap <b>All</b>, then <b>+ Mine</b> on each item you carry. Then come back here to set your cost, price and stock.':'No match.')+'</p>';
-  h+='<section class="block"><h3>My price line</h3><p class="hint">Add your own item and customer price. It shows in the list and the cart.</p><div class="btnrow"><input id="ml-n" class="pedit" style="width:150px" placeholder="Peptide" aria-label="Peptide name"><input id="ml-s" class="pedit" style="width:70px" placeholder="Size" aria-label="Size"><input id="ml-p" class="pedit" inputmode="decimal" placeholder="Price" value="0.00" aria-label="Customer price"><button type="button" class="btn small primary" id="ml-add">Add</button></div></section>';
-  h+=importHtml();
-  h+='<section class="block"><h3>Adjust every price</h3><p class="hint">Add or take off a percent from your price list (not the Xint prices), for example 20 for +20%. It replaces your earlier edits.</p><div class="btnrow"><input id="pr-adj" class="pedit" inputmode="decimal" placeholder="%" style="width:70px"><button type="button" class="btn small" id="pr-adjgo">Apply</button><button type="button" class="btn small" id="pr-reset">Reset to list</button></div></section>';
-  h+='<div class="ordbar"><div class="tot">Order: '+count+' item'+(count===1?'':'s')+' · '+money(total)+'</div>'+(unpriced?'<p class="hint">'+unpriced+' item'+(unpriced===1?' has':'s have')+' no price yet and '+(unpriced===1?'is':'are')+' not in the total. Type a price on its card.</p>':'')+'<div class="btnrow"><button type="button" class="btn small primary" id="pr-cart-open">View cart'+(count?' ('+count+')':'')+'</button><button type="button" class="btn small" id="pr-copy"'+(count?'':' disabled')+'>Copy order</button><button type="button" class="btn small" id="pr-clear"'+(count?'':' disabled')+'>Clear order</button></div>'+(uiFlags.prMsg?'<p class="hint">'+esc(uiFlags.prMsg)+'</p>':'')+'</div>';
-  const keepOpen=[...el.querySelectorAll("details.pgroup[open]")].map(d=>d.dataset.g);
-  const pos=window.scrollY;
-  el.innerHTML=h;
-  el.querySelectorAll("details.pgroup").forEach(d=>{ if(keepOpen.indexOf(d.dataset.g)>=0) d.open=true; });
-  window.scrollTo(0,pos);
+  const items=invItems(), cart=invCart(), q=prQ.trim().toLowerCase();
+  if(uiFlags.prCart){ el.innerHTML=cartHtml(items,cart); window.scrollTo(0,0); return; }
+  let units=0,sc=0,sr=0; items.forEach(x=>{ const n=x.qty||0; units+=n; sc+=n*(x.cost||0); sr+=n*(x.price||0); });
+  let cn=0,ct=0; items.forEach(x=>{ const n=cart[x.id]||0; if(n){ cn+=n; ct+=n*(x.price||0); } });
+  const groups=[],gi={}; items.forEach(x=>{ const k=x.n.toLowerCase(); let g=gi[k]; if(!g){ g={n:x.n,rows:[]}; gi[k]=g; groups.push(g); } g.rows.push(x); });
+  groups.sort((a,b)=>a.n.localeCompare(b.n,undefined,{sensitivity:"base",numeric:true})); groups.forEach(g=>g.rows.sort((a,b)=>String(a.s).localeCompare(String(b.s),undefined,{numeric:true})));
+  const sel=groups.filter(g=>!q||g.n.toLowerCase().indexOf(q)>=0);
+  const keep=[...el.querySelectorAll("details.pgroup[open]")].map(d=>d.dataset.g), addOpen=el.querySelector("#inv-add")?el.querySelector("#inv-add").open:!items.length, pos=window.scrollY;
+  const names=[...new Set(DATA.map(p=>p.name.split(" (")[0]))].sort((a,b)=>a.localeCompare(b));
+  let h='<div class="vhead"><div><h2>My inventory</h2><p class="hint">You type in what you carry, what it costs you and what you charge. It stays on this device. There is no outside price list in this app.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-back">&larr; Peptides</button></div></div>'
+   +'<div class="shelf"><b>'+items.length+' item'+(items.length===1?'':'s')+' · '+units+' on hand</b><p class="hint">Stock at your cost '+money(sc)+(sr?' · at your prices '+money(sr)+' · profit '+money(sr-sc):'')+'</p></div>'
+   +'<details class="fold" id="inv-add"'+(addOpen?' open':'')+'><summary><span>Add an item</span><span class="hint">peptide, size, cost, price</span></summary><div class="foldbody"><div class="syform">'
+   +'<label>Peptide<input id="ia-n" list="ia-names" autocomplete="off" placeholder="Start typing a name"><datalist id="ia-names">'+names.map(n=>'<option value="'+esc(n)+'">').join("")+'</datalist></label>'
+   +'<label>Size<input id="ia-s" placeholder="10 mg"></label>'
+   +'<label>My cost (each)<input id="ia-c" inputmode="decimal" placeholder="0.00"></label>'
+   +'<label>My price (each)<input id="ia-p" inputmode="decimal" placeholder="0.00"></label>'
+   +'<label>On hand<input id="ia-q" inputmode="numeric" placeholder="0"></label></div>'
+   +'<div class="btnrow"><button type="button" class="btn primary" id="ia-go">Add to my inventory</button></div>'+(uiFlags.prErr?'<p class="flag bad">'+esc(uiFlags.prErr)+'</p>':'')+'</div></details>';
+  if(items.length) h+='<input id="pr-q" class="search" type="search" placeholder="Search my inventory" value="'+esc(prQ)+'" aria-label="Search my inventory"><div class="btnrow"><button type="button" class="btn small" id="pr-expand">Open all</button><button type="button" class="btn small" id="pr-collapse">Close all</button></div>';
+  h+=sel.map(g=>'<details class="pgroup" data-g="'+esc(g.n)+'"'+(q?' open':'')+'><summary><span>'+esc(g.n)+'</span><span class="hint">'+g.rows.map(x=>esc(x.s)).slice(0,6).join(" · ")+'</span></summary>'
+    +g.rows.map(x=>{ const mg=(x.cost!=null&&x.price!=null&&x.price>0)?x.price-x.cost:null, c=cart[x.id]||0;
+      return '<div class="prow"><div class="pl"><b>'+esc(x.s||"each")+'</b><span class="pp">'+(mg!=null?'Margin '+money(mg)+' ('+Math.round(mg/x.price*100)+'%)':'Enter cost and price for margin')+'</span></div>'
+       +'<div class="invrow" style="border:0;padding:0;flex:0 0 auto"><label>My cost<input class="pedit" inputmode="decimal" data-id="'+x.id+'" data-f="cost" value="'+(x.cost!=null?x.cost.toFixed(2):'')+'" placeholder="0.00" aria-label="My cost"></label>'
+       +'<label>My price<input class="pedit" inputmode="decimal" data-id="'+x.id+'" data-f="price" value="'+(x.price!=null?x.price.toFixed(2):'')+'" placeholder="0.00" aria-label="My price"></label>'
+       +'<label>On hand<input class="pedit" inputmode="numeric" data-id="'+x.id+'" data-f="qty" value="'+(x.qty!=null?x.qty:'')+'" placeholder="0" aria-label="On hand"></label></div>'
+       +'<div class="qty"><button type="button" data-q="-1" data-id="'+x.id+'" aria-label="Less in order">&minus;</button><span>'+c+'</span><button type="button" data-q="1" data-id="'+x.id+'" aria-label="More in order">+</button></div>'
+       +'<button type="button" class="btn small" data-del="'+x.id+'">'+(prDel===x.id?'Tap again to delete':'Delete')+'</button></div>'; }).join("")+'</details>').join("");
+  if(items.length&&!sel.length) h+='<p class="empty">No match.</p>';
+  if(!items.length) h+='<p class="empty">Nothing here yet. Add the first item above.</p>';
+  h+='<div class="ordbar"><div class="tot">Order: '+cn+' item'+(cn===1?'':'s')+' · '+money(ct)+'</div><div class="btnrow"><button type="button" class="btn small primary" id="pr-cart-open">View cart'+(cn?' ('+cn+')':'')+'</button></div></div>';
+  el.innerHTML=h; el.querySelectorAll("details.pgroup").forEach(d=>{ if(keep.indexOf(d.dataset.g)>=0) d.open=true; }); window.scrollTo(0,pos);
   const qi=$("#pr-q"); if(qi&&uiFlags.prFocus){ qi.focus(); qi.setSelectionRange(qi.value.length,qi.value.length); }
 }
-
-/* ---------- upload a new price list (CSV, TSV, pasted text, or Excel) ---------- */
-function csvRows(text){
-  text=String(text||"").replace(/^﻿/,""); const first=text.split(/\r?\n/).find(l=>l.trim())||"";
-  const d=(first.split("\t").length>1)?"\t":(first.split(";").length>first.split(",").length?";":",");
-  const rows=[]; let row=[],cur="",q=false;
-  for(let i=0;i<text.length;i++){ const c=text[i];
-    if(q){ if(c==='"'){ if(text[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=c; }
-    else if(c==='"') q=true; else if(c===d){ row.push(cur); cur=""; }
-    else if(c==="\n"||c==="\r"){ if(c==="\r"&&text[i+1]==="\n") i++; row.push(cur); cur=""; if(row.some(x=>x.trim())) rows.push(row); row=[]; }
-    else cur+=c; }
-  row.push(cur); if(row.some(x=>x.trim())) rows.push(row); return rows;
-}
-const SZ=/(\d+(?:\.\d+)?)\s*(mg|mcg|ug|µg|iu|g|ml)\b/i;
-const normSize=z=>{ const m=String(z||"").trim().match(SZ); return m?(m[1]+" "+m[2].toLowerCase().replace("ug","mcg").replace("µg","mcg").replace("iu","IU")):clip(String(z||"").trim(),20); };
-function parsePriceText(text){
-  const rows=csvRows(text); if(rows.length<2) return {err:"I couldn't find rows in that file."};
-  let hi=rows.findIndex(r=>r.some(c=>/price|cost/i.test(c))&&r.some(c=>/pepti|name|product|item/i.test(c)));
-  let iN=-1,iS=-1,iP=-1;
-  if(hi>=0){ rows[hi].forEach((c,i)=>{ c=c.trim(); if(iP<0&&/price|cost/i.test(c)) iP=i; else if(iN<0&&/pepti|name|product|item/i.test(c)) iN=i; else if(iS<0&&/size|mg|strength|amount|vial|dose|qty/i.test(c)) iS=i; }); }
-  else { hi=-1; iN=0; iS=rows[0].length>2?1:-1; iP=rows[0].length-1; }
-  if(iN<0||iP<0) return {err:"I need a Peptide column and a Price column."};
-  const out=[],bad=[],seen={};
-  for(const r of rows.slice(hi+1)){
-    let n=(r[iN]||"").trim(), z=iS>=0?(r[iS]||"").trim():"", pr=(r[iP]||"").trim();
-    if(!n&&!z&&!pr) continue; if(!n) continue;
-    if(!z){ const m=n.match(/^(.*?)[\s,(-]+(\d+(?:\.\d+)?\s*(?:mg|mcg|iu|g|ml))\)?\s*$/i); if(m){ n=m[1].trim(); z=m[2]; } }
-    z=normSize(z);
-    const num=pr.replace(/[$,\s]/g,""); let p=null;
-    if(num!==""&&!/^(n\/?a|tbd|ask|-+|#.*)$/i.test(num)){ const f=parseFloat(num); if(isFinite(f)&&f>=0&&/^[0-9.]+$/.test(num)) p=Math.round(f*100)/100; else { bad.push(n+" "+z+" ("+pr+")"); continue; } }
-    const k=(n+"|"+z).toLowerCase(); if(seen[k]){ bad.push(n+" "+z+" (duplicate)"); continue; } seen[k]=1;
-    out.push({n:clip(n,90),s:z,p});
-  }
-  if(!out.length) return {err:"No usable rows found."};
-  if(out.length>400) return {err:"That is over 400 rows. Is it the right file?"};
-  return {rows:out,bad};
-}
-function importHtml(){
-  let h='<section class="block"><h3>Update the price list</h3><p class="hint">'+(PRINFO?'Using your uploaded list: <b>'+esc(PRINFO.name)+'</b>'+(PRINFO.at?' ('+esc(PRINFO.at)+')':'')+'.':'Using the built-in list.')+' Upload a new file when prices change. Upload your own list (columns Peptide, Size, Price) or the Xint price sheet. Xint website prices are built in. Each kind replaces only its own part.</p>'
-   +'<div class="btnrow"><label class="btn small primary" for="pr-file" style="cursor:pointer">Choose file</label><input id="pr-file" type="file" accept=".csv,.tsv,.txt,.xlsx,.xls,text/csv,text/plain" style="position:absolute;left:-9999px"><button type="button" class="btn small" id="pr-paste-open">'+(uiFlags.prPaste?'Hide paste box':'Paste instead')+'</button><button type="button" class="btn small" id="pr-dl">Download current (CSV)</button>'+(PRINFO?'<button type="button" class="btn small" id="pr-builtin">Go back to built-in list</button>':'')+'</div>';
-  if(uiFlags.prPaste) h+='<textarea id="pr-text" class="pedit" style="width:100%;min-height:90px;margin-top:8px" placeholder="Peptide, Size, Price&#10;BPC-157, 10 mg, 25.98"></textarea><div class="btnrow"><button type="button" class="btn small" id="pr-text-go">Read it</button></div>';
-  if(uiFlags.prErr) h+='<p class="flag bad">'+esc(uiFlags.prErr)+'</p>';
-  if(prImp){ const d=prImp.diff;
-    h+='<div class="flag"><b>Preview: '+esc(prImp.name)+'</b><br>'+prImp.rows.length+' items ('+prImp.rows.filter(r=>r.p!=null).length+' priced). '+d.added+' new, '+d.changed+' price changes, '+d.same+' unchanged, '+d.removed+' no longer on the list.'
-      +(prImp.bad.length?'<br>Skipped '+prImp.bad.length+': '+esc(prImp.bad.slice(0,4).join("; "))+(prImp.bad.length>4?'…':''):'')
-      +'</div><div class="btnrow"><button type="button" class="btn small primary" id="pr-apply">Use this list</button><button type="button" class="btn small" id="pr-cancel">Cancel</button></div>'; }
-  return h+'</section>';
-}
-function diffLists(next,cur){
-  const m={}; cur.forEach(r=>{ m[(prKey(r)).toLowerCase()]=r; });
-  let added=0,changed=0,same=0; const keys={};
-  next.forEach(r=>{ const k=(prKey(r)).toLowerCase(); keys[k]=1; const o=m[k]; if(!o) added++; else if((o.p==null?null:o.p)!==(r.p==null?null:r.p)) changed++; else same++; });
-  return {added,changed,same,removed:cur.filter(r=>!keys[(prKey(r)).toLowerCase()]).length};
-}
-function stageImport(text,name){
-  uiFlags.prErr=""; prImp=null;
-  const x=parseXin(csvRows(text));
-  if(x&&x.rows.length){ const keep=PR.filter(r=>!r.u||r.u==="web"); prImp={rows:keep.concat(x.rows),bad:x.bad,name:(name||"Xint list")+" (Xint box prices + pens)",diff:diffLists(x.rows,PR.filter(r=>r.u==="box"||r.u==="pc"))}; return; }
-  const r=parsePriceText(text);
-  if(r.err){ uiFlags.prErr=r.err; return; }
-  const keepX=PR.filter(r=>r.u); const rows=r.rows.concat(keepX);
-  prImp={rows,bad:r.bad,name:(name||"pasted list")+" (your price list)",diff:diffLists(r.rows,PR.filter(r=>!r.u))};
-}
-function loadXlsx(){ return new Promise((ok,no)=>{ if(window.XLSX) return ok(); const sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"; sc.onload=()=>ok(); sc.onerror=()=>no(new Error("load")); document.head.appendChild(sc); }); }
-async function prFile(f){
-  uiFlags.prErr=""; prImp=null;
-  try{
-    if(/\.xlsx?$/i.test(f.name)){ await loadXlsx(); const wb=XLSX.read(await f.arrayBuffer(),{type:"array"}); const ws=wb.Sheets[wb.SheetNames[0]]; stageImport(XLSX.utils.sheet_to_csv(ws,{rawNumbers:true}),f.name); }
-    else stageImport(await f.text(),f.name);
-  }catch(err){ uiFlags.prErr=/\.xlsx?$/i.test(f.name)?"Couldn't open the Excel file here (it needs internet the first time). Save it as CSV and try again.":"Couldn't read that file."; }
-  renderPrices();
-}
-async function prSaveList(rows,name){
-  const iv=crypto.getRandomValues(new Uint8Array(12)); const at=todayISO();
-  const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},PRKEY,new TextEncoder().encode(JSON.stringify({rows,name,at})));
-  const tb=a=>btoa(String.fromCharCode.apply(null,new Uint8Array(a)));
-  save(CUSTOM_KEY,{iv:tb(iv),ct:tb(ct)}); PR=rows; PRINFO={name,at}; save(PEDIT_KEY,{});
-}
-
-
-function prCmp(r){
-  if(r.u!=="box"&&r.u!=="web") return "";
-  const o=PR.find(x=>x.u===(r.u==="box"?"web":"box")&&x.n===r.n&&x.s===r.s); if(!o) return "";
-  const box=r.u==="box"?r:o, web=r.u==="box"?o:r;
-  const b=prPrice(box), w=prPrice(web); if(b==null||w==null) return "";
-  const w10=w*10, d=w10-b;
-  return '<span class="pp" style="color:var(--ink)">Compare, 10 vials: list '+money(b)+' · site '+money(w10)+' ('+(d>=0?'site +':'site −')+money(Math.abs(d))+')</span>';
-}
-function cartLines(ord){
-  const L=[]; prAll().forEach(r=>{ const n=ord[prKey(r)]||0; if(n>0) L.push({r,n,p:custPrice(r),c:myCost(r)}); }); return L;
-}
-function cartText(ord){
-  const L=cartLines(ord); let tot=0;
-  const ls=L.map(x=>{ const nm=x.r.n+" "+x.r.s; if(x.p==null) return x.n+" x "+nm+" (price TBD)"; tot+=x.n*x.p; return x.n+" x "+nm+" @ "+money(x.p)+" = "+money(x.n*x.p); });
-  return ls.join("\n")+"\nTotal: "+money(tot);
-}
-function cartHtml(ord){
-  const L=cartLines(ord);
-  const groups=[["My price list",x=>!x.r.u],["Xint list (price for 10 vials)",x=>x.r.u==="box"],["Xint website (per vial)",x=>x.r.u==="web"],["Pens",x=>x.r.u==="pc"]];
-  let h='<div class="vhead"><div><h2>Cart</h2><p class="hint">'+(L.length?L.length+' line'+(L.length===1?'':'s')+', '+L.reduce((a,x)=>a+x.n,0)+' items. Change quantities here.':'Nothing in the cart yet.')+'</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-cart-close">&larr; Keep shopping</button></div></div>';
-  let total=0,unp=0;
-  if(!L.length) h+='<p class="empty">Your cart is empty. Go back, open a peptide, and tap + to add it.</p>';
-  groups.forEach(g=>{
-    const rows=L.filter(g[1]); if(!rows.length) return;
-    let sub=0; rows.forEach(x=>{ if(x.p==null) unp+=x.n; else sub+=x.n*x.p; }); total+=sub;
-    h+='<section class="block"><h3>'+g[0]+'</h3>'+rows.map(x=>{ const k=prKey(x.r);
-      return '<div class="prow"><div class="pl"><b>'+esc(x.r.n)+'</b><span class="pp">'+esc(x.r.s)+(x.r.c?' · '+esc(x.r.c):'')+'</span><span class="pp">'+(x.p==null?'<b>set my price</b> (type it on the card)':'Customer '+money(x.p)+' each · line '+money(x.n*x.p))+(x.c!=null?'<span class="pp">your cost '+money(x.c)+' each</span>':'')+'</span></div>'
-       +'<div class="qty"><button type="button" data-q="-1" data-k="'+esc(k)+'" aria-label="Less">&minus;</button><span>'+x.n+'</span><button type="button" data-q="1" data-k="'+esc(k)+'" aria-label="More">+</button></div>'
-       +'<button type="button" class="btn small" data-rm="'+esc(k)+'">Remove</button></div>'; }).join("")
-      +'<p class="hint" style="margin-top:8px">Subtotal: <b>'+money(sub)+'</b></p></section>';
-  });
-  if(L.length){
-    let cost=0,prof=0,cn=0; L.forEach(x=>{ if(x.c!=null&&x.p!=null){ cost+=x.n*x.c; prof+=x.n*(x.p-x.c); cn+=x.n; } });
-    h+='<div class="ordbar"><div class="tot">Customer total: '+money(total)+'</div>'+(cn?'<p class="hint">Only you see this: cost '+money(cost)+', profit '+money(prof)+' on '+cn+' item'+(cn===1?'':'s')+'.</p>':'')+(unp?'<p class="hint">'+unp+' item'+(unp===1?' has':'s have')+' no customer price yet and '+(unp===1?'is':'are')+' not in the total.</p>':'')
-      +'<div class="btnrow"><button type="button" class="btn small primary" id="pr-copy">Copy order</button>'+(navigator.share?'<button type="button" class="btn small" id="pr-share">Share</button>':'')+'<button type="button" class="btn small" id="pr-clear">Clear cart</button></div><div class="btnrow"><button type="button" class="btn small" id="pr-sold">Sold: take out of my stock</button></div>'+(uiFlags.prMsg?'<p class="hint" style="white-space:pre-wrap">'+esc(uiFlags.prMsg)+'</p>':'')+'</div>';
-  }
+function cartLines(items,cart){ const L=[]; items.forEach(x=>{ const n=cart[x.id]||0; if(n>0) L.push({x,n}); }); return L; }
+function cartText(items,cart){ const L=cartLines(items,cart); let t=0; const rows=L.map(l=>{ const p=l.x.price||0; t+=l.n*p; return l.n+" x "+l.x.n+" "+(l.x.s||"")+(p?" @ "+money(p)+" = "+money(l.n*p):""); }); return rows.join("\n")+(rows.length?"\nTotal: "+money(t):""); }
+function cartHtml(items,cart){
+  const L=cartLines(items,cart); let total=0,cost=0,prof=0,cc=0;
+  let h='<div class="vhead"><div><h2>Cart</h2><p class="hint">'+(L.length?L.reduce((a,l)=>a+l.n,0)+' items. Change quantities here.':'Nothing in the cart yet.')+'</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-cart-close">&larr; Keep adding</button></div></div>';
+  if(!L.length) h+='<p class="empty">Your cart is empty. Go back and tap + on an item.</p>';
+  else h+='<section class="block">'+L.map(l=>{ const x=l.x, p=x.price||0; total+=l.n*p; if(x.cost!=null&&x.price!=null){ cost+=l.n*x.cost; prof+=l.n*(x.price-x.cost); cc+=l.n; }
+    return '<div class="prow"><div class="pl"><b>'+esc(x.n)+'</b><span class="pp">'+esc(x.s||"each")+' · '+(p?money(p)+' each · line '+money(l.n*p):'<b>no price yet</b>')+'</span>'+(x.cost!=null?'<span class="pp">your cost '+money(x.cost)+' each</span>':'')+'</div>'
+     +'<div class="qty"><button type="button" data-q="-1" data-id="'+x.id+'" aria-label="Less">&minus;</button><span>'+l.n+'</span><button type="button" data-q="1" data-id="'+x.id+'" aria-label="More">+</button></div><button type="button" class="btn small" data-rm="'+x.id+'">Remove</button></div>'; }).join("")+'</section>'
+    +'<div class="ordbar"><div class="tot">Customer total: '+money(total)+'</div>'+(cc?'<p class="hint">Only you see this: cost '+money(cost)+', profit '+money(prof)+' on '+cc+' item'+(cc===1?'':'s')+'.</p>':'')
+    +'<div class="btnrow"><button type="button" class="btn small primary" id="pr-copy">Copy order</button>'+(navigator.share?'<button type="button" class="btn small" id="pr-share">Share</button>':'')+'<button type="button" class="btn small" id="pr-clear">Clear cart</button></div>'
+    +'<div class="btnrow"><button type="button" class="btn small" id="pr-sold">Sold: take out of my stock</button></div>'+(uiFlags.prMsg?'<p class="hint" style="white-space:pre-wrap">'+esc(uiFlags.prMsg)+'</p>':'')+'</div>';
   return h;
 }
-function prLock(){ uiFlags.prCart=false; PR=null; PRKEY=null; PRBUILT=null; prImp=null; prErr=""; prQ=""; }
 
-/* ---------- events (new) ---------- */
-
-$("#prices-btn").addEventListener("click",()=>{ renderPrices(); app.dataset.view="prices"; window.scrollTo({top:0}); });
-$("#prices").addEventListener("click",async e=>{
+/* ---------- events (inventory) ---------- */
+$("#prices-btn").addEventListener("click",()=>{ uiFlags.prCart=false; renderPrices(); app.dataset.view="prices"; window.scrollTo({top:0}); });
+$("#prices").addEventListener("click",e=>{
   const t=e.target; uiFlags.prFocus=false;
   if(t.closest("#pr-back")){ app.dataset.view="list"; return; }
   if(t.closest("#pr-cart-open")){ uiFlags.prCart=true; uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-cart-close")){ uiFlags.prCart=false; uiFlags.prMsg=""; renderPrices(); return; }
-  if(t.closest("#pr-lock")){ prLock(); renderPrices(); return; }
-  if(t.closest("#pr-go")){
-    const now=Date.now(); if(now<prWait){ prErr="Too many tries. Wait "+Math.ceil((prWait-now)/1000)+" s."; renderPrices(); return; }
-    const pin=($("#pr-pin")||{}).value||"";
-    try{ PR=await prUnlock(pin); prErr=""; prFails=0; prLockAt=Date.now(); }
-    catch(err){ PR=null; if(err&&err.message==="nocrypto") prErr="This browser can't unlock it here (needs a secure https page)."; else { prFails++; prErr="Wrong PIN."; if(prFails>=5){ prWait=Date.now()+30000; prFails=0; prErr="Wrong PIN. Wait 30 s before trying again."; } } }
-    renderPrices(); return;
-  }
-  if(!PR) return;
-  const rm=t.closest("[data-rm]"); if(rm){ const o=prOrder(); delete o[rm.dataset.rm]; save(ORD_KEY,o); renderPrices(); return; }
-  if(t.closest("#pr-share")){ try{ navigator.share({title:"Order",text:cartText(prOrder())}); }catch(err){} return; }
-  const qb=t.closest("[data-q]");
-  if(qb){ const k=qb.dataset.k, o=prOrder(); const n=Math.max(0,(o[k]||0)+(+qb.dataset.q)); if(n) o[k]=n; else delete o[k]; save(ORD_KEY,o); uiFlags.prMsg=""; renderPrices(); return; }
-  if(t.closest("#pr-clear")){ save(ORD_KEY,{}); uiFlags.prMsg=""; renderPrices(); return; }
-  if(t.closest("#pr-copy")){
-    const txt=cartText(prOrder()); const done=()=>{ uiFlags.prMsg="Order copied."; renderPrices(); };
+  if(t.closest("#pr-expand")||t.closest("#pr-collapse")){ const o=!!t.closest("#pr-expand"); $("#prices").querySelectorAll("details.pgroup").forEach(d=>{ d.open=o; }); return; }
+  if(t.closest("#ia-go")){
+    const n=($("#ia-n").value||"").trim().slice(0,60), s=($("#ia-s").value||"").trim().slice(0,20)||"each", c=parseFloat($("#ia-c").value), p=parseFloat($("#ia-p").value), qn=parseInt($("#ia-q").value,10);
+    if(!n){ uiFlags.prErr="Type the peptide name."; renderPrices(); return; }
+    const it={id:newId("i"),n:n,s:s}; if(isFinite(c)&&c>=0) it.cost=Math.round(c*100)/100; if(isFinite(p)&&p>=0) it.price=Math.round(p*100)/100; if(isFinite(qn)&&qn>=0) it.qty=qn;
+    const a=invItems(); a.push(it); invSave(a); uiFlags.prErr=""; renderPrices(); return; }
+  const dl=t.closest("[data-del]"); if(dl){ if(prDel===dl.dataset.del){ invSave(invItems().filter(x=>x.id!==prDel)); const c=invCart(); delete c[prDel]; save(CART_KEY,c); prDel=null; } else prDel=dl.dataset.del; renderPrices(); return; }
+  const rm=t.closest("[data-rm]"); if(rm){ const c=invCart(); delete c[rm.dataset.rm]; save(CART_KEY,c); renderPrices(); return; }
+  const qb=t.closest("[data-q]"); if(qb){ const c=invCart(), k=qb.dataset.id, n=Math.max(0,(c[k]||0)+(+qb.dataset.q)); if(n) c[k]=n; else delete c[k]; save(CART_KEY,c); uiFlags.prMsg=""; renderPrices(); return; }
+  if(t.closest("#pr-clear")){ save(CART_KEY,{}); uiFlags.prMsg=""; renderPrices(); return; }
+  if(t.closest("#pr-share")){ try{ navigator.share({title:"Order",text:cartText(invItems(),invCart())}); }catch(err){} return; }
+  if(t.closest("#pr-copy")){ const txt=cartText(invItems(),invCart()); const done=()=>{ uiFlags.prMsg="Order copied."; renderPrices(); };
     try{ navigator.clipboard.writeText(txt).then(done,()=>{ uiFlags.prMsg=txt; renderPrices(); }); }catch(err){ uiFlags.prMsg=txt; renderPrices(); } return; }
-  if(t.closest("#pr-adjgo")){ const pc=parseFloat(($("#pr-adj")||{}).value); if(!isFinite(pc)||pc<=-90||pc>500) return; const ed={}; PR.forEach(r=>{ if(typeof r.p==="number"&&!r.u) ed[prKey(r)]=Math.round(r.p*(1+pc/100)*100)/100; }); save(PEDIT_KEY,ed); uiFlags.prMsg="All prices adjusted "+(pc>=0?"+":"")+pc+"%."; renderPrices(); return; }
-  if(t.closest("#pr-reset")){ save(PEDIT_KEY,{}); uiFlags.prMsg="Prices reset to the list."; renderPrices(); return; }
+  if(t.closest("#pr-sold")){ const c=invCart(), a=invItems(); let n=0; a.forEach(x=>{ if(c[x.id]&&typeof x.qty==="number"){ x.qty=Math.max(0,x.qty-c[x.id]); n++; } }); invSave(a); save(CART_KEY,{}); uiFlags.prMsg="Sale recorded. Stock reduced on "+n+" item"+(n===1?"":"s")+"."; uiFlags.prCart=false; renderPrices(); return; }
 });
 $("#prices").addEventListener("change",e=>{
-  const ci=e.target.closest&&e.target.closest(".pcust[data-kc]");
-  if(ci&&PR){ const m=load(CUST_KEY,{}); const v=parseFloat(ci.value); if(ci.value.trim()===""||!isFinite(v)||v<=0) delete m[ci.dataset.kc]; else m[ci.dataset.kc]=Math.round(v*100)/100; save(CUST_KEY,m); uiFlags.prMsg=""; renderPrices(); return; }
-  const i=e.target.closest&&e.target.closest(".pedit[data-k]"); if(!i||!PR) return;
-  const v=parseFloat(i.value); const ed=prEdits(); const r=prAll().find(x=>prKey(x)===i.dataset.k); if(!r) return;
-  if(i.value.trim()===""){ delete ed[i.dataset.k]; save(PEDIT_KEY,ed); }
-  else if(isFinite(v)&&v>=0){ if(typeof r.p==="number"&&Math.abs(v-r.p)<0.005) delete ed[i.dataset.k]; else ed[i.dataset.k]=Math.round(v*100)/100; save(PEDIT_KEY,ed); }
-  uiFlags.prMsg=""; renderPrices();
-});
-$("#prices").addEventListener("change",e=>{
-  const i=e.target.closest&&e.target.closest(".pinv[data-ki]"); if(!i||!PR) return;
-  const v=parseFloat(i.value), blank=i.value.trim()==="";
-  invFx(i.dataset.ki,en=>{ if(i.dataset.f==="cost"){ if(blank||!isFinite(v)||v<0) delete en.cost; else en.cost=Math.round(v*100)/100; } else { if(blank||!isFinite(v)||v<0) delete en.qty; else en.qty=Math.floor(v); } });
-  uiFlags.prMsg=""; renderPrices();
+  const i=e.target.closest&&e.target.closest(".pedit[data-id]"); if(!i) return;
+  const a=invItems(), x=a.find(y=>y.id===i.dataset.id); if(!x) return; const v=parseFloat(i.value), blank=i.value.trim()==="", f=i.dataset.f;
+  if(blank||!isFinite(v)||v<0) delete x[f]; else x[f]=f==="qty"?Math.floor(v):Math.round(v*100)/100;
+  invSave(a); uiFlags.prMsg=""; renderPrices();
 });
 $("#prices").addEventListener("input",e=>{ if(e.target.id==="pr-q"){ prQ=e.target.value; uiFlags.prFocus=true; renderPrices(); } });
-$("#prices").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.id==="pr-pin"){ const b=$("#pr-go"); if(b) b.click(); } });
-
-$("#prices").addEventListener("click",async e=>{
-  const t=e.target; if(!PR) return;
-  const sc=t.closest("[data-src]"); if(sc){ prSrc=sc.dataset.src; renderPrices(); return; }
-  const iv=t.closest("[data-inv]"); if(iv){ const m=invMap(), k=iv.dataset.inv; if(m[k]) delete m[k]; else m[k]={}; save(INV_KEY,m); renderPrices(); return; }
-  const ix=t.closest("[data-invx]"); if(ix){ const m=invMap(); delete m[ix.dataset.invx]; save(INV_KEY,m); renderPrices(); return; }
-  if(t.closest("#pr-sold")){ const o=prOrder(); const m=invMap(); let n=0; Object.keys(o).forEach(k=>{ if(m[k]&&typeof m[k].qty==="number"){ m[k].qty=Math.max(0,m[k].qty-o[k]); n++; } }); save(INV_KEY,m); save(ORD_KEY,{}); uiFlags.prMsg="Sale recorded. Stock reduced on "+n+" inventory item"+(n===1?"":"s")+"."; uiFlags.prCart=false; renderPrices(); return; }
-  if(t.closest("#pr-expand")||t.closest("#pr-collapse")){ const o=!!t.closest("#pr-expand"); $("#prices").querySelectorAll("details.pgroup").forEach(d=>{ d.open=o; }); return; }
-  if(t.closest("#ml-add")){ const n=($("#ml-n")||{}).value.trim(), sz=($("#ml-s")||{}).value.trim(), p=parseFloat(($("#ml-p")||{}).value); if(!n||!isFinite(p)||p<0) return; const L=load(LINES_KEY,[]); L.push({n:n.slice(0,60),s:(sz||"each").slice(0,20),p:Math.round(p*100)/100}); save(LINES_KEY,L); renderPrices(); return; }
-  const md=t.closest("[data-mydel]"); if(md){ const L=load(LINES_KEY,[]).filter(x=>(x.n+"|"+(x.s||"each"))!==md.dataset.mydel); save(LINES_KEY,L); renderPrices(); return; }
-  if(t.closest("#pr-paste-open")){ uiFlags.prPaste=!uiFlags.prPaste; renderPrices(); return; }
-  if(t.closest("#pr-text-go")){ stageImport(($("#pr-text")||{}).value||"","pasted list"); renderPrices(); return; }
-  if(t.closest("#pr-cancel")){ prImp=null; uiFlags.prErr=""; renderPrices(); return; }
-  if(t.closest("#pr-apply")&&prImp){ try{ await prSaveList(prImp.rows,prImp.name); uiFlags.prMsg="List updated: "+prImp.rows.length+" items. Your old edits were cleared."; prImp=null; uiFlags.prPaste=false; save(ORD_KEY,{}); }catch(err){ uiFlags.prErr="Couldn't save the list."; } renderPrices(); return; }
-  if(t.closest("#pr-builtin")){ try{ localStorage.removeItem(CUSTOM_KEY); }catch(err){} PR=PRBUILT; PRINFO=null; save(PEDIT_KEY,{}); uiFlags.prMsg="Back on the built-in list."; renderPrices(); return; }
-  if(t.closest("#pr-dl")){ const ed=0; const rows=[["Peptide","Size","Price"]].concat(PR.map(r=>{ const p=prPrice(r); return [r.n,r.s,p==null?"":p.toFixed(2)]; })); const csv=rows.map(r=>r.map(c=>/[",\n]/.test(c)?'"'+String(c).replace(/"/g,'""')+'"':c).join(",")).join("\n"); try{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download="price-list-"+todayISO()+".csv"; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); }catch(err){} return; }
-});
-$("#prices").addEventListener("change",e=>{ if(e.target.id==="pr-file"&&PR&&e.target.files&&e.target.files[0]) prFile(e.target.files[0]); });
-
-document.addEventListener("visibilitychange",()=>{ if(document.hidden) prLockAt=Date.now(); else if(PR&&Date.now()-prLockAt>120000){ prLock(); if(app.dataset.view==="prices") renderPrices(); } });
-
-
-document.addEventListener("toggle",e=>{ const d=e.target; if(d&&d.matches&&d.matches("details.vitem,details.vgroup,details.catgrp,details.sy,details.fold")){ uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen[d.dataset.k]=d.open; } },true);
-document.addEventListener("change",e=>{ const t=e.target; if(t&&t.classList&&t.classList.contains("who-pick")){ if(t.value==="__new"){ uiFlags.add=true; uiFlags.addNew=true; uiFlags.logFor=null; renderAll(); app.dataset.view="vials"; const sel=$("#av-whosel",vialsEl); if(sel){ sel.value="__new"; const n=$("#av-who",vialsEl); if(n){ n.hidden=false; n.focus(); } } return; } save("pdg:whoSel",t.value); renderAll(); } });
-$("#quick-btn").addEventListener("click",()=>{ renderQuick(); app.dataset.view="quick"; window.scrollTo({top:0}); });
-$("#quick").addEventListener("click",e=>{ if(e.target.closest("#q-back")) app.dataset.view="list"; });
-$("#quick").addEventListener("input",e=>{ if(e.target.id&&e.target.id.indexOf("q-")===0&&e.target.id!=="q-pid") paintQuick(); });
-$("#quick").addEventListener("change",e=>{
-  if(e.target.id==="q-pid"){ const p=DATA.find(x=>x.id===e.target.value); if(p){ const g=id=>$("#"+id,$("#quick")); g("q-vial").value=p.vialDefault||p.vials[0]; g("q-water").value=p.water; g("q-dose").value=(p.start!=null?p.start:p.common); g("q-unit").value=p.unit==="mg"?"mg":"mcg"; } }
-  paintQuick();
-});
-$("#news-btn").addEventListener("click",()=>{ renderNews(); app.dataset.view="news"; window.scrollTo({top:0}); if(UPD&&UPD.news.length) save(NEWS_SEEN,UPD.news[0].date); newsDot(); });
-$("#news").addEventListener("click",e=>{
-  if(e.target.closest("#news-back")){ app.dataset.view="list"; return; }
-  const f=e.target.closest("[data-nf]"); if(f){ newsMine=f.dataset.nf==="mine"; renderNews(); return; }
-  const o=e.target.closest("[data-open]"); if(o) openPeptide(o.dataset.open);
-});
-listEl.addEventListener("click",e=>{ if(e.target.closest("#intro-ok")){ save("pdg:intro",true); renderList(); } });
-detailEl.addEventListener("toggle",e=>{ const d=e.target; if(d&&d.id==="live"&&d.open){ const p=DATA.find(x=>x.id===d.dataset.live); if(p) loadLive(p,false); } },true);
-vialsEl.addEventListener("click",e=>{
-  if(e.target.closest("#bk-copy")){ const txt=JSON.stringify(backupData()); const b=$("#bk-copy",vialsEl);
-    const done=()=>{ if(b) b.textContent="Copied"; }; const fb=()=>{ uiFlags.restoreOpen=true; renderVials(); const ta=$("#bk-text",vialsEl); if(ta){ ta.value=txt; ta.focus(); ta.select(); } };
-    try{ navigator.clipboard.writeText(txt).then(done,fb); }catch(err){ fb(); } return; }
-  if(e.target.closest("#bk-dl")){ download("dose-guide-backup-"+todayISO()+".json",JSON.stringify(backupData(),null,1)); return; }
-  if(e.target.closest("#bk-open")){ uiFlags.restoreOpen=!uiFlags.restoreOpen; uiFlags.bkMsg=""; uiFlags.bkErr=""; renderVials(); return; }
-  if(e.target.closest("#bk-go")){ restoreFrom(($("#bk-text",vialsEl)||{}).value||""); renderAll(); return; }
-});
-vialsEl.addEventListener("change",e=>{ if(e.target.id==="bk-file"&&e.target.files&&e.target.files[0]){ const r=new FileReader(); r.onload=()=>{ restoreFrom(String(r.result||"")); renderAll(); }; r.readAsText(e.target.files[0]); } });
-(function(){ const d=$("#notice-d"); if(!d) return; if(!load("pdg:noticeSeen",false)) d.open=true; d.addEventListener("toggle",()=>{ if(!d.open) save("pdg:noticeSeen",true); }); })();
+$("#prices").addEventListener("keydown",e=>{ if(e.key==="Enter"&&/^ia-/.test(e.target.id||"")){ e.preventDefault(); const b=$("#ia-go"); if(b) b.click(); } });
+document.addEventListener("visibilitychange",()=>{});
 
 /* ---------- sync across devices (own login: name + 4-digit PIN; separate server) ---------- */
 const SYNC_URL="https://dose-guide-sync.onrender.com";
@@ -2515,7 +2292,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12c", BUILT="Nov 12, 2026 4:00 PM CT";
+  const VER="2026-11-12d", BUILT="Nov 12, 2026 5:00 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);

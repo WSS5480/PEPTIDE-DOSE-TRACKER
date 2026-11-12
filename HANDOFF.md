@@ -33,3 +33,10 @@ Update this file in the same commit as every change.
 ## Decisions
 - 2026-11-12: LC526 modeled like HHB (pre-mixed, no water). Reason: the only ingredient listing gives amounts per mL on a 10 mL vial; per-mL total (526) matches the product code.
 - 2026-11-08: Sources limited to labels, human studies, guidelines. Reason: Steve's rule against vendor doses; blocked sites (PubMed, ClinicalTrials.gov) left some entries marked unverified.
+
+## 2026-11-12d — Prices is now a pure manual inventory
+- Steve's rule: NO built-in price list for anyone. Only what the user types (item, size, own cost, own price, on hand).
+- Removed PRICE_BLOB (encrypted Xint list), PIN gate, CSV import. Storage: `pdg:items`, `pdg:cart`. Old keys (pdg:inv/custPrice/myLines/priceList/priceEdits/order) migrated once then deleted.
+- Cart shows customer total + profit; Sold button reduces stock. sw cache pdg-v27.
+- Old blob still exists in git history and in old cached copies on devices (history rewrite = destructive, needs Steve's OK).
+- Dropped: publishing prices to resellers (his latest messages imply it; not confirmed).
