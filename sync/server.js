@@ -180,20 +180,20 @@ app.put("/vials", auth, wrap(async (req, res) => {
 /* Owner tools: the login named Owner lists users and decides who may see Owner's prices (prices only, never cost). */
 const owner = (req, res, next) => (nameKey(req.user.name) === "owner" ? next() : bad(res, "Owner only.", 403));
 app.get("/owner/users", auth, owner, wrap(async (req, res) => {
-  const { rows } = await q(`select u.id, u.name, u.created, u.disabled, u.can_price, coalesce(jsonb_array_length(d.data->'vials'), 0) vials
+  const { rows } = await q(`select u.id, u.name, u.created, u.disabled, u.can_price, (case when jsonb_typeof(d.data->'vials') = 'array' then jsonb_array_length(d.data->'vials') else 0 end) vials
     from dose_users u left join dose_data d on d.user_id = u.id where u.name_key <> 'owner' order by u.created desc`);
   res.json({ users: rows });
 }));
 app.post("/owner/users/:id", auth, owner, wrap(async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  if (!id || typeof req.body?.can_price !== "boolean") return bad(res, "Bad request.");
+  if (!id || id > 2147483647 || typeof req.body?.can_price !== "boolean") return bad(res, "Bad request.");
   const r = await q("update dose_users set can_price = $2 where id = $1 and name_key <> 'owner'", [id, req.body.can_price]);
   if (!r.rowCount) return bad(res, "No such login.", 404);
   res.json({ ok: true });
 }));
 app.delete("/owner/users/:id", auth, owner, wrap(async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  if (!id) return bad(res, "Bad id.");
+  if (!id || id > 2147483647) return bad(res, "Bad id.");
   const r = await q("delete from dose_users where id = $1 and name_key <> 'owner'", [id]);   /* tokens and data go with it (cascade) */
   if (!r.rowCount) return bad(res, "No such login.", 404);
   stCache.delete(id);
@@ -202,7 +202,8 @@ app.delete("/owner/users/:id", auth, owner, wrap(async (req, res) => {
 app.put("/owner/prices", auth, owner, wrap(async (req, res) => {
   const a = Array.isArray(req.body?.items) ? req.body.items : null;
   if (!a || a.length > 2000) return bad(res, "Bad data.");
-  const items = a.map((x) => ({ n: String(x?.n || "").slice(0, 60), s: String(x?.s || "").slice(0, 20), p: Number(x?.p) })).filter((x) => x.n && isFinite(x.p) && x.p >= 0);
+  const items = a.map((x) => ({ n: String(x?.n || "").slice(0, 60), s: String(x?.s || "").slice(0, 20), p: typeof x?.p === "number" ? x.p : NaN })).filter((x) => x.n && isFinite(x.p) && x.p >= 0);
+  if (!items.length && req.body?.clear !== true) return bad(res, "Refusing to publish an empty price list.");
   await q("insert into dose_prices(id, data, updated) values (1, $1::jsonb, now()) on conflict (id) do update set data = excluded.data, updated = now()", [JSON.stringify(items)]);
   res.json({ ok: true, count: items.length });
 }));

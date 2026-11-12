@@ -2048,7 +2048,7 @@ function mergeOwner(){
 setTimeout(()=>{ try{ invSwitch(); mergeOwner(); if(app.dataset.view==="prices") renderPrices(); }catch(e){} try{ if(!isGuest()&&invItems().some(x=>x.o)){ dropOwnerItems(); if(app.dataset.view==="prices") renderPrices(); } }catch(e){} },0);
 function stashes(){ const out=[]; try{ for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k&&k.indexOf("pdg:items:")===0){ const a=load(k,[]); const n=Array.isArray(a)?a.filter(x=>!x.o).length:0; if(n) out.push({k:k,who:k.slice(10)||"(signed out)",n:n}); } } }catch(e){} return out; }
 function recoverHtml(){
-  if(SY&&!isOwner()) return "";   /* never offer the Owner's saved lists to a checked user */
+  if(!isOwner()) return "";   /* saved lists hold the Owner's cost and qty: only the signed-in Owner may see or restore them */
   const L=stashes(); if(!L.length) return "";
   return '<details class="fold" id="inv-recover"><summary><span>Saved lists on this device</span><span class="hint">'+L.length+' found</span></summary><div class="foldbody"><p class="hint">Lists put away when you switched logins. Tap one to bring its items into the list you are looking at now.</p>'
    +L.map(x=>'<div class="prow"><div class="pl"><b>'+esc(x.who)+'</b><span class="pp">'+x.n+' item'+(x.n===1?'':'s')+'</span></div><button type="button" class="btn small primary" data-rec="'+esc(x.k)+'">Bring back</button></div>').join("")+'</div></details>';
@@ -2113,7 +2113,7 @@ function renderPrices(){
        +(isGuest()?'':'<button type="button" class="btn small" data-del="'+x.id+'">'+(prDel===x.id?'Tap again to delete':'Delete')+'</button>')+'</div>'; }).join("")+'</details>').join("");
   if(items.length&&!sel.length) h+='<p class="empty">No match.</p>';
   if(!items.length) h+='<p class="empty">Nothing here yet. Add the first item above.</p>';
-  if(!items.length&&!(SY&&!isOwner())){ const L=stashes().filter(x=>x.k.indexOf("snap-")<0).sort((a,b)=>b.n-a.n)[0]||stashes().sort((a,b)=>b.n-a.n)[0]; if(L) h+='<div class="flag"><b>Your list is saved.</b> '+L.n+' item'+(L.n===1?'':'s')+' under "'+esc(L.who)+'". <button type="button" class="btn small primary" data-rec="'+esc(L.k)+'">Bring back</button></div>'; }
+  if(!items.length&&isOwner()){ const L=stashes().filter(x=>x.k.indexOf("snap-")<0).sort((a,b)=>b.n-a.n)[0]||stashes().sort((a,b)=>b.n-a.n)[0]; if(L) h+='<div class="flag"><b>Your list is saved.</b> '+L.n+' item'+(L.n===1?'':'s')+' under "'+esc(L.who)+'". <button type="button" class="btn small primary" data-rec="'+esc(L.k)+'">Bring back</button></div>'; }
   h+=recoverHtml();
   h+='<div class="ordbar"><div class="tot">Order: '+cn+' item'+(cn===1?'':'s')+' · '+money(ct)+'</div><div class="btnrow"><button type="button" class="btn small primary" id="pr-cart-open">View cart'+(cn?' ('+cn+')':'')+'</button></div></div>';
   el.innerHTML=h; el.querySelectorAll("details.pgroup").forEach(d=>{ if(keep.indexOf(d.dataset.g)>=0) d.open=true; }); window.scrollTo(0,pos);
@@ -2139,7 +2139,7 @@ $("#prices-btn").addEventListener("click",()=>{ uiFlags.prCart=false; uiFlags.pr
 $("#prices").addEventListener("click",e=>{
   const t=e.target; uiFlags.prFocus=false;
   if(t.closest("#pr-back")){ app.dataset.view="list"; return; }
-  const rc=t.closest("[data-rec]"); if(rc){ const src=load(rc.dataset.rec,[]), a=invItems(); let n=0; (Array.isArray(src)?src:[]).forEach(x=>{ if(!x||x.o) return; if(!a.some(y=>!y.o&&y.n===x.n&&y.s===x.s)){ a.push(Object.assign({},x,{id:newId("i")})); n++; } }); invSave(a); uiFlags.prErr="Brought back "+n+" item"+(n===1?"":"s")+"."; renderPrices(); return; }
+  const rc=t.closest("[data-rec]"); if(rc&&isOwner()){ const src=load(rc.dataset.rec,[]), a=invItems(); let n=0; (Array.isArray(src)?src:[]).forEach(x=>{ if(!x||x.o) return; if(!a.some(y=>!y.o&&y.n===x.n&&y.s===x.s)){ a.push(Object.assign({},x,{id:newId("i")})); n++; } }); invSave(a); uiFlags.prErr="Brought back "+n+" item"+(n===1?"":"s")+"."; renderPrices(); return; }
   if(t.closest("#pr-wipe")){ if(uiFlags.prWipe){ uiFlags.prWipe=false; invSnap(); invSave([]); save(CART_KEY,{}); } else uiFlags.prWipe=true; renderPrices(); return; }
   if(t.closest("#pr-restore")){ syCall("/prices").then(r=>{ if(!r.ok||!r.j.owner){ uiFlags.prErr="Sign in as Owner first."; renderPrices(); return; }
       const a=invItems().filter(x=>!x.o); let n=0; (r.j.items||[]).forEach(w=>{ if(!a.some(x=>x.n===w.n&&x.s===w.s)){ a.push({id:newId("i"),n:w.n,s:w.s,price:w.p}); n++; } });
@@ -2311,7 +2311,7 @@ async function syAuth(kind){
     clearTimeout(slow);
     if(!r.ok){ uiFlags.syMsg=""; uiFlags.syErr=r.status>=500?"The sync server is down right now (it is still being set up on the owner's side). Your vials are safe on this phone. Try again later.":((r.j&&r.j.error)||"That did not work. Try again."); syRefresh(); return; }
     try{ localStorage.setItem("pdg:lastName",name); }catch(e){}
-    SY={token:r.j.token,name:r.j.name,last:0,account:r.j.account||null}; save("pdg:sync",SY); invSwitch(); uiFlags.syForm=""; uiFlags.syMsg=""; uiFlags.syErr="";
+    SY={token:r.j.token,name:r.j.name,last:0,account:r.j.account||null}; save("pdg:sync",SY); invSwitch(); if(isOwner()) dropOwnerItems(); uiFlags.syForm=""; uiFlags.syMsg=""; uiFlags.syErr="";
     await syncNow(true); renderVials();
   }catch(e){ clearTimeout(slow); uiFlags.syMsg=""; uiFlags.syErr="Could not reach the sync server. If your internet is fine, the server is down (owner setup unfinished). Your vials are safe on this phone."; syRefresh(); }
 }
@@ -2378,7 +2378,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12t", BUILT="Nov 12, 2026 10:00 PM CT";
+  const VER="2026-11-12u", BUILT="Nov 12, 2026 10:15 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);

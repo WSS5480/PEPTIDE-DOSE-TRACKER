@@ -97,3 +97,7 @@ Update this file in the same commit as every change.
 
 ## 2026-11-12t — never publish an empty price list
 - Likely cause of Owner's "Nothing new to restore": an empty inventory got published (PUT /owner/prices with []) and wiped the server copy. ownerPublish now returns early on an empty list. Prices a checked user's device still holds (pdg:ownerPrices) are the only other copy. sw pdg-v43.
+
+## 2026-11-12u — reviewer #2 fixes
+- Saved lists / Bring back only for the signed-in Owner (they hold cost/qty). Owner sign-in drops cached guest copies. Server: PUT /owner/prices refuses an empty list unless {clear:true}; price must be a number; /owner/users guards non-array vials and huge ids. sw pdg-v44.
+- Known/accepted: first registrant of "Owner" would become owner (Steve's Owner already exists; can't be deleted by the endpoint). Owner PIN is 4 digits like everyone; 5 wrong tries lock 15 min.
