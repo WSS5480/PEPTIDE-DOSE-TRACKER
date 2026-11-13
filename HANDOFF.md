@@ -121,3 +121,7 @@ Update this file in the same commit as every change.
 
 ## 2026-11-13c — vials save to the account (database), not just the phone
 - Steve: "save to db vs their phones". A NEW vial (Add vial form or "Save this vial" on a peptide page) now requires being signed in; otherwise it opens Create login with an explanation. Editing/logging existing vials unchanged. Banner on the vials page when vials exist but nobody is signed in. Sync still caches locally and queues sync 1.5 s after each change. sw pdg-v48.
+
+## 2026-11-13d — dose reminders (8:00 am default)
+- Vials page: "Dose reminders" fold (on/off, alert time, Test alert) + red "Dose due today" banner. remindCheck() runs on load, every 60 s and when the app becomes visible; once per day after the alert time, only if a vial is due (plan started, not expired, not logged today, interval passed; peptides without a fixed interval only until the first dose). Notification via service-worker registration with vibrate pattern + navigator.vibrate. Settings in localStorage `pdg:remind`. sw pdg-v49 (push handler vibrates too).
+- LIMIT: fires only while the app is open or running in the background on the phone. A true 8:00 alert with the app fully closed needs a server push at 8 am: sync server is on Render FREE (sleeps), so it needs a paid always-on plan or a Render Cron Job, plus the push key. A browser holds ONE push subscription per key, so this must be designed together with the renewal-reminder push (My Apps key) from the parallel session. Not built. Asked Steve.

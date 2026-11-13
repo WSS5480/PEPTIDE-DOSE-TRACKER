@@ -1394,10 +1394,58 @@ function needLogin(){
   uiFlags.syErr="Create your login first. Vials save to your account, not just this phone, so you never lose them."; uiFlags.syForm="new"; uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen.sync=true; uiFlags.add=false; uiFlags.form=false;
   app.dataset.view="vials"; renderVials(); window.scrollTo({top:0}); return true;
 }
+/* ---------- dose reminders: phone notification + vibration at the chosen time (default 8:00 am) when a dose is due ---------- */
+const REMIND_KEY="pdg:remind";
+function remindCfg(){ const c=load(REMIND_KEY,null); return (c&&typeof c==="object")?{on:!!c.on,time:/^\d\d:\d\d$/.test(c.time||"")?c.time:"08:00",last:c.last||""}:{on:false,time:"08:00",last:""}; }
+function remindSave(c){ save(REMIND_KEY,c); }
+/* vials that need a dose today: plan started, not expired, not already logged today, and the gap since the last dose has passed */
+function dueVials(){
+  const out=[];
+  vials.forEach(v=>{ const p=peptideOf(v); if(!p) return; let t; try{ t=trackerState(p,v); }catch(e){ return; }
+    if(t.week<1||t.expired||t.sinceLast===0) return;
+    const e=eff(p,v); if(t.last&&(!e.interval||t.dueIn>0)) return;   /* no fixed interval: only remind until the first dose is logged */
+    out.push({v:v,p:p,name:p.name.split(" (")[0],dose:t.dose,units:t.units,unit:p.unitLabel||p.unit}); });
+  return out;
+}
+function dueText(d){ return d.map(x=>x.name+" "+fmt(x.dose)+" "+x.unit+" ("+fmt(x.units,1)+" units)").join(" · "); }
+async function remindNotify(title,body){
+  try{ if(navigator.vibrate) navigator.vibrate([300,150,300,150,300]); }catch(e){}
+  if(typeof Notification==="undefined"||Notification.permission!=="granted") return false;
+  const opt={body:body,tag:"dose-due",renotify:true,requireInteraction:true,vibrate:[300,150,300,150,300,150,600],icon:"icon-192.png",badge:"icon-192.png"};
+  try{ const reg=("serviceWorker" in navigator)?await navigator.serviceWorker.getRegistration():null; if(reg&&reg.showNotification){ await reg.showNotification(title,opt); return true; } new Notification(title,opt); return true; }catch(e){ return false; }
+}
+function remindCheck(){
+  const c=remindCfg(); if(!c.on) return;
+  const now=new Date(), hm=String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+  if(hm<c.time||c.last===todayISO()) return;
+  const d=dueVials(); if(!d.length) return;
+  c.last=todayISO(); remindSave(c); remindNotify("Dose due today",dueText(d));
+}
+function remindHtml(){
+  const c=remindCfg(), ok=typeof Notification!=="undefined", perm=ok?Notification.permission:"unsupported", d=dueVials();
+  let h='<details class="pgroup sy" id="remind-card" data-k="remind"'+(uiFlags.vopen&&uiFlags.vopen.remind?' open':'')+'><summary><span>Dose reminders</span><span class="hint">'+(c.on?'on · '+esc(c.time):'off')+'</span></summary><div class="foldbody" style="padding:0 14px 14px;display:flex;flex-direction:column;gap:10px">';
+  h+='<p class="hint">Phone alert with vibration when a dose is due. It goes off once a day at your time, only if something is due and not logged yet. It works while the app is open or running in the background on your phone.</p>';
+  h+='<div class="syform"><label>Alert time<input id="rm-time" type="time" value="'+esc(c.time)+'"></label></div><div class="btnrow">'
+    +(c.on?'<button type="button" class="btn small" data-rm="off">Turn off</button>':'<button type="button" class="btn small primary" data-rm="on">Turn on reminders</button>')
+    +'<button type="button" class="btn small" data-rm="test">Test alert</button></div>';
+  if(!ok) h+='<p class="hint">This browser cannot show alerts. On iPhone, add the Dose Guide to your Home Screen first and open it from there.</p>';
+  else if(perm==="denied") h+='<p class="flag bad">Alerts are blocked. Allow notifications for the Dose Guide in your phone settings.</p>';
+  if(uiFlags.rmMsg) h+='<p class="hint">'+esc(uiFlags.rmMsg)+'</p>';
+  return h+'</div></details>';
+}
+document.addEventListener("click",async e=>{
+  const b=e.target.closest&&e.target.closest("[data-rm]"); if(!b) return; const k=b.getAttribute("data-rm"), c=remindCfg();
+  if(k==="on"){ if(typeof Notification!=="undefined"&&Notification.permission==="default"){ try{ await Notification.requestPermission(); }catch(x){} } c.on=true; remindSave(c); uiFlags.rmMsg=(typeof Notification!=="undefined"&&Notification.permission==="granted")?"Reminders are on. You will get an alert at "+c.time+" when a dose is due.":"Reminders are on, but alerts are blocked. Allow notifications in your phone settings."; uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen.remind=true; remindCheck(); renderVials(); }
+  else if(k==="off"){ c.on=false; remindSave(c); uiFlags.rmMsg=""; renderVials(); }
+  else if(k==="test"){ if(typeof Notification!=="undefined"&&Notification.permission==="default"){ try{ await Notification.requestPermission(); }catch(x){} } const d=dueVials(); const sent=await remindNotify("Dose due (test)",d.length?dueText(d):"Nothing is due right now. This is only a test."); uiFlags.rmMsg=sent?"Test alert sent. You should feel it vibrate.":"Could not show an alert. Check that notifications are allowed for the Dose Guide."; uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen.remind=true; renderVials(); }
+});
+document.addEventListener("change",e=>{ if(e.target&&e.target.id==="rm-time"){ const c=remindCfg(); if(/^\d\d:\d\d$/.test(e.target.value)){ c.time=e.target.value; c.last=""; remindSave(c); uiFlags.rmMsg="Alert time set to "+c.time+"."; renderVials(); } } });
+setInterval(remindCheck,60000); document.addEventListener("visibilitychange",()=>{ if(!document.hidden) remindCheck(); }); setTimeout(remindCheck,1500);
+function dueBannerHtml(){ const d=dueVials(); return d.length?'<p class="flag bad" id="due-banner"><b>Dose due today:</b> '+esc(dueText(d))+'</p>':""; }
 function renderVials(){
   let html='<div class="vhead"><div><h2><svg width="18" height="27" viewBox="0 0 20 30" aria-hidden="true"><rect x="6" y="1" width="8" height="4" rx="1" fill="#0b6a86"/><rect x="7" y="5" width="6" height="3" fill="#cfe3ec"/><rect x="3" y="8" width="14" height="20" rx="3.5" fill="#eaf4f8" stroke="#0b6a86" stroke-width="1.6"/><rect x="4.6" y="16" width="10.8" height="10.4" rx="2.4" fill="#0b6a86" opacity=".55"/></svg>My vials</h2><p class="hint">Saved on this device. Log doses and the app tracks weeks, what is left, and what is due. Red means two active vials share an ingredient or drug class. No red does not mean safe.</p></div>'
     +'<div class="btnrow"><button type="button" class="btn" id="vials-back">&larr; Peptides</button><button type="button" class="btn" id="mg-open">'+(uiFlags.manage?'Done':'Delete vials')+'</button><button type="button" class="btn primary" id="add-vial">+ Add vial</button></div></div>';
-  html+=syncHtml();
+  html+=dueBannerHtml()+syncHtml()+remindHtml();
   if(!SY&&vials.length&&!uiFlags.syForm) html+='<p class="flag bad">These vials are only on this phone. Create a login (Sync &amp; login above) to save them to your account.</p>';
   if(uiFlags.add) html+=addVialFormHtml();
   if(!vials.length&&!uiFlags.add) html+='<p class="empty">No vials yet. Tap + Add vial, or open any peptide and tap "Save this vial &amp; count weeks".</p>';
@@ -2454,7 +2502,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-13c", BUILT="Nov 13, 2026 11:00 AM CT";
+  const VER="2026-11-13d", BUILT="Nov 13, 2026 1:30 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
