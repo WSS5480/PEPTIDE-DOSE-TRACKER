@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Place an order</title>
+<style>
+:root{--bg:#f6f7f5;--ink:#1c2321;--mut:#667570;--card:#fff;--line:#dfe4e1;--acc:#0f6b55;--bad:#a4332b}
+@media(prefers-color-scheme:dark){:root{--bg:#121715;--ink:#e8eeeb;--mut:#93a39d;--card:#1b2320;--line:#2c3732;--acc:#3fbf9a;--bad:#ff8a80}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:16px 14px 120px;max-width:560px;margin:0 auto}
+h1{font-size:1.35rem;margin:6px 0 2px}p{margin:4px 0}.mut{color:var(--mut);font-size:.9rem}
+.item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;display:flex;align-items:center;gap:10px;justify-content:space-between}
+.item b{display:block}.item .s{color:var(--mut);font-size:.9rem}
+.q{display:flex;align-items:center;gap:8px}.q button{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:1.3rem}
+.q span{min-width:24px;text-align:center;font-weight:600}
+input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:1rem;margin:4px 0 10px}
+label{font-size:.9rem;color:var(--mut)}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between;max-width:560px;margin:0 auto}
+.btn{display:block;width:100%;text-align:center;padding:14px;border-radius:12px;border:0;background:var(--acc);color:#fff;font-size:1.05rem;font-weight:600;text-decoration:none}
+.btn.sec{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+.bar .btn{width:auto;padding:12px 20px}.bad{color:var(--bad);font-weight:600}.ok{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0}
+.tot{font-size:1.15rem;font-weight:700}
+</style></head><body>
+<div id="app"><p class="mut">Loading&hellip;</p></div>
+<script>
+(function(){
+var API="https://dose-guide-sync.onrender.com", slug=(new URLSearchParams(location.search).get("s")||"").trim(), app=document.getElementById("app");
+var items=[], cart={}, shop="", err="", busy=false, done=null, form={name:"",contact:""};
+function esc(t){ return String(t).replace(/[&<>"']/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function money(n){ return "$"+(Math.round(n*100)/100).toFixed(2); }
+function total(){ var t=0; items.forEach(function(x){ t+=(cart[x.k]||0)*x.price; }); return t; }
+function count(){ var n=0; for(var k in cart) n+=cart[k]; return n; }
+async function call(path,opt){ var r=await fetch(API+path,Object.assign({headers:{"content-type":"application/json"}},opt||{})); var j={}; try{ j=await r.json(); }catch(e){} return {ok:r.ok,j:j,status:r.status}; }
+async function load(){
+  if(!slug){ app.innerHTML='<h1>Place an order</h1><p class="bad">This link is missing its code. Ask the seller to send it again.</p>'; return; }
+  try{ var r=await call("/shop/"+encodeURIComponent(slug)); if(!r.ok){ app.innerHTML='<h1>Place an order</h1><p class="bad">'+esc(r.j.error||"This shop is not available.")+'</p>'; return; }
+    shop=r.j.shop; items=r.j.items||[]; Object.keys(cart).forEach(function(k){ var x=items.find(function(y){return y.k===k;}); if(!x) delete cart[k]; else if(cart[k]>x.qty) cart[k]=x.qty; }); }
+  catch(e){ if(!items.length){ app.innerHTML='<h1>Place an order</h1><p class="mut">Waking the shop up, this can take up to a minute&hellip;</p>'; setTimeout(load,4000); return; } }
+  draw();
+}
+function draw(){
+  if(done){ app.innerHTML='<h1>Order placed</h1><div class="ok"><p><b>'+esc(shop)+'</b> has your order #'+done.id+'.</p>'+done.lines.map(function(l){ return '<p>'+l.qty+' x '+esc(l.n)+' '+esc(l.s)+' &middot; '+money(l.qty*l.price)+'</p>'; }).join("")+'<p class="tot">Total '+money(done.total)+'</p></div>'
+    +(done.pay?'<a class="btn" href="'+esc(done.pay)+'">Pay '+money(done.total)+' with Cash App</a><p class="mut" style="margin-top:8px">Opens Cash App with the amount filled in. Tap Pay there to finish.</p>':'<p class="mut">'+esc(shop)+' will contact you about payment.</p>')
+    +'<p style="margin-top:14px"><button class="btn sec" id="again">Start a new order</button></p>'; document.getElementById("again").onclick=function(){ done=null; cart={}; load(); }; return; }
+  var h='<h1>'+esc(shop)+'</h1><p class="mut">Pick what you want. Stock shown is what is left right now.</p>';
+  if(!items.length) h+='<p class="ok">Nothing is in stock right now. Check back soon.</p>';
+  h+=items.map(function(x){ var c=cart[x.k]||0; return '<div class="item"><div><b>'+esc(x.n)+'</b><span class="s">'+esc(x.s||"each")+' &middot; '+money(x.price)+' &middot; '+x.qty+' left</span></div><div class="q"><button data-k="'+esc(x.k)+'" data-d="-1" aria-label="Less">&minus;</button><span>'+c+'</span><button data-k="'+esc(x.k)+'" data-d="1" aria-label="More">+</button></div></div>'; }).join("");
+  if(count()){ h+='<label>Your name<input id="f-name" autocomplete="name" value="'+esc(form.name)+'"></label><label>Phone or email<input id="f-contact" autocomplete="tel" value="'+esc(form.contact)+'"></label>'; }
+  if(err) h+='<p class="bad">'+esc(err)+'</p>';
+  h+='<div class="bar"><div class="tot">'+money(total())+'<div class="mut" style="font-weight:400">'+count()+' item'+(count()===1?'':'s')+'</div></div><button class="btn" id="go"'+(count()&&!busy?'':' disabled style="opacity:.5"')+'>'+(busy?'Placing&hellip;':'Place order')+'</button></div>';
+  app.innerHTML=h;
+}
+app.addEventListener("click",function(e){
+  var b=e.target.closest("button[data-k]"); if(b){ keep(); var k=b.dataset.k, x=items.find(function(y){return y.k===k;}); var n=Math.max(0,Math.min(x.qty,(cart[k]||0)+(+b.dataset.d))); if(n) cart[k]=n; else delete cart[k]; err=""; draw(); return; }
+  if(e.target.closest("#go")) place();
+});
+app.addEventListener("input",keep);
+function keep(){ var a=document.getElementById("f-name"), c=document.getElementById("f-contact"); if(a) form.name=a.value; if(c) form.contact=c.value; }
+async function place(){
+  keep(); if(busy) return; if(form.name.trim().length<2){ err="Enter your name."; draw(); return; } if(form.contact.trim().length<3){ err="Enter a phone number or email."; draw(); return; }
+  busy=true; err=""; draw();
+  try{ var r=await call("/shop/"+encodeURIComponent(slug)+"/order",{method:"POST",body:JSON.stringify({name:form.name,contact:form.contact,items:Object.keys(cart).map(function(k){ return {k:k,qty:cart[k]}; })})});
+    busy=false; if(r.ok){ done=r.j; draw(); return; } err=r.j.error||"Could not place the order."; await load(); }
+  catch(e){ busy=false; err="Could not reach the shop. Try again in a moment."; draw(); }
+}
+load();
+})();
+</script></body></html>

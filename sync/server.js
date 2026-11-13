@@ -79,6 +79,20 @@ alter table dose_users add column if not exists whatsapp text not null default '
 alter table dose_users add column if not exists disabled boolean not null default false;
 alter table dose_users add column if not exists can_price boolean not null default false;
 create table if not exists dose_inventory (id int primary key, data jsonb not null default '[]'::jsonb, updated timestamptz not null default now());
+alter table dose_users add column if not exists slug text;
+alter table dose_users add column if not exists cashtag text not null default '';
+create unique index if not exists dose_users_slug on dose_users(slug) where slug is not null;
+create table if not exists dose_user_prices (user_id int not null references dose_users(id) on delete cascade, k text not null, price numeric(10,2) not null, primary key (user_id, k));
+create table if not exists dose_orders (
+  id serial primary key,
+  seller_id int not null references dose_users(id) on delete cascade,
+  customer_name text not null,
+  customer_contact text not null,
+  lines jsonb not null,
+  total numeric(10,2) not null,
+  status text not null default 'new',
+  created timestamptz not null default now()
+);
 create table if not exists dose_prices (id int primary key, data jsonb not null default '[]'::jsonb, updated timestamptz not null default now());
 create table if not exists dose_tokens (
   token_hash text primary key,
@@ -236,12 +250,28 @@ app.get("/owner/inventory", auth, owner, wrap(async (req, res) => {
 app.put("/owner/inventory", auth, owner, wrap(async (req, res) => {
   const a = Array.isArray(req.body?.items) ? req.body.items : null;
   if (!a || a.length > 3000) return bad(res, "Bad data.");
+  const edits = req.body?.qtyEdits && typeof req.body.qtyEdits === "object" && !Array.isArray(req.body.qtyEdits) ? req.body.qtyEdits : {};
   const num = (v) => (typeof v === "number" && isFinite(v) && v >= 0 ? v : undefined);
-  const items = a.map((x) => ({ id: String(x?.id || "").slice(0, 40), n: String(x?.n || "").slice(0, 60), s: String(x?.s || "").slice(0, 20), cost: num(x?.cost), price: num(x?.price), qty: num(x?.qty) })).filter((x) => x.id && x.n);
-  if (!items.length && req.body?.clear !== true) return bad(res, "Refusing to save an empty list.");
-  await q("insert into dose_inventory(id, data, updated) values (1, $1::jsonb, now()) on conflict (id) do update set data = excluded.data, updated = now()", [JSON.stringify(items)]);
-  res.json({ ok: true, count: items.length });
+  const inc = a.map((x) => ({ id: String(x?.id || "").slice(0, 40), n: String(x?.n || "").slice(0, 60), s: String(x?.s || "").slice(0, 20), cost: num(x?.cost), price: num(x?.price), qty: num(x?.qty) })).filter((x) => x.id && x.n);
+  if (!inc.length && req.body?.clear !== true) return bad(res, "Refusing to save an empty list.");
+  const c = await pool.connect();
+  try {
+    await c.query("begin");
+    await c.query("insert into dose_inventory(id, data) values (1, '[]'::jsonb) on conflict (id) do nothing");
+    const { rows: [r] } = await c.query("select data from dose_inventory where id = 1 for update");
+    const old = new Map((Array.isArray(r.data) ? r.data : []).map((x) => [x.id, x]));
+    /* Quantity belongs to the server: customer orders lower it. The app only changes it by an explicit edit. */
+    const items = inc.map((x) => {
+      const o = old.get(x.id); const e = num(edits[x.id]);
+      x.qty = e !== undefined ? Math.floor(e) : (o && typeof o.qty === "number" ? o.qty : (x.qty !== undefined ? Math.floor(x.qty) : 0));
+      return x;
+    });
+    await c.query("update dose_inventory set data = $1::jsonb, updated = now() where id = 1", [JSON.stringify(items)]);
+    await c.query("commit");
+    res.json({ ok: true, count: items.length, items });
+  } catch (e) { await c.query("rollback").catch(() => {}); throw e; } finally { c.release(); }
 }));
+
 app.put("/owner/prices", auth, owner, wrap(async (req, res) => {
   const a = Array.isArray(req.body?.items) ? req.body.items : null;
   if (!a || a.length > 2000) return bad(res, "Bad data.");
@@ -256,9 +286,129 @@ app.get("/prices", auth, wrap(async (req, res) => {
   const { rows: [u] } = await q("select can_price from dose_users where id = $1", [req.user.id]);
   const allowed = isOwner || !!(u && u.can_price);
   if (!allowed) return res.json({ allowed: false, owner: false, items: [] });
+  const { rows: [inv] } = await q("select data, updated from dose_inventory where id = 1");
+  const list = inv && Array.isArray(inv.data) ? inv.data.filter((x) => typeof x.price === "number" && x.price > 0) : [];
+  if (list.length) return res.json({ allowed: true, owner: isOwner, items: list.map((x) => ({ n: x.n, s: x.s, p: x.price, q: typeof x.qty === "number" ? x.qty : 0 })), updated: inv.updated });
   const { rows: [r] } = await q("select data, updated from dose_prices where id = 1");
   res.json({ allowed: true, owner: isOwner, items: r ? r.data : [], updated: r ? r.updated : null });
 }));
+
+/* ---------- customer ordering ----------
+   Each login has a shop link. The customer sees the shared stock (Owner's quantities) at THAT login's prices,
+   orders, and pays that login's Cash App. Stock drops when the order is placed; cancelling puts it back. */
+const keyOf = (n, s) => (String(n || "").toLowerCase().trim() + "|" + String(s || "").toLowerCase().trim());
+const cleanTag = (v) => String(v || "").replace(/^\$/, "").trim();
+const TAG_OK = /^[A-Za-z0-9_]{1,20}$/;
+async function ensureSlug(userId) {
+  const { rows: [u] } = await q("select slug from dose_users where id = $1", [userId]);
+  if (u && u.slug) return u.slug;
+  for (let i = 0; i < 6; i++) {
+    const slug = crypto.randomBytes(5).toString("hex");
+    try { await q("update dose_users set slug = $2 where id = $1 and slug is null", [userId, slug]); const { rows: [x] } = await q("select slug from dose_users where id = $1", [userId]); if (x && x.slug) return x.slug; } catch (e) { if (e.code !== "23505") throw e; }
+  }
+  throw new Error("slug");
+}
+app.get("/me/shop", auth, wrap(async (req, res) => {
+  const slug = await ensureSlug(req.user.id);
+  const { rows: [u] } = await q("select cashtag from dose_users where id = $1", [req.user.id]);
+  res.json({ slug, cashtag: u ? u.cashtag : "" });
+}));
+app.put("/me/shop", auth, wrap(async (req, res) => {
+  const tag = cleanTag(req.body?.cashtag);
+  if (tag && !TAG_OK.test(tag)) return bad(res, "That Cash App tag does not look right. Letters, numbers and underscore only.");
+  await q("update dose_users set cashtag = $2 where id = $1", [req.user.id, tag]);
+  res.json({ ok: true, cashtag: tag });
+}));
+app.get("/me/prices", auth, wrap(async (req, res) => {
+  const { rows } = await q("select k, price from dose_user_prices where user_id = $1", [req.user.id]);
+  const prices = {}; rows.forEach((r) => { prices[r.k] = Number(r.price); });
+  res.json({ prices });
+}));
+app.put("/me/prices", auth, wrap(async (req, res) => {
+  const p = req.body?.prices;
+  if (!p || typeof p !== "object" || Array.isArray(p)) return bad(res, "Bad data.");
+  const ents = Object.entries(p).filter(([k, v]) => typeof k === "string" && k.length <= 90 && typeof v === "number" && isFinite(v) && v > 0 && v < 100000).slice(0, 3000);
+  const c = await pool.connect();
+  try {
+    await c.query("begin");
+    await c.query("delete from dose_user_prices where user_id = $1", [req.user.id]);
+    for (const [k, v] of ents) await c.query("insert into dose_user_prices(user_id, k, price) values ($1,$2,$3)", [req.user.id, k.toLowerCase(), Math.round(v * 100) / 100]);
+    await c.query("commit");
+    res.json({ ok: true, count: ents.length });
+  } catch (e) { await c.query("rollback").catch(() => {}); throw e; } finally { c.release(); }
+}));
+async function sellerCatalog(u) {
+  const { rows: [inv] } = await q("select data from dose_inventory where id = 1");
+  const items = inv && Array.isArray(inv.data) ? inv.data : [];
+  let own = null;
+  if (nameKey(u.name) !== "owner") { const { rows } = await q("select k, price from dose_user_prices where user_id = $1", [u.id]); own = {}; rows.forEach((r) => { own[r.k] = Number(r.price); }); }
+  return items.map((x) => { const k = keyOf(x.n, x.s); const price = own ? own[k] : x.price; return { k, n: x.n, s: x.s, price, qty: typeof x.qty === "number" ? x.qty : 0 }; }).filter((x) => typeof x.price === "number" && x.price > 0);
+}
+app.get("/shop/:slug", limit("shop", 240, 60 * 60 * 1000), wrap(async (req, res) => {
+  const { rows: [u] } = await q("select id, name, cashtag, disabled from dose_users where slug = $1", [String(req.params.slug || "").slice(0, 40)]);
+  if (!u || u.disabled) return bad(res, "This shop link is not active.", 404);
+  const items = (await sellerCatalog(u)).filter((x) => x.qty > 0);
+  res.json({ shop: u.name, pay: !!u.cashtag, items });
+}));
+app.post("/shop/:slug/order", limit("order", 20, 60 * 60 * 1000), wrap(async (req, res) => {
+  const name = String(req.body?.name || "").replace(/\s+/g, " ").trim().slice(0, 60), contact = String(req.body?.contact || "").replace(/\s+/g, " ").trim().slice(0, 80);
+  const want = Array.isArray(req.body?.items) ? req.body.items.slice(0, 40) : [];
+  if (name.length < 2) return bad(res, "Enter your name.");
+  if (contact.length < 3) return bad(res, "Enter a phone number or email so the seller can reach you.");
+  const asked = new Map(); want.forEach((w) => { const k = String(w?.k || "").toLowerCase(); const n = Math.floor(Number(w?.qty)); if (k && n > 0 && n <= 99) asked.set(k, (asked.get(k) || 0) + n); });
+  if (!asked.size) return bad(res, "Pick at least one item.");
+  const { rows: [u] } = await q("select id, name, cashtag, disabled from dose_users where slug = $1", [String(req.params.slug || "").slice(0, 40)]);
+  if (!u || u.disabled) return bad(res, "This shop link is not active.", 404);
+  const c = await pool.connect();
+  try {
+    await c.query("begin");
+    const { rows: [inv] } = await c.query("select data from dose_inventory where id = 1 for update");
+    const items = inv && Array.isArray(inv.data) ? inv.data : [];
+    let own = null;
+    if (nameKey(u.name) !== "owner") { const { rows } = await c.query("select k, price from dose_user_prices where user_id = $1", [u.id]); own = {}; rows.forEach((r) => { own[r.k] = Number(r.price); }); }
+    const lines = []; let total = 0;
+    for (const [k, n] of asked) {
+      const it = items.find((x) => keyOf(x.n, x.s) === k);
+      const price = it ? (own ? own[k] : it.price) : undefined;
+      if (!it || !(price > 0)) { await c.query("rollback"); return bad(res, "One of those items is no longer available."); }
+      const have = typeof it.qty === "number" ? it.qty : 0;
+      if (have < n) { await c.query("rollback"); return bad(res, (have > 0 ? "Only " + have + " left of " : "Sold out: ") + it.n + " " + it.s + ".", 409); }
+      lines.push({ k, id: it.id, n: it.n, s: it.s, qty: n, price }); total += n * price; it.qty = have - n;
+    }
+    total = Math.round(total * 100) / 100;
+    await c.query("update dose_inventory set data = $1::jsonb, updated = now() where id = 1", [JSON.stringify(items)]);
+    const { rows: [o] } = await c.query("insert into dose_orders(seller_id, customer_name, customer_contact, lines, total) values ($1,$2,$3,$4::jsonb,$5) returning id", [u.id, name, contact, JSON.stringify(lines), total]);
+    await c.query("commit");
+    res.json({ ok: true, id: o.id, total, lines, shop: u.name, pay: u.cashtag ? "https://cash.app/$" + u.cashtag + "/" + total.toFixed(2) : null });
+  } catch (e) { await c.query("rollback").catch(() => {}); throw e; } finally { c.release(); }
+}));
+app.get("/me/orders", auth, wrap(async (req, res) => {
+  const isOwner = nameKey(req.user.name) === "owner";
+  const { rows } = await q(`select o.id, o.customer_name, o.customer_contact, o.lines, o.total, o.status, o.created, u.name seller from dose_orders o join dose_users u on u.id = o.seller_id
+    where ($2 or o.seller_id = $1) order by o.created desc limit 100`, [req.user.id, isOwner]);
+  res.json({ orders: rows.map((r) => ({ id: r.id, name: r.customer_name, contact: r.customer_contact, lines: r.lines, total: Number(r.total), status: r.status, created: r.created, seller: r.seller })) });
+}));
+app.post("/me/orders/:id", auth, wrap(async (req, res) => {
+  const id = parseInt(req.params.id, 10), st = String(req.body?.status || "");
+  if (!id || id > 2147483647 || !["new", "paid", "cancelled"].includes(st)) return bad(res, "Bad request.");
+  const isOwner = nameKey(req.user.name) === "owner";
+  const c = await pool.connect();
+  try {
+    await c.query("begin");
+    const { rows: [o] } = await c.query("select id, seller_id, lines, status from dose_orders where id = $1 for update", [id]);
+    if (!o || (!isOwner && o.seller_id !== req.user.id)) { await c.query("rollback"); return bad(res, "No such order.", 404); }
+    if (o.status !== "cancelled" && st === "cancelled") {   /* put the stock back */
+      const { rows: [inv] } = await c.query("select data from dose_inventory where id = 1 for update");
+      const items = inv && Array.isArray(inv.data) ? inv.data : [];
+      (o.lines || []).forEach((l) => { const it = items.find((x) => keyOf(x.n, x.s) === l.k); if (it) it.qty = (typeof it.qty === "number" ? it.qty : 0) + l.qty; });
+      await c.query("update dose_inventory set data = $1::jsonb, updated = now() where id = 1", [JSON.stringify(items)]);
+    } else if (o.status === "cancelled" && st !== "cancelled") { await c.query("rollback"); return bad(res, "A cancelled order cannot be reopened. Ask the customer to order again."); }
+    await c.query("update dose_orders set status = $2 where id = $1", [id, st]);
+    await c.query("commit");
+    res.json({ ok: true });
+  } catch (e) { await c.query("rollback").catch(() => {}); throw e; } finally { c.release(); }
+}));
+
 app.post("/logout", auth, wrap(async (req, res) => {
   await q("delete from dose_tokens where token_hash = $1", [req.tokenHash]);
   res.json({ ok: true });

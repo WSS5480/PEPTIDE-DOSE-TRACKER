@@ -2058,11 +2058,21 @@ const ITEMS_KEY="pdg:items", CART_KEY="pdg:cart";
 const money=n=>{ if(n==null||!isFinite(n)) return "$0"; const r=Math.round(n*100)/100; return "$"+(Math.abs(r-Math.round(r))<0.005?String(Math.round(r)):r.toFixed(2)); };
 let prQ="", prDel=null;
 function invItems(){ const a=load(ITEMS_KEY,null); return Array.isArray(a)?a.filter(x=>x&&typeof x.id==="string"&&typeof x.n==="string"):[]; }
-function invSave(a){ save(ITEMS_KEY,a); ownerPublish(); }
+function invSave(a){ save(ITEMS_KEY,a); ownerPublish(); sellerPublish(); }
 /* Owner only: publish your PRICES (never cost) so users you check can see them */
 const isOwner=()=>!!(typeof SY!=="undefined"&&SY&&String(SY.name||"").trim().toLowerCase()==="owner");
 let pubT=null;
-function ownerPublish(){ if(!isOwner()) return; clearTimeout(pubT); pubT=setTimeout(()=>{ const items=invItems().filter(x=>!x.o&&typeof x.price==="number").map(x=>({n:x.n,s:x.s,p:x.price})); if(!items.length) return;   /* never publish an empty list: it would wipe the prices your users see */ const mine=invItems().filter(x=>!x.o); syCall("/owner/inventory",{method:"PUT",body:JSON.stringify({items:mine})}).catch(()=>{}); syCall("/owner/prices",{method:"PUT",body:JSON.stringify({items:items})}).catch(()=>{}); },1200); }
+function ownerPublish(){ if(!isOwner()) return; clearTimeout(pubT); pubT=setTimeout(()=>{ const mine=invItems().filter(x=>!x.o), items=mine.filter(x=>typeof x.price==="number").map(x=>({n:x.n,s:x.s,p:x.price})); if(!items.length) return;   /* never publish an empty list: it would wipe the prices your users see */
+  const base=load("pdg:invBase",{}), edits={}; mine.forEach(x=>{ if(typeof x.qty==="number"&&base[x.id]!==x.qty) edits[x.id]=x.qty; });   /* stock on the server is shared with customer orders, so only YOUR changes are sent */
+  syCall("/owner/inventory",{method:"PUT",body:JSON.stringify({items:mine,qtyEdits:edits})}).then(r=>{ if(r.ok) applyServerQty(r.j.items); }).catch(()=>{}); syCall("/owner/prices",{method:"PUT",body:JSON.stringify({items:items})}).catch(()=>{}); },1200); }
+/* take the shared stock numbers from the server (customer orders lower them); a number you just typed and not yet sent is kept */
+function applyServerQty(srv){ if(!Array.isArray(srv)) return; const base=load("pdg:invBase",{}), a=invItems(); let ch=false;
+  srv.forEach(w=>{ if(typeof w.qty!=="number") return; const x=a.find(y=>!y.o&&y.id===w.id); if(x&&(x.qty===base[w.id]||x.qty===w.qty||typeof x.qty!=="number")){ if(x.qty!==w.qty){ x.qty=w.qty; ch=true; } } base[w.id]=w.qty; });
+  save("pdg:invBase",base); if(ch){ save(ITEMS_KEY,a); if(app.dataset.view==="prices"&&!uiFlags.prCart&&!uiFlags.prUsers&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#prices"))) renderPrices(); } }
+async function ownerQtySync(){ if(!isOwner()) return; try{ const r=await syCall("/owner/inventory"); if(r.ok) applyServerQty(r.j.items||[]); }catch(e){} }
+/* any other login: your own price per item goes to the server so YOUR customer link shows your prices */
+let selT=null;
+function sellerPublish(){ if(isOwner()||typeof SY==="undefined"||!SY) return; clearTimeout(selT); selT=setTimeout(()=>{ const m={}; invItems().forEach(x=>{ if(typeof x.price==="number"&&x.price>0) m[(String(x.n).trim()+"|"+String(x.s).trim()).toLowerCase()]=x.price; }); if(!Object.keys(m).length) return; syCall("/me/prices",{method:"PUT",body:JSON.stringify({prices:m})}).catch(()=>{}); },1500); }
 /* Owner: your full list (cost, price, qty) is backed up privately on the server, so it follows you to every device */
 async function ownerPull(force){
   if(!isOwner()) return 0;
@@ -2073,7 +2083,7 @@ async function ownerPull(force){
     return n; }catch(e){ return 0; }
 }
 async function prAccess(){
-  if(typeof SY==="undefined"||!SY) return; if(isOwner()) await ownerPull(false);
+  if(typeof SY==="undefined"||!SY) return; if(isOwner()){ await ownerPull(false); await ownerQtySync(); }
   try{ const r=await syCall("/prices"); if(r.ok){ save("pdg:ownerPrices",{allowed:!!r.j.allowed,owner:!!r.j.owner,items:r.j.items||[]}); mergeOwner(); if(app.dataset.view==="prices"&&!uiFlags.prCart&&!uiFlags.prUsers) renderPrices(); } }catch(e){}
 }
 async function prLoadUsers(){
@@ -2109,7 +2119,7 @@ function mergeOwner(){
   if(!O.allowed||O.owner){ if(a.some(x=>x.o)){ a=a.filter(x=>!x.o); invSave(a); } return; }
   const want={}; (O.items||[]).forEach(x=>{ want[x.n+"|"+x.s]=x; });
   a=a.filter(x=>!x.o||want[x.n+"|"+x.s]);
-  Object.keys(want).forEach(k=>{ const w=want[k], f=a.find(x=>x.o&&x.n===w.n&&x.s===w.s); if(f) f.cost=w.p; else a.push({id:newId("o"),n:w.n,s:w.s,cost:w.p,o:1}); });
+  Object.keys(want).forEach(k=>{ const w=want[k], f=a.find(x=>x.o&&x.n===w.n&&x.s===w.s); if(f){ f.cost=w.p; if(typeof w.q==="number") f.qty=w.q; } else a.push({id:newId("o"),n:w.n,s:w.s,cost:w.p,o:1,qty:typeof w.q==="number"?w.q:0}); });
   invSave(a);
 }
 /* on every load: copied Owner-list items only belong to a signed-in, checked guest; anyone else never keeps them */
@@ -2150,6 +2160,29 @@ function invCart(){ const c=load(CART_KEY,{}); return (c&&typeof c==="object"&&!
 })();
 /* one-time clean slate (Steve: remove all previous pricing; he types his own) */
 (function(){ try{ if(!localStorage.getItem("pdg:fresh1")){ localStorage.setItem("pdg:fresh1","1"); invSnap(); save(ITEMS_KEY,[]); save(CART_KEY,{}); } }catch(e){} })();
+/* ---------- customer link + orders ---------- */
+function shopUrl(){ const S=uiFlags.shop; return S&&S.slug?location.origin+"/shop.html?s="+S.slug:""; }
+function shopHtml(){
+  if(typeof SY==="undefined"||!SY) return "";
+  const S=uiFlags.shop||{}, O=uiFlags.orders||[], nn=O.filter(o=>o.status==="new").length, url=shopUrl();
+  const st={new:"New",paid:"Paid",cancelled:"Cancelled"};
+  return '<details class="fold" id="shop-fold"'+(uiFlags.shopOpen?' open':'')+'><summary><span>Customer link &amp; orders</span><span class="hint">'+(nn?nn+' new':'send a link, get orders')+'</span></summary><div class="foldbody">'
+   +'<p class="hint">Send this link to a customer. They see what is in stock at YOUR prices, order, then tap Pay to open your Cash App with the total filled in.</p>'
+   +(url?'<label>Your customer link<input id="shop-url" readonly value="'+esc(url)+'"></label><div class="btnrow"><button type="button" class="btn small primary" id="shop-copy">Copy link</button>'+(navigator.share?'<button type="button" class="btn small" id="shop-share">Share</button>':'')+'</div>':'<p class="hint">Loading your link&hellip;</p>')
+   +'<div class="syform"><label>My Cash App tag<input id="shop-tag" autocomplete="off" autocapitalize="off" placeholder="$yourname" value="'+(S.cashtag?'$'+esc(S.cashtag):'')+'"></label></div><div class="btnrow"><button type="button" class="btn small primary" id="shop-tag-save">Save Cash App tag</button></div>'
+   +(S.cashtag?'':'<p class="flag">No Cash App tag yet. Customers can still order, but the Pay button will not show.</p>')
+   +(uiFlags.shopMsg?'<p class="hint">'+esc(uiFlags.shopMsg)+'</p>':'')
+   +'<h3 style="margin:12px 0 4px">Orders</h3><div class="btnrow"><button type="button" class="btn small" id="shop-refresh">Refresh orders</button></div>'
+   +(O.length?O.map(o=>'<div class="prow"><div class="pl"><b>'+esc(o.name)+' · '+money(o.total)+'</b><span class="pp">'+esc(o.contact)+(isOwner()&&o.seller?' · via '+esc(o.seller):'')+'</span><span class="pp">'+o.lines.map(l=>l.qty+' x '+esc(l.n)+' '+esc(l.s)).join(', ')+'</span><span class="pp">'+st[o.status]+' · '+new Date(o.created).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})+'</span></div>'
+     +(o.status==="cancelled"?'':'<div class="btnrow">'+(o.status==="new"?'<button type="button" class="btn small primary" data-ostat="paid" data-oid="'+o.id+'">Mark paid</button>':'')+'<button type="button" class="btn small" data-ostat="cancelled" data-oid="'+o.id+'">'+(uiFlags.shopCan===o.id?'Tap again: cancel, restock':'Cancel')+'</button></div>')+'</div>').join(""):'<p class="empty">No orders yet.</p>')
+   +'</div></details>';
+}
+async function shopLoad(){
+  if(typeof SY==="undefined"||!SY) return;
+  try{ const a=await syCall("/me/shop"); if(a.ok) uiFlags.shop=a.j; const b=await syCall("/me/orders"); if(b.ok) uiFlags.orders=b.j.orders; }catch(e){}
+  if(app.dataset.view==="prices"&&!uiFlags.prCart&&!uiFlags.prUsers&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#prices"))) renderPrices();
+}
+setInterval(()=>{ if(document.visibilityState==="visible"&&app.dataset.view==="prices"&&!uiFlags.prCart&&!uiFlags.prUsers&&typeof SY!=="undefined"&&SY){ if(isOwner()) ownerQtySync(); else prAccess(); shopLoad(); } },30000);
 function renderPrices(){
   const el=$("#prices"); if(!el) return;
   const items=invItems(), cart=invCart(), q=prQ.trim().toLowerCase();
@@ -2159,9 +2192,10 @@ function renderPrices(){
   const groups=[],gi={}; items.forEach(x=>{ const k=x.n.toLowerCase(); let g=gi[k]; if(!g){ g={n:x.n,rows:[]}; gi[k]=g; groups.push(g); } g.rows.push(x); });
   groups.sort((a,b)=>a.n.localeCompare(b.n,undefined,{sensitivity:"base",numeric:true})); groups.forEach(g=>g.rows.sort((a,b)=>String(a.s).localeCompare(String(b.s),undefined,{numeric:true})));
   const sel=groups.filter(g=>!q||g.n.toLowerCase().indexOf(q)>=0);
+  if(el.querySelector("#shop-fold")) uiFlags.shopOpen=el.querySelector("#shop-fold").open;
   const keep=[...el.querySelectorAll("details.pgroup[open]")].map(d=>d.dataset.g), addOpen=el.querySelector("#inv-add")?el.querySelector("#inv-add").open:!items.length, pos=window.scrollY;
   const names=[...new Set(DATA.map(p=>p.name.split(" (")[0]))].sort((a,b)=>a.localeCompare(b));
-  let h='<div class="vhead"><div><h2>My inventory</h2><p class="hint">You type in what you carry, what it costs you and what you charge. It stays on this device. There is no outside price list in this app.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-back">&larr; Peptides</button>'+(isOwner()?'<button type="button" class="btn small primary" id="pr-users">Users &amp; price access</button><button type="button" class="btn small" id="pr-restore">Restore prices from server</button>':'')+'</div></div>'+ownerPricesHtml()
+  let h='<div class="vhead"><div><h2>My inventory</h2><p class="hint">You type in what you carry, what it costs you and what you charge. It stays on this device. There is no outside price list in this app.</p></div><div class="btnrow"><button type="button" class="btn small" id="pr-back">&larr; Peptides</button>'+(isOwner()?'<button type="button" class="btn small primary" id="pr-users">Users &amp; price access</button><button type="button" class="btn small" id="pr-restore">Restore prices from server</button>':'')+'</div></div>'+ownerPricesHtml()+shopHtml()
    +'<details class="fold" id="inv-add"'+(addOpen?' open':'')+'><summary><span>Add an item</span><span class="hint">name, size, cost, price</span></summary><div class="foldbody"><div class="syform">'
    +'<label>Peptide<input id="ia-n" list="ia-names" autocomplete="off" placeholder="Start typing a name"><datalist id="ia-names">'+names.map(n=>'<option value="'+esc(n)+'">').join("")+'</datalist></label>'
    +'<label>Size<input id="ia-s" placeholder="10 mg"></label>'
@@ -2176,7 +2210,7 @@ function renderPrices(){
       return '<div class="prow"><div class="pl"><b>'+esc(x.s||"each")+'</b><span class="pp">'+(mg!=null?'Margin '+money(mg)+' ('+Math.round(mg/x.price*100)+'%)':'Enter cost and price for margin')+'</span></div>'
        +'<div class="invrow" style="border:0;padding:0;flex:0 0 auto"><label>My cost'+(x.o?' <span class="hint">(Owner price)</span>':'')+'<input class="pedit" inputmode="decimal" '+(x.o?'readonly ':'')+'data-id="'+x.id+'" data-f="cost" value="'+(x.cost!=null?x.cost.toFixed(2):'')+'" placeholder="0.00" aria-label="My cost"></label>'
        +'<label>My price<input class="pedit" inputmode="decimal" data-id="'+x.id+'" data-f="price" value="'+(x.price!=null?x.price.toFixed(2):'')+'" placeholder="0.00" aria-label="My price"></label>'
-       +'<label>Qty<input class="pedit" inputmode="numeric" data-id="'+x.id+'" data-f="qty" value="'+(x.qty!=null?x.qty:'')+'" placeholder="0" aria-label="Quantity on hand"></label></div>'
+       +(x.o?'<label>In stock <span class="hint">(shared)</span><input readonly value="'+(x.qty!=null?x.qty:0)+'" aria-label="Shared stock"></label></div>':'<label>Qty<input class="pedit" inputmode="numeric" data-id="'+x.id+'" data-f="qty" value="'+(x.qty!=null?x.qty:'')+'" placeholder="0" aria-label="Quantity on hand"></label></div>')
        +'<div class="qty"><button type="button" data-q="-1" data-id="'+x.id+'" aria-label="Less in order">&minus;</button><span>'+c+'</span><button type="button" data-q="1" data-id="'+x.id+'" aria-label="More in order">+</button></div>'
        +(isGuest()?'':'<button type="button" class="btn small" data-del="'+x.id+'">'+(prDel===x.id?'Tap again to delete':'Delete')+'</button>')+'</div>'; }).join("")+'</details>').join("");
   if(items.length&&!sel.length) h+='<p class="empty">No match.</p>';
@@ -2203,10 +2237,17 @@ function cartHtml(items,cart){
 }
 
 /* ---------- events (inventory) ---------- */
-$("#prices-btn").addEventListener("click",()=>{ uiFlags.prCart=false; uiFlags.prUsers=false; prAccess(); ownerPublish(); renderPrices(); app.dataset.view="prices"; window.scrollTo({top:0}); });
+$("#prices-btn").addEventListener("click",()=>{ uiFlags.prCart=false; uiFlags.prUsers=false; prAccess(); shopLoad(); ownerPublish(); renderPrices(); app.dataset.view="prices"; window.scrollTo({top:0}); });
 $("#prices").addEventListener("click",e=>{
   const t=e.target; uiFlags.prFocus=false;
   if(t.closest("#pr-back")){ app.dataset.view="list"; return; }
+  if(t.closest("#shop-copy")){ const u=shopUrl(); const ok=()=>{ uiFlags.shopMsg="Link copied."; renderPrices(); }; try{ navigator.clipboard.writeText(u).then(ok,()=>{ const i=$("#shop-url"); if(i){ i.select(); } }); }catch(err){ const i=$("#shop-url"); if(i) i.select(); } return; }
+  if(t.closest("#shop-share")){ try{ navigator.share({title:"Place an order",url:shopUrl()}); }catch(err){} return; }
+  if(t.closest("#shop-refresh")){ uiFlags.shopMsg=""; shopLoad(); return; }
+  if(t.closest("#shop-tag-save")){ const v=($("#shop-tag").value||"").trim(); syCall("/me/shop",{method:"PUT",body:JSON.stringify({cashtag:v})}).then(r=>{ if(r.ok){ uiFlags.shop=Object.assign(uiFlags.shop||{},{cashtag:r.j.cashtag}); uiFlags.shopMsg=r.j.cashtag?"Saved. Customers will pay $"+r.j.cashtag+".":"Cash App tag removed."; } else uiFlags.shopMsg=(r.j&&r.j.error)||"Could not save."; renderPrices(); }).catch(()=>{ uiFlags.shopMsg="Could not reach the server."; renderPrices(); }); return; }
+  const os=t.closest("[data-ostat]"); if(os){ const id=+os.dataset.oid, st=os.dataset.ostat;
+    if(st==="cancelled"&&uiFlags.shopCan!==id){ uiFlags.shopCan=id; renderPrices(); return; }
+    uiFlags.shopCan=null; syCall("/me/orders/"+id,{method:"POST",body:JSON.stringify({status:st})}).then(r=>{ uiFlags.shopMsg=r.ok?(st==="cancelled"?"Order cancelled and stock put back.":"Marked paid."):((r.j&&r.j.error)||"Could not update."); return shopLoad().then(()=>{ if(isOwner()) return ownerQtySync(); }); }).catch(()=>{ uiFlags.shopMsg="Could not reach the server."; renderPrices(); }); return; }
   const rc=t.closest("[data-rec]"); if(rc&&isOwner()){ const src=load(rc.dataset.rec,[]), a=invItems(); let n=0; (Array.isArray(src)?src:[]).forEach(x=>{ if(!x||x.o) return; if(!a.some(y=>!y.o&&y.n===x.n&&y.s===x.s)){ a.push(Object.assign({},x,{id:newId("i")})); n++; } }); invSave(a); uiFlags.prErr="Brought back "+n+" item"+(n===1?"":"s")+"."; renderPrices(); return; }
   if(t.closest("#pr-wipe")){ if(uiFlags.prWipe){ uiFlags.prWipe=false; invSnap(); invSave([]); save(CART_KEY,{}); } else uiFlags.prWipe=true; renderPrices(); return; }
   if(t.closest("#pr-restore")){ ownerPull(true).then(m=>{ if(m){ uiFlags.prErr="Restored "+m+" item"+(m===1?"":"s")+" with cost, price and qty from your private backup."; renderPrices(); return; } return syCall("/prices").then(r=>{ if(!r.ok||!r.j.owner){ uiFlags.prErr="Sign in as Owner first."; renderPrices(); return; }
@@ -2502,7 +2543,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-13d", BUILT="Nov 13, 2026 1:30 PM CT";
+  const VER="2026-11-13e", BUILT="Nov 13, 2026 4:30 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
