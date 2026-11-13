@@ -118,3 +118,6 @@ Update this file in the same commit as every change.
 
 ## 2026-11-13b — merge note
 - Rebased the "Save vial says what is missing" change on top of the parallel session's subscription commit (VER 2026-11-13b, sw pdg-v47). Two sessions are editing this repo: pull before pushing.
+
+## 2026-11-13c — vials save to the account (database), not just the phone
+- Steve: "save to db vs their phones". A NEW vial (Add vial form or "Save this vial" on a peptide page) now requires being signed in; otherwise it opens Create login with an explanation. Editing/logging existing vials unchanged. Banner on the vials page when vials exist but nobody is signed in. Sync still caches locally and queues sync 1.5 s after each change. sw pdg-v48.

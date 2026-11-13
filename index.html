@@ -1388,10 +1388,17 @@ function manageHtml(){
   h+=rows.map(v=>{ const p=peptideOf(v), t=trackerState(p,v); return '<label class="prow" style="cursor:pointer"><span class="pl"><b>'+esc(p.name)+'</b><span class="pp">'+(whoOf(v)?esc(whoOf(v))+' · ':'Mine · ')+(t.week>0?'week '+t.week:'starts '+fmtDate(v.start))+' · mixed '+fmtDate(v.mixed)+(v.log.length?' · '+v.log.length+' logged':'')+(t.expired?' · expired':'')+'</span></span><input type="checkbox" data-sel="'+esc(v.id)+'"'+(sel[v.id]?' checked':'')+' style="width:22px;height:22px"></label>'; }).join("");
   return h+'</section>';
 }
+/* Vials live in the account database. A new vial needs a login so it is never stuck on one phone. */
+function needLogin(){
+  if(typeof SY!=="undefined"&&SY) return false;
+  uiFlags.syErr="Create your login first. Vials save to your account, not just this phone, so you never lose them."; uiFlags.syForm="new"; uiFlags.vopen=uiFlags.vopen||{}; uiFlags.vopen.sync=true; uiFlags.add=false; uiFlags.form=false;
+  app.dataset.view="vials"; renderVials(); window.scrollTo({top:0}); return true;
+}
 function renderVials(){
   let html='<div class="vhead"><div><h2><svg width="18" height="27" viewBox="0 0 20 30" aria-hidden="true"><rect x="6" y="1" width="8" height="4" rx="1" fill="#0b6a86"/><rect x="7" y="5" width="6" height="3" fill="#cfe3ec"/><rect x="3" y="8" width="14" height="20" rx="3.5" fill="#eaf4f8" stroke="#0b6a86" stroke-width="1.6"/><rect x="4.6" y="16" width="10.8" height="10.4" rx="2.4" fill="#0b6a86" opacity=".55"/></svg>My vials</h2><p class="hint">Saved on this device. Log doses and the app tracks weeks, what is left, and what is due. Red means two active vials share an ingredient or drug class. No red does not mean safe.</p></div>'
     +'<div class="btnrow"><button type="button" class="btn" id="vials-back">&larr; Peptides</button><button type="button" class="btn" id="mg-open">'+(uiFlags.manage?'Done':'Delete vials')+'</button><button type="button" class="btn primary" id="add-vial">+ Add vial</button></div></div>';
   html+=syncHtml();
+  if(!SY&&vials.length&&!uiFlags.syForm) html+='<p class="flag bad">These vials are only on this phone. Create a login (Sync &amp; login above) to save them to your account.</p>';
   if(uiFlags.add) html+=addVialFormHtml();
   if(!vials.length&&!uiFlags.add) html+='<p class="empty">No vials yet. Tap + Add vial, or open any peptide and tap "Save this vial &amp; count weeks".</p>';
   else if(uiFlags.manage) html+=manageHtml();
@@ -1616,6 +1623,7 @@ vialsEl.addEventListener("click",e=>{
     if(!(vial>0)){ avErr("Enter the vial size (a number above 0)."); return; }
     if(!(water>0)){ avErr("Enter how much water you added (a number above 0)."); return; }
     if(!(target>0)){ avErr("Enter the target dose (a number above 0)."); return; }
+    if(needLogin()) return;
     const v={id:newId("v"),pid,vial,water,mixed:$("#av-mixed",vialsEl).value||todayISO(),start:$("#av-start",vialsEl).value||todayISO(),target,log:[]};
     const ws=($("#av-whosel",vialsEl)||{}).value; const who=(ws==="__new"?(($("#av-who",vialsEl)||{}).value||""):ws||"").trim().slice(0,30); if(ws==="__new"&&!who){ avErr("Type the person's name."); return; } if(who) v.who=who;
     const ev=parseInt(($("#av-every",vialsEl)||{}).value,10); if(ev>0) v.every=ev;
@@ -1659,7 +1667,7 @@ detailEl.addEventListener("click",e=>{
     const target=parseFloat(($("#vf-target",detailEl)||{}).value); if(!(target>0)) return;
     const ev=parseInt(($("#vf-every",detailEl)||{}).value,10)||0;
     if(v&&uiFlags.form==="edit"){ Object.assign(v,{vial:c.vial,water:c.water,mixed,start,target}); if(ev>0) v.every=ev; else delete v.every; }
-    else { v={id:newId("v"),pid:p.id,vial:c.vial,water:c.water,mixed,start,target,log:[]}; if(ev>0) v.every=ev; vials.push(v); }
+    else { if(needLogin()) return; v={id:newId("v"),pid:p.id,vial:c.vial,water:c.water,mixed,start,target,log:[]}; if(ev>0) v.every=ev; vials.push(v); }
     uiFlags.form=false; saveVials(); renderAll(); return;
   }
   vialAction(e);
@@ -2446,7 +2454,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-13b", BUILT="Nov 13, 2026 10:30 AM CT";
+  const VER="2026-11-13c", BUILT="Nov 13, 2026 11:00 AM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
