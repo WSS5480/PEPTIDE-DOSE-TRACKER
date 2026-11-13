@@ -70,6 +70,7 @@ create table if not exists dose_users (
 alter table dose_users add column if not exists whatsapp text not null default '';
 alter table dose_users add column if not exists disabled boolean not null default false;
 alter table dose_users add column if not exists can_price boolean not null default false;
+create table if not exists dose_inventory (id int primary key, data jsonb not null default '[]'::jsonb, updated timestamptz not null default now());
 create table if not exists dose_prices (id int primary key, data jsonb not null default '[]'::jsonb, updated timestamptz not null default now());
 create table if not exists dose_tokens (
   token_hash text primary key,
@@ -198,6 +199,20 @@ app.delete("/owner/users/:id", auth, owner, wrap(async (req, res) => {
   if (!r.rowCount) return bad(res, "No such login.", 404);
   stCache.delete(id);
   res.json({ ok: true });
+}));
+/* Owner's own full list (cost, price, qty) is backed up here, readable ONLY by the Owner login. Never sent to anyone else. */
+app.get("/owner/inventory", auth, owner, wrap(async (req, res) => {
+  const { rows: [r] } = await q("select data, updated from dose_inventory where id = 1");
+  res.json({ items: r ? r.data : [], updated: r ? r.updated : null });
+}));
+app.put("/owner/inventory", auth, owner, wrap(async (req, res) => {
+  const a = Array.isArray(req.body?.items) ? req.body.items : null;
+  if (!a || a.length > 3000) return bad(res, "Bad data.");
+  const num = (v) => (typeof v === "number" && isFinite(v) && v >= 0 ? v : undefined);
+  const items = a.map((x) => ({ id: String(x?.id || "").slice(0, 40), n: String(x?.n || "").slice(0, 60), s: String(x?.s || "").slice(0, 20), cost: num(x?.cost), price: num(x?.price), qty: num(x?.qty) })).filter((x) => x.id && x.n);
+  if (!items.length && req.body?.clear !== true) return bad(res, "Refusing to save an empty list.");
+  await q("insert into dose_inventory(id, data, updated) values (1, $1::jsonb, now()) on conflict (id) do update set data = excluded.data, updated = now()", [JSON.stringify(items)]);
+  res.json({ ok: true, count: items.length });
 }));
 app.put("/owner/prices", auth, owner, wrap(async (req, res) => {
   const a = Array.isArray(req.body?.items) ? req.body.items : null;

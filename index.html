@@ -2003,9 +2003,18 @@ function invSave(a){ save(ITEMS_KEY,a); ownerPublish(); }
 /* Owner only: publish your PRICES (never cost) so users you check can see them */
 const isOwner=()=>!!(typeof SY!=="undefined"&&SY&&String(SY.name||"").trim().toLowerCase()==="owner");
 let pubT=null;
-function ownerPublish(){ if(!isOwner()) return; clearTimeout(pubT); pubT=setTimeout(()=>{ const items=invItems().filter(x=>!x.o&&typeof x.price==="number").map(x=>({n:x.n,s:x.s,p:x.price})); if(!items.length) return;   /* never publish an empty list: it would wipe the prices your users see */ syCall("/owner/prices",{method:"PUT",body:JSON.stringify({items:items})}).catch(()=>{}); },1200); }
+function ownerPublish(){ if(!isOwner()) return; clearTimeout(pubT); pubT=setTimeout(()=>{ const items=invItems().filter(x=>!x.o&&typeof x.price==="number").map(x=>({n:x.n,s:x.s,p:x.price})); if(!items.length) return;   /* never publish an empty list: it would wipe the prices your users see */ const mine=invItems().filter(x=>!x.o); syCall("/owner/inventory",{method:"PUT",body:JSON.stringify({items:mine})}).catch(()=>{}); syCall("/owner/prices",{method:"PUT",body:JSON.stringify({items:items})}).catch(()=>{}); },1200); }
+/* Owner: your full list (cost, price, qty) is backed up privately on the server, so it follows you to every device */
+async function ownerPull(force){
+  if(!isOwner()) return 0;
+  try{ const r=await syCall("/owner/inventory"); if(!r.ok) return 0; const srv=r.j.items||[]; if(!srv.length) return 0;
+    const a=invItems().filter(x=>!x.o); if(a.length&&!force) return 0;
+    let n=0; srv.forEach(w=>{ if(!a.some(x=>x.n===w.n&&x.s===w.s)){ const it={id:w.id||newId("i"),n:w.n,s:w.s}; ["cost","price","qty"].forEach(f=>{ if(typeof w[f]==="number") it[f]=w[f]; }); a.push(it); n++; } });
+    if(n){ save(ITEMS_KEY,a); if(app.dataset.view==="prices"&&!uiFlags.prCart&&!uiFlags.prUsers) renderPrices(); }
+    return n; }catch(e){ return 0; }
+}
 async function prAccess(){
-  if(typeof SY==="undefined"||!SY) return;
+  if(typeof SY==="undefined"||!SY) return; if(isOwner()) await ownerPull(false);
   try{ const r=await syCall("/prices"); if(r.ok){ save("pdg:ownerPrices",{allowed:!!r.j.allowed,owner:!!r.j.owner,items:r.j.items||[]}); mergeOwner(); if(app.dataset.view==="prices"&&!uiFlags.prCart&&!uiFlags.prUsers) renderPrices(); } }catch(e){}
 }
 async function prLoadUsers(){
@@ -2141,9 +2150,9 @@ $("#prices").addEventListener("click",e=>{
   if(t.closest("#pr-back")){ app.dataset.view="list"; return; }
   const rc=t.closest("[data-rec]"); if(rc&&isOwner()){ const src=load(rc.dataset.rec,[]), a=invItems(); let n=0; (Array.isArray(src)?src:[]).forEach(x=>{ if(!x||x.o) return; if(!a.some(y=>!y.o&&y.n===x.n&&y.s===x.s)){ a.push(Object.assign({},x,{id:newId("i")})); n++; } }); invSave(a); uiFlags.prErr="Brought back "+n+" item"+(n===1?"":"s")+"."; renderPrices(); return; }
   if(t.closest("#pr-wipe")){ if(uiFlags.prWipe){ uiFlags.prWipe=false; invSnap(); invSave([]); save(CART_KEY,{}); } else uiFlags.prWipe=true; renderPrices(); return; }
-  if(t.closest("#pr-restore")){ syCall("/prices").then(r=>{ if(!r.ok||!r.j.owner){ uiFlags.prErr="Sign in as Owner first."; renderPrices(); return; }
+  if(t.closest("#pr-restore")){ ownerPull(true).then(m=>{ if(m){ uiFlags.prErr="Restored "+m+" item"+(m===1?"":"s")+" with cost, price and qty from your private backup."; renderPrices(); return; } return syCall("/prices").then(r=>{ if(!r.ok||!r.j.owner){ uiFlags.prErr="Sign in as Owner first."; renderPrices(); return; }
       const a=invItems().filter(x=>!x.o); let n=0; (r.j.items||[]).forEach(w=>{ if(!a.some(x=>x.n===w.n&&x.s===w.s)){ a.push({id:newId("i"),n:w.n,s:w.s,price:w.p}); n++; } });
-      invSave(a); uiFlags.prErr=n?"Restored "+n+" item"+(n===1?"":"s")+" with your prices. Cost and qty were never saved on the server, so type those in again.":"Nothing new to restore."; uiFlags.prRestored=true; renderPrices(); }).catch(()=>{ uiFlags.prErr="Could not reach the server."; renderPrices(); }); return; }
+      invSave(a); uiFlags.prErr=n?"Restored "+n+" item"+(n===1?"":"s")+" with your prices. Cost and qty were never saved on the server, so type those in again.":"Nothing new to restore."; uiFlags.prRestored=true; renderPrices(); }); }).catch(()=>{ uiFlags.prErr="Could not reach the server."; renderPrices(); }); return; }
   if(t.closest("#pr-users")){ uiFlags.prUsers=true; uiFlags.prUsersData=null; renderPrices(); prLoadUsers(); return; }
   const ud=t.closest("[data-udel]"); if(ud){ e.preventDefault(); const id=ud.dataset.udel;
     if(uiFlags.prUdel!==id){ uiFlags.prUdel=id; renderPrices(); return; }
@@ -2378,7 +2387,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12u", BUILT="Nov 12, 2026 10:15 PM CT";
+  const VER="2026-11-12v", BUILT="Nov 12, 2026 11:00 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);

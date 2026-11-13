@@ -101,3 +101,7 @@ Update this file in the same commit as every change.
 ## 2026-11-12u — reviewer #2 fixes
 - Saved lists / Bring back only for the signed-in Owner (they hold cost/qty). Owner sign-in drops cached guest copies. Server: PUT /owner/prices refuses an empty list unless {clear:true}; price must be a number; /owner/users guards non-array vials and huge ids. sw pdg-v44.
 - Known/accepted: first registrant of "Owner" would become owner (Steve's Owner already exists; can't be deleted by the endpoint). Owner PIN is 4 digits like everyone; 5 wrong tries lock 15 min.
+
+## 2026-11-12v — Owner list backed up on the server
+- Lists are per device, so Steve's phone had none. New owner-only endpoints GET/PUT /owner/inventory (table dose_inventory: full list incl. cost/qty; Owner token only; refuses empty save). Client: every change pushes the full list; Owner sign-in/opening Prices pulls it when the local list is empty; "Restore prices from server" now pulls the full list first. sw pdg-v45.
+- Privacy: cost/qty are stored server-side but only readable by the Owner login. Checked users still get prices only (dose_prices).
