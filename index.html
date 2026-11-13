@@ -1326,7 +1326,7 @@ function addVialFormHtml(){
     +'<div id="av-lockbox" hidden><label for="av-lock" id="av-lock-label">Locked dose</label><input class="num" id="av-lock" type="number" inputmode="decimal" step="any" min="0.001"><span class="hint" id="av-lock-hint"></span></div></div>'
     +'<div class="field"><label for="av-target" id="av-target-label">Target dose</label><input class="num" id="av-target" type="number" inputmode="decimal" step="any" min="0.001"><span class="hint" id="av-hint"></span></div>'
     +'<div id="av-calc" aria-live="polite"></div>'
-    +'<div class="btnrow"><button type="button" class="btn primary" id="av-save">Save vial</button><button type="button" class="btn" id="av-cancel">Cancel</button></div></div>';
+    +'<p class="flag bad" id="av-err" role="alert" hidden></p><div class="btnrow"><button type="button" class="btn primary" id="av-save">Save vial</button><button type="button" class="btn" id="av-cancel">Cancel</button></div></div>';
 }
 function fillAddDefaults(){
   const sel=$("#av-pid",vialsEl); if(!sel) return;
@@ -1610,11 +1610,14 @@ vialsEl.addEventListener("click",e=>{
   if(e.target.closest("#add-vial")){ uiFlags.add=true; uiFlags.logFor=null; renderVials(); return; }
   if(e.target.closest("#av-cancel")){ uiFlags.add=false; renderVials(); return; }
   if(e.target.closest("#av-save")){
-    const pid=($("#av-pid",vialsEl)||{}).value; const p=DATA.find(x=>x.id===pid); if(!p) return;
+    const avErr=m=>{ const el=$("#av-err",vialsEl); if(el){ el.textContent=m; el.hidden=false; el.scrollIntoView({block:"center"}); } };
+    const pid=($("#av-pid",vialsEl)||{}).value; const p=DATA.find(x=>x.id===pid); if(!p){ avErr("Pick a peptide first."); return; }
     const vial=parseFloat($("#av-vial",vialsEl).value), water=parseFloat($("#av-water",vialsEl).value), target=parseFloat($("#av-target",vialsEl).value);
-    if(!(vial>0&&water>0&&target>0)) return;
+    if(!(vial>0)){ avErr("Enter the vial size (a number above 0)."); return; }
+    if(!(water>0)){ avErr("Enter how much water you added (a number above 0)."); return; }
+    if(!(target>0)){ avErr("Enter the target dose (a number above 0)."); return; }
     const v={id:newId("v"),pid,vial,water,mixed:$("#av-mixed",vialsEl).value||todayISO(),start:$("#av-start",vialsEl).value||todayISO(),target,log:[]};
-    const ws=($("#av-whosel",vialsEl)||{}).value; const who=(ws==="__new"?(($("#av-who",vialsEl)||{}).value||""):ws||"").trim().slice(0,30); if(ws==="__new"&&!who) return; if(who) v.who=who;
+    const ws=($("#av-whosel",vialsEl)||{}).value; const who=(ws==="__new"?(($("#av-who",vialsEl)||{}).value||""):ws||"").trim().slice(0,30); if(ws==="__new"&&!who){ avErr("Type the person's name."); return; } if(who) v.who=who;
     const ev=parseInt(($("#av-every",vialsEl)||{}).value,10); if(ev>0) v.every=ev;
     if((($("#av-mode",vialsEl)||{}).value)==="lock"){ const lk=parseFloat($("#av-lock",vialsEl).value); if(lk>0) v.lock=lk; }
     vials.push(v); if(who){ uiFlags.add=false; saveVials(); renderAll(); return; } const c=getCalc(p); c.vial=vial; c.water=water; save("pdg:calc:"+pid,c);
@@ -2443,7 +2446,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-13a", BUILT="Nov 13, 2026 2:15 AM CT";
+  const VER="2026-11-13b", BUILT="Nov 13, 2026 10:30 AM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);

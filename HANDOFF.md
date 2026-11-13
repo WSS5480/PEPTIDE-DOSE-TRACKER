@@ -112,3 +112,6 @@ Update this file in the same commit as every change.
 ## 2026-11-12v — Owner list backed up on the server
 - Lists are per device, so Steve's phone had none. New owner-only endpoints GET/PUT /owner/inventory (table dose_inventory: full list incl. cost/qty; Owner token only; refuses empty save). Client: every change pushes the full list; Owner sign-in/opening Prices pulls it when the local list is empty; "Restore prices from server" now pulls the full list first. sw pdg-v45.
 - Privacy: cost/qty are stored server-side but only readable by the Owner login. Checked users still get prices only (dose_prices).
+
+## 2026-11-13a — Save vial gives a reason
+- Delia (user) "can't save a vial": sync server logs clean (no 4xx/5xx). The Save vial button silently did nothing when vial size, water or target dose was empty/0 or a new person's name was missing. Now shows a red message saying which. sw pdg-v46. Not confirmed this was her cause; ask her what she sees / which box was empty.
