@@ -18,12 +18,19 @@ Update this file in the same commit as every change.
 - Version stamp: `VER`/`BUILT` in index.html. Bump with every release.
 - Tests: Playwright with `service_workers="block"`.
 
+## Decisions
+- 2026-11-13: Steve chose one subscriber flow for every app, Oddable's: price set in My Apps (Setup tab), Cash App link + "I paid" + he confirms under Payments, phone push reminders at 5, 3, 1 and 0 days, lock on the day after the end date with no grace. Trial length (30 days) and price stay per app. Reason: he wants all apps to work the same for subscribers.
+- What the subscription gates did not change: only sync across devices is paid. The calculator itself stays open.
+
 ## Open items
+- Reminders need the app installed to the Home Screen on iPhone. Real push delivery could not be tested from the build sandbox (no network); the request reaches My Apps and is stored. Have Steve tap "Turn on renewal reminders" on his phone, then "Check and send now" in My Apps Setup.
+- WhatsApp reminder box still exists in My Apps for Dose Guide (manual). Fine to keep; push is the automatic one.
 - `dose-guide-sync` (srv-dbjqr88ae00c73f1h0e0) fails to deploy: `DATABASE_URL` not set. Steve must paste the Internal Database URL of `dose-guide-db` into its Environment. Then: verify /healthz, have Arlene create a login, set her PIN to 2757 (platform `setpin` action), and confirm sign-in stays remembered.
 - Possible: fold long sections on peptide detail pages; the 9 built-in refOnly peptides still need the dosing-source pass; LC216 and LC120 may get calculators like LC526.
 - Separate doctor/nurse "recommended dosing" app: not started. App-store points to raise first (in-app purchase vs Cash App, developer accounts, review risk).
 
 ## Change log
+- 2026-11-13 (v2026-11-13a, sw pdg-v46): Subscription now works like the owner's other apps (Oddable is the model). Sync server: no grace days (locks the day after the end date, Central time, decided by My Apps), new routes `POST /pay` ("I paid" request), `GET /account` (fresh state), `GET /push-key`, `POST /push` (phone reminders). Price and Cash App link come from My Apps `/api/v1/pay/info` with `tenant: "dose:<id>"`. Client: Pay + "I paid" / "Check again" buttons (`data-sy`), pending message, "Turn on renewal reminders" in the sync card (`pdg:push` remembers it per login), "in development, credit card payments coming soon" line. `sw.js` has push + notificationclick handlers. Tested locally end to end (local Postgres + local My Apps + Playwright phone size): trial, last day, lock, I paid, owner confirm, unlock.
 - 2026-11-12: Prices > My inventory: + Mine on each item, own cost / price / on-hand per item, margin, cart profit uses own cost, "Sold" button reduces stock. Stored in `pdg:inv` (price uses existing `pdg:custPrice`).
 - 2026-11-12: Lipo-C Fat Blaster (LC526) calculator: pre-mixed 10 mL, 526 mg/mL, 1 mL = 100 units. Dose range is clinic practice, not sourced. Fixed squashed category groups on desktop.
 - 2026-11-11: Menu, collapsible categories, category colors, vial icons, My vials shelf, readable sign-in with server-down message.

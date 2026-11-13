@@ -15,7 +15,7 @@ const q = (t, p) => pool.query(t, p);
 /* My Apps (the owner's manager) holds trials, payments and the Cash App tag. Same pattern as the other apps. */
 const MYAPPS_URL = (process.env.MYAPPS_URL || "").replace(/\/$/, "");
 const MYAPPS_SECRET = process.env.MYAPPS_SECRET || "";
-const GRACE_DAYS = 3;   /* after the paid date passes, sync keeps working this many days while the reminder shows */
+/* Same rules as every other app in My Apps: no grace days. Sync locks the day after the end date; reminders come 5, 3, 1 days before and on the last day. */
 async function myapps(path, body) {
   if (!MYAPPS_URL || !MYAPPS_SECRET) return null;
   try {
@@ -24,27 +24,35 @@ async function myapps(path, body) {
     return r.ok ? j : null;
   } catch (e) { return null; }
 }
-let payCache = { at: 0, v: null };
-async function payInfo() {
-  if (payCache.v && Date.now() - payCache.at < 5 * 60 * 1000) return payCache.v;
-  const j = await myapps("/api/v1/pay-info", {});
-  if (j) payCache = { at: Date.now(), v: { price: j.price || "5", link: j.link || "", cashtag: j.cashtag || "" } };
-  return payCache.v || { price: "5", link: "", cashtag: "" };
+/* Like myapps() but keeps the error text, for calls a person is waiting on. */
+async function myappsTry(path, body) {
+  if (!MYAPPS_URL || !MYAPPS_SECRET) return { ok: false, status: 503, error: "Payments are not set up yet." };
+  try {
+    const r = await fetch(MYAPPS_URL + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.assign({ slug: "dose", secret: MYAPPS_SECRET }, body)), signal: AbortSignal.timeout(45000) });
+    const j = await r.json().catch(() => ({}));
+    return r.ok ? Object.assign({ ok: true }, j) : { ok: false, status: r.status, error: j.error || "My Apps said " + r.status };
+  } catch (e) { return { ok: false, status: 502, error: "Could not reach the payment server. Try again in a minute." }; }
 }
-/* "state": ok | trial | due | grace | locked, plus days left. Fails open if My Apps cannot be reached. */
+const tenantOf = (u) => "dose:" + u.id;
+/* Price, Cash App link and whether this login has an "I paid" request waiting. Price and tag are set once in My Apps. */
+let payLast = { price: "5", link: "", cashtag: "" };
+async function payInfo(u) {
+  const j = await myapps("/api/v1/pay/info", { tenant: tenantOf(u) });
+  if (!j) return Object.assign({ pending: false }, payLast);
+  payLast = { price: String(j.price || "5"), link: /^https:\/\//.test(j.link || "") ? j.link : "", cashtag: j.tag || "" };
+  return Object.assign({ pending: !!j.pending }, payLast);
+}
+/* "state": ok | trial | due | locked, plus days left. Fails open if My Apps cannot be reached. */
 async function accountState(u) {
-  const key = "dose:" + u.id;
-  const pay = await payInfo();
-  let plan = await myapps("/api/v1/trial", { tenant: key, tenantName: u.name }) ;
+  const plan = await myapps("/api/v1/trial", { tenant: tenantOf(u), tenantName: u.name });
+  const pay = await payInfo(u);
   if (!plan) return { state: "ok", pay, unknown: true };
   const left = plan.days_left == null ? null : plan.days_left;
   const end = plan.expires_on ? String(plan.expires_on).slice(0, 10) : null;
-  const today = new Date().toISOString().slice(0, 10);
-  const over = end ? Math.round((new Date(today) - new Date(end)) / 86400000) : 0;
   let state = "ok";
-  if (plan.plan === "pro") state = plan.source === "trial" ? (left != null && left <= 5 ? "due" : "trial") : (left != null && left <= 5 ? "due" : "ok");
-  else state = end && over <= GRACE_DAYS ? "grace" : (end ? "locked" : "ok");
-  return { state, days_left: left, ends: end, trial: plan.source === "trial", pay };
+  if (plan.plan === "pro") state = left != null && left <= 5 ? "due" : (plan.source === "trial" ? "trial" : "ok");
+  else state = end ? "locked" : "ok";
+  return { state, days_left: left, ends: end, trial: plan.source === "trial", pay, pending: !!pay.pending };
 }
 const stCache = new Map();
 async function stateFor(u, fresh) {
@@ -177,6 +185,26 @@ app.put("/vials", auth, wrap(async (req, res) => {
   if (json.length > 1500000) return bad(res, "Too much data.", 413);
   await q("insert into dose_data(user_id, data, updated) values ($1,$2::jsonb, now()) on conflict (user_id) do update set data = excluded.data, updated = now()", [req.user.id, json]);
   res.json({ ok: true, account });
+}));
+/* Subscription, same flow as the other apps: pay on Cash App, tap "I paid", the owner confirms in My Apps. */
+app.post("/pay", auth, limit("pay", 12, 60 * 60 * 1000), wrap(async (req, res) => {
+  const r = await myappsTry("/api/v1/pay/request", { tenant: tenantOf(req.user), tenantName: req.user.name });
+  if (!r.ok) return bad(res, r.error, r.status >= 500 ? 502 : 400);
+  res.json({ ok: true, ref: r.ref, account: await stateFor(req.user, true) });
+}));
+app.get("/account", auth, wrap(async (req, res) => { res.json({ account: await stateFor(req.user, true) }); }));
+/* Phone reminders before the end date (5, 3, 1 days and the last day). My Apps sends them. */
+app.get("/push-key", auth, wrap(async (req, res) => {
+  const r = await myappsTry("/api/v1/push/key", {});
+  if (!r.ok || !r.key) return bad(res, "Reminders are not set up yet.", 503);
+  res.json({ key: r.key });
+}));
+app.post("/push", auth, limit("push", 30, 60 * 60 * 1000), wrap(async (req, res) => {
+  const sub = req.body?.subscription;
+  if (!sub || typeof sub.endpoint !== "string" || !sub.keys) return bad(res, "Bad request.");
+  const r = await myappsTry("/api/v1/push/subscribe", { tenant: tenantOf(req.user), subscription: { endpoint: sub.endpoint, keys: { p256dh: String(sub.keys.p256dh || ""), auth: String(sub.keys.auth || "") } } });
+  if (!r.ok) return bad(res, r.status >= 500 ? "Could not turn reminders on. Try again in a minute." : r.error, r.status >= 500 ? 502 : 400);
+  res.json({ ok: true });
 }));
 /* Owner tools: the login named Owner lists users and decides who may see Owner's prices (prices only, never cost). */
 const owner = (req, res, next) => (nameKey(req.user.name) === "owner" ? next() : bad(res, "Owner only.", 403));

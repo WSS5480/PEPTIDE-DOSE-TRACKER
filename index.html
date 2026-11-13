@@ -2270,42 +2270,98 @@ async function syncNow(manual){
 }
 function syQueue(){ if(!SY) return; clearTimeout(syTimer); syTimer=setTimeout(()=>syncNow(false),1500); }
 function syRefresh(){ if(typeof vialsEl!=="undefined"&&app.dataset.view==="vials"&&!uiFlags.syForm) { const s=$("#sync-card",vialsEl); if(s) s.outerHTML=syncHtml(); } else if(typeof vialsEl!=="undefined"&&app.dataset.view==="vials"){ const s=$("#sync-msg",vialsEl); if(s) s.innerHTML=syMsgHtml(); } }
-/* subscription: 30 days free, then $5/month paid to the owner by Cash App; the reminder shows on its own */
+/* subscription: 30 days free, then monthly, paid to the owner by Cash App. Same flow as the owner's other apps:
+   pay on Cash App, tap "I paid", the owner confirms. Price and Cash App tag come from the server. No grace days. */
 function syAcct(){ return SY&&SY.account&&typeof SY.account==="object"?SY.account:null; }
+const SY_DEV='<p class="hint">This app is in development. Credit card payments are coming soon.</p>';
 function syPayText(a){
-  const price="$"+esc((a.pay&&a.pay.price)||"5"), link=a.pay&&a.pay.link;
-  return {price:price, btn:link?'<a class="btn small primary" href="'+esc(link)+'" target="_blank" rel="noopener">Pay '+price+' on Cash App</a>':'<span class="hint">Ask Steve how to pay.</span>'};
+  const price="$"+esc((a.pay&&a.pay.price)||"5"), link=a.pay&&/^https:\/\//.test(a.pay.link||"")?a.pay.link:"", pend=!!a.pending;
+  return {price:price, pend:pend,
+    btn:(link?'<a class="btn small primary" href="'+esc(link)+'" target="_blank" rel="noopener">Pay '+price+' on Cash App</a>':'<span class="hint">Payment is not set up yet. Ask Steve how to pay.</span>')
+      +(pend?'<button type="button" class="btn small" data-sy="check">Check again</button>':'<button type="button" class="btn small" data-sy="paid">I paid</button>'),
+    note:(pend?'<p class="flag good">Payment request received. Your 30 days are added as soon as it is confirmed. Tap Check again in a minute.</p>':'')
+      +(uiFlags.syPayMsg?'<p class="flag bad">'+esc(uiFlags.syPayMsg)+'</p>':'')+SY_DEV};
 }
 function syLine(a){
   if(!a) return "";
-  const t=syPayText(a);
+  const t=syPayText(a), what=a.trial?"free trial":"subscription";
   if(a.state==="trial") return '<p class="hint">Free trial: <b>'+a.days_left+' day'+(a.days_left===1?"":"s")+' left</b>. After that it is '+t.price+'/month, paid on Cash App.</p>';
-  if(a.state==="due") return '<p class="flag bad">Your '+(a.trial?"free trial":"subscription")+' ends '+(a.days_left===0?"today":(a.days_left===1?"tomorrow":"in "+a.days_left+" days"))+(a.ends?" ("+esc(a.ends)+")":"")+'. Send '+t.price+' on Cash App to keep syncing.</p><div class="btnrow">'+t.btn+'</div>';
-  if(a.state==="grace") return '<p class="flag bad">Your '+(a.trial?"free trial":"subscription")+' ended'+(a.ends?" "+esc(a.ends):"")+'. Send '+t.price+' on Cash App now. Syncing stops in a few days.</p><div class="btnrow">'+t.btn+'</div>';
-  if(a.state==="locked") return '<p class="flag bad">Syncing is paused because your '+(a.trial?"free trial":"subscription")+' ended. Your vials are safe on this device. Send '+t.price+' on Cash App to turn it back on.</p><div class="btnrow">'+t.btn+'</div>';
+  if(a.state==="due") return '<p class="flag bad">Your '+what+' ends '+(a.days_left===0?"today":(a.days_left===1?"tomorrow":"in "+a.days_left+" days"))+(a.ends?" ("+esc(a.ends)+")":"")+'. '+(t.pend?'':'Send '+t.price+' on Cash App, then tap I paid to keep syncing.')+'</p><div class="btnrow">'+t.btn+'</div>'+t.note;
+  if(a.state==="locked"||a.state==="grace") return '<p class="flag bad">Syncing is paused because your '+what+' ended'+(a.ends?" "+esc(a.ends):"")+'. Your vials are safe on this device.'+(t.pend?'':' Send '+t.price+' on Cash App, then tap I paid to turn it back on.')+'</p><div class="btnrow">'+t.btn+'</div>'+t.note;
   return "";
 }
+function syShow(){ try{ renderList(); }catch(e){} syRefresh(); }
+async function syPaid(){
+  if(!SY||uiFlags.syPayBusy) return; uiFlags.syPayBusy=true; uiFlags.syPayMsg="";
+  try{
+    const r=await syCall("/pay",{method:"POST",body:"{}"});
+    if(r.ok&&r.j&&r.j.account){ SY.account=r.j.account; save("pdg:sync",SY); }
+    else if(r.status===401){ uiFlags.syPayMsg="Sign in again, then tap I paid."; }
+    else uiFlags.syPayMsg=(r.j&&r.j.error)||"That did not work. Try again in a minute.";
+  }catch(e){ uiFlags.syPayMsg="Could not reach the server. It may be waking up. Try again in a minute."; }
+  uiFlags.syPayBusy=false; syShow();
+}
+async function syCheck(){
+  if(!SY||uiFlags.syPayBusy) return; uiFlags.syPayBusy=true; uiFlags.syPayMsg="";
+  let open=false;
+  try{
+    const r=await syCall("/account");
+    if(r.ok&&r.j&&r.j.account){ SY.account=r.j.account; save("pdg:sync",SY); open=r.j.account.state!=="locked"; if(!open&&r.j.account.pending) uiFlags.syPayMsg="Not confirmed yet. Try again in a few minutes."; }
+    else uiFlags.syPayMsg="Could not check right now. Try again in a minute.";
+  }catch(e){ uiFlags.syPayMsg="Could not reach the server. It may be waking up. Try again in a minute."; }
+  uiFlags.syPayBusy=false; syShow(); if(open) syncNow(true);
+}
+/* phone reminders before the end date (5, 3, 1 days and the last day) */
+function syPushOn(){ return !!(SY&&load("pdg:push","")===SY.name); }
+function syPushHtml(){
+  if(!SY) return "";
+  return (syPushOn()?'<p class="hint">Renewal reminders are on for this device.</p>':'<div class="btnrow"><button type="button" class="btn small" data-sy="push">Turn on renewal reminders</button></div>')
+    +(uiFlags.syPushMsg?'<p class="hint">'+esc(uiFlags.syPushMsg)+'</p>':'');
+}
+async function syPush(){
+  if(!SY||uiFlags.syPushBusy) return; uiFlags.syPushBusy=true;
+  const say=t=>{ uiFlags.syPushMsg=t; syRefresh(); };
+  try{
+    if(!("serviceWorker" in navigator)||!("PushManager" in window)||typeof Notification==="undefined"){ say("This browser cannot get reminders. On iPhone, add the Dose Guide to your Home Screen first, then open it from there."); return; }
+    const perm=await Notification.requestPermission();
+    if(perm!=="granted"){ say("Notifications are blocked. Allow them for the Dose Guide in your phone settings."); return; }
+    const k=await syCall("/push-key");
+    if(!k.ok||!k.j||!k.j.key){ say((k.j&&k.j.error)||"Reminders are not set up yet."); return; }
+    const pad="=".repeat((4-k.j.key.length%4)%4), raw=atob((k.j.key+pad).replace(/-/g,"+").replace(/_/g,"/")), key=Uint8Array.from(raw.split("").map(c=>c.charCodeAt(0)));
+    const reg=await Promise.race([navigator.serviceWorker.ready,new Promise((_,no)=>setTimeout(()=>no(new Error("Close and reopen the app, then try again.")),10000))]);
+    const sub=(await reg.pushManager.getSubscription())||(await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key}));
+    const r=await syCall("/push",{method:"POST",body:JSON.stringify({subscription:sub.toJSON()})});
+    if(!r.ok){ say((r.j&&r.j.error)||"Could not turn reminders on. Try again in a minute."); return; }
+    save("pdg:push",SY.name); say("");
+  }catch(e){ say((e&&e.message)||"Could not turn reminders on."); }
+  finally{ uiFlags.syPushBusy=false; }
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest&&e.target.closest("[data-sy]"); if(!b) return;
+  const k=b.getAttribute("data-sy");
+  if(k==="paid") syPaid(); else if(k==="check") syCheck(); else if(k==="push") syPush();
+});
 function syBannerHtml(){
   const a=syAcct(); if(!a||(a.state!=="due"&&a.state!=="grace"&&a.state!=="locked")) return "";
   return '<section class="block" id="sy-banner">'+syLine(a)+'</section>';
 }
 function syMsgHtml(){ return (uiFlags.syMsg?'<p class="flag good">'+esc(uiFlags.syMsg)+'</p>':'')+(uiFlags.syErr?'<p class="flag bad">'+esc(uiFlags.syErr)+'</p>':''); }
 function syncHtml(){
-  const st=uiFlags.vopen&&uiFlags.vopen.sync, forced=!!(uiFlags.syForm||uiFlags.syErr||uiFlags.syMsg), open=forced||st===true;
+  const st=uiFlags.vopen&&uiFlags.vopen.sync, forced=!!(uiFlags.syForm||uiFlags.syErr||uiFlags.syMsg||uiFlags.syPushMsg||uiFlags.syPayMsg), open=forced||st===true;
   const sum=SY?'Signed in as '+esc(SY.name):'Not signed in';
   let h='<details class="pgroup sy '+(SY?'ok':'off')+'" id="sync-card" data-k="sync"'+(open?' open':'')+'><summary><span>Sync across devices</span><span class="hint">'+sum+'</span></summary><div class="foldbody" style="padding:0 14px 14px;display:flex;flex-direction:column;gap:12px">';
   if(SY){
     const t=SY.last?new Date(SY.last).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):"";
-    h+='<p class="hint">'+(t?'Last synced '+esc(t)+'. ':'')+'Vials and dose logs follow you to every device where you sign in.</p>'+syLine(syAcct())
+    h+='<p class="hint">'+(t?'Last synced '+esc(t)+'. ':'')+'Vials and dose logs follow you to every device where you sign in.</p>'+syLine(syAcct())+syPushHtml()
       +'<div class="btnrow"><button type="button" class="btn small primary" id="sy-now">Sync now</button><button type="button" class="btn small" id="sy-out">Sign out</button></div>';
   } else if(uiFlags.syForm){
     const mk=uiFlags.syForm==="new", ln=(function(){ try{ return localStorage.getItem("pdg:lastName")||"Owner"; }catch(e){ return "Owner"; } })();
-    h+='<p class="hint">'+(mk?'Pick a login name and a 4-digit PIN. Use the same ones on your other devices. First 30 days free, then $5/month on Cash App.':'Sign in with your login name and 4-digit PIN.')+'</p>'
+    h+='<p class="hint">'+(mk?'Pick a login name and a 4-digit PIN. Use the same ones on your other devices. First 30 days free, then a small monthly price on Cash App.':'Sign in with your login name and 4-digit PIN.')+'</p>'
       +'<div class="syform"><label>Login name<input id="sy-name" name="pdg-login" type="text" autocomplete="username" autocapitalize="off" maxlength="40" value="'+esc(uiFlags.syName||ln)+'"></label>'
       +'<label>4-digit PIN<input id="sy-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="'+(mk?'new-password':'current-password')+'"></label></div>'
       +'<div class="btnrow"><button type="button" class="btn primary" id="sy-go">'+(mk?'Create login':'Sign in')+'</button><button type="button" class="btn" id="sy-cancel">Cancel</button></div>';
   } else {
-    h+='<p class="hint">Move your vials between your phone, tablet and computer. Free for 30 days, then $5/month. Nothing syncs until you sign in.</p>'
+    h+='<p class="hint">Move your vials between your phone, tablet and computer. Free for 30 days, then a small monthly price paid on Cash App. Nothing syncs until you sign in.</p>'+SY_DEV
       +'<div class="btnrow"><button type="button" class="btn small primary" id="sy-new">Create login</button><button type="button" class="btn small" id="sy-in">Sign in</button></div>';
   }
   return h+'<div id="sync-msg">'+syMsgHtml()+'</div></div></details>';
@@ -2331,7 +2387,7 @@ vialsEl.addEventListener("click",e=>{
   if(e.target.closest("#sy-go")){ syAuth(uiFlags.syForm); return; }
   if(e.target.closest("#sy-now")){ syncNow(true); return; }
   if(e.target.closest("#sy-out")){
-    const tok=SY&&SY.token; SY=null; save("pdg:sync",null); dropOwnerItems(); invSwitch(); uiFlags.syMsg="Signed out. Your vials stay on this device."; uiFlags.syErr="";
+    const tok=SY&&SY.token; SY=null; save("pdg:sync",null); dropOwnerItems(); invSwitch(); uiFlags.syMsg="Signed out. Your vials stay on this device."; uiFlags.syErr=""; uiFlags.syPayMsg=""; uiFlags.syPushMsg="";
     if(tok) fetch(SYNC_URL+"/logout",{method:"POST",headers:{Authorization:"Bearer "+tok}}).catch(()=>{});
     renderVials(); return;
   }
@@ -2387,7 +2443,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-12v", BUILT="Nov 12, 2026 11:00 PM CT";
+  const VER="2026-11-13a", BUILT="Nov 13, 2026 2:15 AM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);
