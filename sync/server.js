@@ -252,7 +252,7 @@ app.put("/owner/inventory", auth, owner, wrap(async (req, res) => {
   if (!a || a.length > 3000) return bad(res, "Bad data.");
   const edits = req.body?.qtyEdits && typeof req.body.qtyEdits === "object" && !Array.isArray(req.body.qtyEdits) ? req.body.qtyEdits : {};
   const num = (v) => (typeof v === "number" && isFinite(v) && v >= 0 ? v : undefined);
-  const inc = a.map((x) => ({ id: String(x?.id || "").slice(0, 40), n: String(x?.n || "").slice(0, 60), s: String(x?.s || "").slice(0, 20), cost: num(x?.cost), price: num(x?.price), qty: num(x?.qty) })).filter((x) => x.id && x.n);
+  const inc = a.map((x) => ({ id: String(x?.id || "").slice(0, 40), n: String(x?.n || "").slice(0, 60), s: String(x?.s || "").slice(0, 20), cost: num(x?.cost), price: (num(x?.price) < 100000 ? num(x?.price) : undefined), qty: num(x?.qty) })).filter((x) => x.id && x.n);
   if (!inc.length && req.body?.clear !== true) return bad(res, "Refusing to save an empty list.");
   const c = await pool.connect();
   try {
@@ -262,8 +262,8 @@ app.put("/owner/inventory", auth, owner, wrap(async (req, res) => {
     const old = new Map((Array.isArray(r.data) ? r.data : []).map((x) => [x.id, x]));
     /* Quantity belongs to the server: customer orders lower it. The app only changes it by an explicit edit. */
     const items = inc.map((x) => {
-      const o = old.get(x.id); const e = num(edits[x.id]);
-      x.qty = e !== undefined ? Math.floor(e) : (o && typeof o.qty === "number" ? o.qty : (x.qty !== undefined ? Math.floor(x.qty) : 0));
+      const o = old.get(x.id); const e = typeof edits[x.id] === "number" && isFinite(edits[x.id]) ? Math.trunc(edits[x.id]) : undefined;
+      x.qty = o && typeof o.qty === "number" ? Math.max(0, o.qty + (e || 0)) : (x.qty !== undefined ? Math.floor(x.qty) : 0);   /* qtyEdits are CHANGES (+/-), so orders placed meanwhile are kept */
       return x;
     });
     await c.query("update dose_inventory set data = $1::jsonb, updated = now() where id = 1", [JSON.stringify(items)]);
@@ -355,6 +355,7 @@ app.post("/shop/:slug/order", limit("order", 20, 60 * 60 * 1000), wrap(async (re
   const want = Array.isArray(req.body?.items) ? req.body.items.slice(0, 40) : [];
   if (name.length < 2) return bad(res, "Enter your name.");
   if (contact.length < 3) return bad(res, "Enter a phone number or email so the seller can reach you.");
+  let sum = 0; want.forEach((w) => { sum += Math.floor(Number(w?.qty)) || 0; }); if (sum > 30) return bad(res, "Please order 30 items or fewer at a time.");
   const asked = new Map(); want.forEach((w) => { const k = String(w?.k || "").toLowerCase(); const n = Math.floor(Number(w?.qty)); if (k && n > 0 && n <= 99) asked.set(k, (asked.get(k) || 0) + n); });
   if (!asked.size) return bad(res, "Pick at least one item.");
   const { rows: [u] } = await q("select id, name, cashtag, disabled from dose_users where slug = $1", [String(req.params.slug || "").slice(0, 40)]);

@@ -2063,11 +2063,11 @@ function invSave(a){ save(ITEMS_KEY,a); ownerPublish(); sellerPublish(); }
 const isOwner=()=>!!(typeof SY!=="undefined"&&SY&&String(SY.name||"").trim().toLowerCase()==="owner");
 let pubT=null;
 function ownerPublish(){ if(!isOwner()) return; clearTimeout(pubT); pubT=setTimeout(()=>{ const mine=invItems().filter(x=>!x.o), items=mine.filter(x=>typeof x.price==="number").map(x=>({n:x.n,s:x.s,p:x.price})); if(!items.length) return;   /* never publish an empty list: it would wipe the prices your users see */
-  const base=load("pdg:invBase",{}), edits={}; mine.forEach(x=>{ if(typeof x.qty==="number"&&base[x.id]!==x.qty) edits[x.id]=x.qty; });   /* stock on the server is shared with customer orders, so only YOUR changes are sent */
-  syCall("/owner/inventory",{method:"PUT",body:JSON.stringify({items:mine,qtyEdits:edits})}).then(r=>{ if(r.ok) applyServerQty(r.j.items); }).catch(()=>{}); syCall("/owner/prices",{method:"PUT",body:JSON.stringify({items:items})}).catch(()=>{}); },1200); }
+  const base=load("pdg:invBase",{}), edits={}; mine.forEach(x=>{ if(typeof x.qty==="number"&&typeof base[x.id]==="number"&&base[x.id]!==x.qty) edits[x.id]=x.qty-base[x.id]; });   /* stock on the server is shared with customer orders, so only YOUR changes are sent */
+  syCall("/owner/inventory",{method:"PUT",body:JSON.stringify({items:mine,qtyEdits:edits})}).then(r=>{ if(r.ok) applyServerQty(r.j.items,edits); }).catch(()=>{}); syCall("/owner/prices",{method:"PUT",body:JSON.stringify({items:items})}).catch(()=>{}); },1200); }
 /* take the shared stock numbers from the server (customer orders lower them); a number you just typed and not yet sent is kept */
-function applyServerQty(srv){ if(!Array.isArray(srv)) return; const base=load("pdg:invBase",{}), a=invItems(); let ch=false;
-  srv.forEach(w=>{ if(typeof w.qty!=="number") return; const x=a.find(y=>!y.o&&y.id===w.id); if(x&&(x.qty===base[w.id]||x.qty===w.qty||typeof x.qty!=="number")){ if(x.qty!==w.qty){ x.qty=w.qty; ch=true; } } base[w.id]=w.qty; });
+function applyServerQty(srv,sent){ if(!Array.isArray(srv)) return; sent=sent||{}; const base=load("pdg:invBase",{}), a=invItems(); let ch=false;
+  srv.forEach(w=>{ if(typeof w.qty!=="number") return; const x=a.find(y=>!y.o&&y.id===w.id); if(x&&(sent[w.id]!==undefined||typeof base[w.id]!=="number"||x.qty===base[w.id]||x.qty===w.qty||typeof x.qty!=="number")){ if(x.qty!==w.qty){ x.qty=w.qty; ch=true; } } base[w.id]=w.qty; });
   save("pdg:invBase",base); if(ch){ save(ITEMS_KEY,a); if(app.dataset.view==="prices"&&!uiFlags.prCart&&!uiFlags.prUsers&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#prices"))) renderPrices(); } }
 async function ownerQtySync(){ if(!isOwner()) return; try{ const r=await syCall("/owner/inventory"); if(r.ok) applyServerQty(r.j.items||[]); }catch(e){} }
 /* any other login: your own price per item goes to the server so YOUR customer link shows your prices */

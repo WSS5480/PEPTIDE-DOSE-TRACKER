@@ -134,3 +134,4 @@ Update this file in the same commit as every change.
 - shop.html: public mobile page, name + phone/email, Place order -> Pay with Cash App button. Same origin as the app (CORS).
 - Tested against local Postgres 16 (order, oversell 409, cancel restock, stale owner PUT keeps 3, qty edit) and Playwright e2e (/tmp/tt/t28.py). sw cache pdg-v50.
 - Known: logins Steve has NOT checked for price access see no stock in their own app (only in their shop). Cash App link needs a tag; no tag = no Pay button.
+- Review fixes (same version): qtyEdits are now DELTAS (+/-) applied to the server's current qty, so orders placed meanwhile are never overwritten; a missing pdg:invBase entry adopts the server qty; max 30 items per order; Owner price capped under 100000. Known/not done: unpaid orders hold stock until the seller cancels; a seller clearing ALL prices does not clear their server prices.
