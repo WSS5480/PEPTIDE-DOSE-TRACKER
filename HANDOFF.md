@@ -115,3 +115,6 @@ Update this file in the same commit as every change.
 
 ## 2026-11-13a — Save vial gives a reason
 - Delia (user) "can't save a vial": sync server logs clean (no 4xx/5xx). The Save vial button silently did nothing when vial size, water or target dose was empty/0 or a new person's name was missing. Now shows a red message saying which. sw pdg-v46. Not confirmed this was her cause; ask her what she sees / which box was empty.
+
+## 2026-11-13b — merge note
+- Rebased the "Save vial says what is missing" change on top of the parallel session's subscription commit (VER 2026-11-13b, sw pdg-v47). Two sessions are editing this repo: pull before pushing.
