@@ -1318,7 +1318,7 @@ function addVialFormHtml(){
   const opts=DATA.filter(p=>p.id!=="custom"&&!p.refOnly).map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join("")+'<option value="custom">Other / custom vial</option>';
   return '<div class="vform" id="addform"><h3>Add a vial</h3>'
     +'<div class="field"><label for="av-pid">Peptide</label><select class="num" id="av-pid">'+opts+'</select></div>'
-    +'<div class="field"><label for="av-who">Who is it for?</label><select class="num" id="av-whosel"><option value="">Me</option>'+peopleNames().map(w=>'<option value="'+esc(w)+'">'+esc(w)+'</option>').join("")+'<option value="__new">+ Add a person…</option></select><input class="num" id="av-who" type="text" maxlength="30" placeholder="Name, e.g. Paola" autocomplete="off" hidden><span class="hint">Named vials are tracked by schedule only. No dose logging.</span></div>'
+    +'<div class="field"><label for="av-who">Who is it for?</label><select class="num" id="av-whosel"><option value="">Me</option>'+peopleNames().map(w=>'<option value="'+esc(w)+'"'+(w===whoSel()?' selected':'')+'>'+esc(w)+'</option>').join("")+'<option value="__new">+ Add a person…</option></select><input class="num" id="av-who" type="text" maxlength="30" placeholder="Name, e.g. Paola" autocomplete="off" hidden><span class="hint">Named vials are tracked by schedule only. No dose logging.</span></div>'
     +'<div class="field"><label for="av-vial" id="av-vial-label">Vial size (mg)</label><input class="num" id="av-vial" type="number" inputmode="decimal" step="any" min="0.01"></div>'
     +'<div class="field"><label for="av-water" id="av-water-label">Bacteriostatic water added (mL)</label><input class="num" id="av-water" type="number" inputmode="decimal" step="any" min="0.1"></div>'
     +'<div class="field"><label for="av-mixed" id="av-mixed-label">Date mixed</label><input class="num" id="av-mixed" type="date" value="'+todayISO()+'"></div>'
@@ -1717,7 +1717,7 @@ detailEl.addEventListener("click",e=>{
     const target=parseFloat(($("#vf-target",detailEl)||{}).value); if(!(target>0)) return;
     const ev=parseInt(($("#vf-every",detailEl)||{}).value,10)||0;
     if(v&&uiFlags.form==="edit"){ Object.assign(v,{vial:c.vial,water:c.water,mixed,start,target}); if(ev>0) v.every=ev; else delete v.every; }
-    else { if(needLogin()) return; v={id:newId("v"),pid:p.id,vial:c.vial,water:c.water,mixed,start,target,log:[]}; if(ev>0) v.every=ev; vials.push(v); }
+    else { if(needLogin()) return; v={id:newId("v"),pid:p.id,vial:c.vial,water:c.water,mixed,start,target,log:[]}; if(ev>0) v.every=ev; if(whoSel()) v.who=whoSel(); vials.push(v); }
     uiFlags.form=false; saveVials(); renderAll(); return;
   }
   vialAction(e);
@@ -2576,7 +2576,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-18b", BUILT="Nov 18, 2026 3:10 PM CT";
+  const VER="2026-11-18c", BUILT="Nov 18, 2026 3:30 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);

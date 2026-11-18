@@ -144,3 +144,6 @@ Update this file in the same commit as every change.
 
 ## 2026-11-18b — vials grouped by person
 - Steve: "in my vials, group my people". Vials page: "Mine" stay on top as before; below them every person gets a collapsed group (name + vial count) holding their schedule cards (peopleGroupsHtml, uses vGroup). The "Whose vials" picker still focuses on one person. sw pdg-v52, VER 2026-11-18b. Tested with Playwright (/tmp/tt/t30.py).
+
+## 2026-11-18c — new vial goes to the selected person
+- Steve: "when i select a whose vial the vials do not go to theirs". Add vial form now pre-selects the person chosen in "Whose vials", and "Save this vial" on a peptide page also assigns to that person (was always Mine). sw pdg-v53, VER 2026-11-18c.
