@@ -135,3 +135,9 @@ Update this file in the same commit as every change.
 - Tested against local Postgres 16 (order, oversell 409, cancel restock, stale owner PUT keeps 3, qty edit) and Playwright e2e (/tmp/tt/t28.py). sw cache pdg-v50.
 - Known: logins Steve has NOT checked for price access see no stock in their own app (only in their shop). Cash App link needs a tag; no tag = no Pay button.
 - Review fixes (same version): qtyEdits are now DELTAS (+/-) applied to the server's current qty, so orders placed meanwhile are never overwritten; a missing pdg:invBase entry adopts the server qty; max 30 items per order; Owner price capped under 100000. Known/not done: unpaid orders hold stock until the seller cancels; a seller clearing ALL prices does not clear their server prices.
+
+## 2026-11-18a — Post sale (order number + customer)
+- Steve: "add order number name (dropdown from user or add if not a user), post removes from inventory and logs sale". Cart page now has Order number (auto-suggests last numeric +1), Customer dropdown (past customers; Owner also sees all active logins; "+ Add new customer"), and "Post sale: take out of stock".
+- Server: POST /me/sale (order_no unique per seller, row-locks dose_inventory id=1, rejects oversell/unknown items, prices from seller's price list, inserts dose_orders status 'paid' source 'manual'); GET /me/customers; /me/orders now returns orderNo + source. dose_orders +order_no +source. Cancelling a posted sale from Orders restocks like any order.
+- Checked users: shared (Owner-copied) items go to the server; their own non-shared items just lower their local qty (not logged). Replaces the old "Sold: take out of my qty" button. sw cache pdg-v51, VER 2026-11-18a.
+- Tested: local Postgres + Playwright (/tmp/tt/t29.py).

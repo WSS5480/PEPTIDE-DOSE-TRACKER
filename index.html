@@ -2173,7 +2173,7 @@ function shopHtml(){
    +(S.cashtag?'':'<p class="flag">No Cash App tag yet. Customers can still order, but the Pay button will not show.</p>')
    +(uiFlags.shopMsg?'<p class="hint">'+esc(uiFlags.shopMsg)+'</p>':'')
    +'<h3 style="margin:12px 0 4px">Orders</h3><div class="btnrow"><button type="button" class="btn small" id="shop-refresh">Refresh orders</button></div>'
-   +(O.length?O.map(o=>'<div class="prow"><div class="pl"><b>'+esc(o.name)+' · '+money(o.total)+'</b><span class="pp">'+esc(o.contact)+(isOwner()&&o.seller?' · via '+esc(o.seller):'')+'</span><span class="pp">'+o.lines.map(l=>l.qty+' x '+esc(l.n)+' '+esc(l.s)).join(', ')+'</span><span class="pp">'+st[o.status]+' · '+new Date(o.created).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})+'</span></div>'
+   +(O.length?O.map(o=>'<div class="prow"><div class="pl"><b>'+(o.orderNo?'#'+esc(o.orderNo)+' · ':'')+esc(o.name)+' · '+money(o.total)+'</b><span class="pp">'+(o.source==='manual'?'Posted sale':esc(o.contact))+(isOwner()&&o.seller?' · via '+esc(o.seller):'')+'</span><span class="pp">'+o.lines.map(l=>l.qty+' x '+esc(l.n)+' '+esc(l.s)).join(', ')+'</span><span class="pp">'+st[o.status]+' · '+new Date(o.created).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})+'</span></div>'
      +(o.status==="cancelled"?'':'<div class="btnrow">'+(o.status==="new"?'<button type="button" class="btn small primary" data-ostat="paid" data-oid="'+o.id+'">Mark paid</button>':'')+'<button type="button" class="btn small" data-ostat="cancelled" data-oid="'+o.id+'">'+(uiFlags.shopCan===o.id?'Tap again: cancel, restock':'Cancel')+'</button></div>')+'</div>').join(""):'<p class="empty">No orders yet.</p>')
    +'</div></details>';
 }
@@ -2221,6 +2221,35 @@ function renderPrices(){
   el.innerHTML=h; el.querySelectorAll("details.pgroup").forEach(d=>{ if(keep.indexOf(d.dataset.g)>=0) d.open=true; }); window.scrollTo(0,pos);
   const qi=$("#pr-q"); if(qi&&uiFlags.prFocus){ qi.focus(); qi.setSelectionRange(qi.value.length,qi.value.length); }
 }
+/* Post a sale: order number + customer (pick from list or add new). Takes it out of the shared stock and logs it under Orders. */
+function nextOrderNo(){ let m=0; (uiFlags.orders||[]).forEach(o=>{ const n=parseInt(o.orderNo,10); if(isFinite(n)&&n>m&&/^\d+$/.test(String(o.orderNo))) m=n; }); return m?String(m+1):""; }
+function saleHtml(){
+  const names=uiFlags.custNames||[], cur=uiFlags.saleCust||"", no=uiFlags.saleNo!=null?uiFlags.saleNo:nextOrderNo();
+  return '<div class="syform" style="margin-top:10px"><label>Order number<input id="sale-no" autocomplete="off" value="'+esc(no)+'" placeholder="1001"></label>'
+   +'<label>Customer<select id="sale-cust"><option value="">Choose&hellip;</option>'+names.map(n=>'<option'+(cur===n?' selected':'')+' value="'+esc(n)+'">'+esc(n)+'</option>').join("")+'<option value="__new"'+(cur==="__new"?' selected':'')+'>+ Add new customer</option></select></label>'
+   +(cur==="__new"?'<label>New customer name<input id="sale-new" autocomplete="off" value="'+esc(uiFlags.saleNew||"")+'"></label>':'')+'</div>'
+   +'<div class="btnrow"><button type="button" class="btn small primary" id="pr-post">'+(uiFlags.salePost?'Posting&hellip;':'Post sale: take out of stock')+'</button></div>'
+   +(uiFlags.saleMsg?'<p class="'+(uiFlags.saleBad?'flag bad':'hint')+'">'+esc(uiFlags.saleMsg)+'</p>':'');
+}
+async function postSale(){
+  if(uiFlags.salePost) return; const items=invItems(), cart=invCart(), L=cartLines(items,cart);
+  const cust=uiFlags.saleCust==="__new"?(uiFlags.saleNew||"").trim():(uiFlags.saleCust||""), no=(uiFlags.saleNo!=null?uiFlags.saleNo:nextOrderNo()).trim();
+  const fail=m=>{ uiFlags.saleMsg=m; uiFlags.saleBad=true; renderPrices(); };
+  if(!L.length) return fail("The cart is empty."); if(!no) return fail("Enter an order number."); if(cust.length<2) return fail("Pick a customer or add a new name.");
+  if(typeof SY==="undefined"||!SY) return fail("Sign in first so the sale is logged.");
+  const shared=L.filter(l=>isOwner()||l.x.o), mine=L.filter(l=>!(isOwner()||l.x.o));
+  uiFlags.salePost=true; uiFlags.saleMsg=""; renderPrices();
+  try{
+    if(shared.length){ const r=await syCall("/me/sale",{method:"POST",body:JSON.stringify({orderNo:no,customer:cust,items:shared.map(l=>({k:(String(l.x.n).trim()+"|"+String(l.x.s).trim()).toLowerCase(),qty:l.n}))})});
+      if(!r.ok){ uiFlags.salePost=false; return fail((r.j&&r.j.error)||"Could not post the sale."); }
+      const base=load("pdg:invBase",{}), a=invItems(); (r.j.stock||[]).forEach(w=>{ base[w.id]=w.qty; a.forEach(x=>{ if((String(x.n).trim()+"|"+String(x.s).trim()).toLowerCase()===w.k&&(x.o||isOwner())) x.qty=w.qty; }); });
+      save("pdg:invBase",base); save(ITEMS_KEY,a); }
+    if(mine.length){ const a=invItems(); mine.forEach(l=>{ const x=a.find(y=>y.id===l.x.id); if(x&&typeof x.qty==="number") x.qty=Math.max(0,x.qty-l.n); }); save(ITEMS_KEY,a); }
+    save(CART_KEY,{}); uiFlags.salePost=false; uiFlags.saleNo=null; uiFlags.saleCust=""; uiFlags.saleNew=""; uiFlags.saleBad=false; uiFlags.prCart=false;
+    uiFlags.prMsg="Order "+no+" posted for "+cust+". Stock reduced and the sale is in your Orders list."; shopLoad(); custLoad(); prAccess(); renderPrices();
+  }catch(e){ uiFlags.salePost=false; fail("Could not reach the server."); }
+}
+async function custLoad(){ try{ const r=await syCall("/me/customers"); if(r.ok) uiFlags.custNames=r.j.names||[]; }catch(e){} }
 function cartLines(items,cart){ const L=[]; items.forEach(x=>{ const n=cart[x.id]||0; if(n>0) L.push({x,n}); }); return L; }
 function cartText(items,cart){ const L=cartLines(items,cart); let t=0; const rows=L.map(l=>{ const p=l.x.price||0; t+=l.n*p; return l.n+" x "+l.x.n+" "+(l.x.s||"")+(p?" @ "+money(p)+" = "+money(l.n*p):""); }); return rows.join("\n")+(rows.length?"\nTotal: "+money(t):""); }
 function cartHtml(items,cart){
@@ -2231,7 +2260,7 @@ function cartHtml(items,cart){
     return '<div class="prow"><div class="pl"><b>'+esc(x.n)+'</b><span class="pp">'+esc(x.s||"each")+' · '+(p?money(p)+' each · line '+money(l.n*p):'<b>no price yet</b>')+'</span>'+(x.cost!=null?'<span class="pp">your cost '+money(x.cost)+' each</span>':'')+'</div>'
      +'<div class="qty"><button type="button" data-q="-1" data-id="'+x.id+'" aria-label="Less">&minus;</button><span>'+l.n+'</span><button type="button" data-q="1" data-id="'+x.id+'" aria-label="More">+</button></div><button type="button" class="btn small" data-rm="'+x.id+'">Remove</button></div>'; }).join("")+'</section>'
     +'<div class="ordbar"><div class="tot">Customer total: '+money(total)+'</div>'+(cc?'<p class="hint">Only you see this: cost '+money(cost)+', profit '+money(prof)+' on '+cc+' item'+(cc===1?'':'s')+'.</p>':'')
-    +'<div class="btnrow"><button type="button" class="btn small primary" id="pr-copy">Copy order</button>'+(navigator.share?'<button type="button" class="btn small" id="pr-share">Share</button>':'')+'<button type="button" class="btn small" id="pr-clear">Clear cart</button></div><div class="btnrow"><button type="button" class="btn small" id="pr-sold">Sold: take out of my qty</button></div>'
+    +'<div class="btnrow"><button type="button" class="btn small primary" id="pr-copy">Copy order</button>'+(navigator.share?'<button type="button" class="btn small" id="pr-share">Share</button>':'')+'<button type="button" class="btn small" id="pr-clear">Clear cart</button></div>'+saleHtml()
     +''+(uiFlags.prMsg?'<p class="hint" style="white-space:pre-wrap">'+esc(uiFlags.prMsg)+'</p>':'')+'</div>';
   return h;
 }
@@ -2258,7 +2287,7 @@ $("#prices").addEventListener("click",e=>{
     if(uiFlags.prUdel!==id){ uiFlags.prUdel=id; renderPrices(); return; }
     uiFlags.prUdel=null; syCall("/owner/users/"+id,{method:"DELETE"}).then(r=>{ if(r.ok){ uiFlags.prUsersData=(uiFlags.prUsersData||[]).filter(u=>String(u.id)!==id); uiFlags.prUsersErr=""; } else uiFlags.prUsersErr=(r.j&&r.j.error)||"Could not delete."; renderPrices(); }).catch(()=>{ uiFlags.prUsersErr="Could not reach the server."; renderPrices(); }); return; }
   if(t.closest("#pr-users-close")){ uiFlags.prUsers=false; renderPrices(); return; }
-  if(t.closest("#pr-cart-open")){ uiFlags.prCart=true; uiFlags.prMsg=""; renderPrices(); return; }
+  if(t.closest("#pr-cart-open")){ uiFlags.prCart=true; uiFlags.prMsg=""; uiFlags.saleMsg=""; custLoad().then(()=>{ if(uiFlags.prCart) renderPrices(); }); shopLoad(); renderPrices(); return; }
   if(t.closest("#pr-cart-close")){ uiFlags.prCart=false; uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-expand")||t.closest("#pr-collapse")){ const o=!!t.closest("#pr-expand"); $("#prices").querySelectorAll("details.pgroup").forEach(d=>{ d.open=o; }); return; }
   if(t.closest("#ia-go")){
@@ -2269,6 +2298,7 @@ $("#prices").addEventListener("click",e=>{
   const dl=t.closest("[data-del]"); if(dl&&!isGuest()){ if(prDel===dl.dataset.del){ invSave(invItems().filter(x=>x.id!==prDel)); const c=invCart(); delete c[prDel]; save(CART_KEY,c); prDel=null; } else prDel=dl.dataset.del; renderPrices(); return; }
   const rm=t.closest("[data-rm]"); if(rm){ const c=invCart(); delete c[rm.dataset.rm]; save(CART_KEY,c); renderPrices(); return; }
   const qb=t.closest("[data-q]"); if(qb){ const c=invCart(), k=qb.dataset.id, n=Math.max(0,(c[k]||0)+(+qb.dataset.q)); if(n) c[k]=n; else delete c[k]; save(CART_KEY,c); uiFlags.prMsg=""; renderPrices(); return; }
+  if(t.closest("#pr-post")){ postSale(); return; }
   if(t.closest("#pr-sold")){ const c=invCart(), a=invItems(); let n=0; a.forEach(x=>{ if(c[x.id]&&typeof x.qty==="number"){ x.qty=Math.max(0,x.qty-c[x.id]); n++; } }); invSave(a); save(CART_KEY,{}); uiFlags.prMsg="Sale recorded. Qty reduced on "+n+" item"+(n===1?"":"s")+"."; uiFlags.prCart=false; renderPrices(); return; }
   if(t.closest("#pr-clear")){ save(CART_KEY,{}); uiFlags.prMsg=""; renderPrices(); return; }
   if(t.closest("#pr-share")){ try{ navigator.share({title:"Order",text:cartText(invItems(),invCart())}); }catch(err){} return; }
@@ -2283,7 +2313,8 @@ $("#prices").addEventListener("change",async e=>{
   if(blank||!isFinite(v)||v<0) delete x[f]; else x[f]=f==="qty"?Math.floor(v):Math.round(v*100)/100;
   invSave(a); uiFlags.prMsg=""; renderPrices();
 });
-$("#prices").addEventListener("input",e=>{ if(e.target.id==="pr-q"){ prQ=e.target.value; uiFlags.prFocus=true; renderPrices(); } });
+$("#prices").addEventListener("change",e=>{ if(e.target.id==="sale-cust"){ uiFlags.saleCust=e.target.value; renderPrices(); } });
+$("#prices").addEventListener("input",e=>{ if(e.target.id==="sale-no") uiFlags.saleNo=e.target.value; if(e.target.id==="sale-new") uiFlags.saleNew=e.target.value;  if(e.target.id==="pr-q"){ prQ=e.target.value; uiFlags.prFocus=true; renderPrices(); } });
 $("#prices").addEventListener("keydown",e=>{ if(e.key==="Enter"&&/^ia-/.test(e.target.id||"")){ e.preventDefault(); const b=$("#ia-go"); if(b) b.click(); } });
 document.addEventListener("visibilitychange",()=>{});
 
@@ -2543,7 +2574,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-13e", BUILT="Nov 13, 2026 4:30 PM CT";
+  const VER="2026-11-18a", BUILT="Nov 18, 2026 12:30 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);

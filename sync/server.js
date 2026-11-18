@@ -93,6 +93,9 @@ create table if not exists dose_orders (
   status text not null default 'new',
   created timestamptz not null default now()
 );
+alter table dose_orders add column if not exists order_no text;
+alter table dose_orders add column if not exists source text not null default 'shop';
+create unique index if not exists dose_orders_no on dose_orders(seller_id, lower(order_no)) where order_no is not null;
 create table if not exists dose_prices (id int primary key, data jsonb not null default '[]'::jsonb, updated timestamptz not null default now());
 create table if not exists dose_tokens (
   token_hash text primary key,
@@ -383,11 +386,51 @@ app.post("/shop/:slug/order", limit("order", 20, 60 * 60 * 1000), wrap(async (re
     res.json({ ok: true, id: o.id, total, lines, shop: u.name, pay: u.cashtag ? "https://cash.app/$" + u.cashtag + "/" + total.toFixed(2) : null });
   } catch (e) { await c.query("rollback").catch(() => {}); throw e; } finally { c.release(); }
 }));
+/* Post a sale by hand: order number + customer, takes the stock out of the shared pool and logs it as a paid order */
+app.get("/me/customers", auth, wrap(async (req, res) => {
+  const isOwner = nameKey(req.user.name) === "owner";
+  const names = new Set();
+  const { rows } = await q("select distinct customer_name from dose_orders where seller_id = $1 order by 1 limit 300", [req.user.id]); rows.forEach((r) => names.add(r.customer_name));
+  if (isOwner) { const u = await q("select name from dose_users where disabled = false order by name limit 300"); u.rows.forEach((r) => { if (nameKey(r.name) !== "owner") names.add(r.name); }); }
+  res.json({ names: [...names].sort((a, b) => a.localeCompare(b)) });
+}));
+app.post("/me/sale", auth, limit("sale", 200, 60 * 60 * 1000), wrap(async (req, res) => {
+  const orderNo = String(req.body?.orderNo || "").replace(/\s+/g, " ").trim().slice(0, 30), name = String(req.body?.customer || "").replace(/\s+/g, " ").trim().slice(0, 60);
+  const want = Array.isArray(req.body?.items) ? req.body.items.slice(0, 60) : [];
+  if (!orderNo) return bad(res, "Enter an order number."); if (name.length < 2) return bad(res, "Pick or add a customer name.");
+  const asked = new Map(); want.forEach((w) => { const k = String(w?.k || "").toLowerCase(); const n = Math.floor(Number(w?.qty)); if (k && n > 0 && n <= 9999) asked.set(k, (asked.get(k) || 0) + n); });
+  if (!asked.size) return bad(res, "Nothing in the order.");
+  const isOwner = nameKey(req.user.name) === "owner";
+  const c = await pool.connect();
+  try {
+    await c.query("begin");
+    const dup = await c.query("select 1 from dose_orders where seller_id = $1 and lower(order_no) = lower($2)", [req.user.id, orderNo]);
+    if (dup.rows.length) { await c.query("rollback"); return bad(res, "Order number " + orderNo + " is already posted.", 409); }
+    const { rows: [inv] } = await c.query("select data from dose_inventory where id = 1 for update");
+    const items = inv && Array.isArray(inv.data) ? inv.data : [];
+    let own = null;
+    if (!isOwner) { const { rows } = await c.query("select k, price from dose_user_prices where user_id = $1", [req.user.id]); own = {}; rows.forEach((r) => { own[r.k] = Number(r.price); }); }
+    const lines = []; let total = 0;
+    for (const [k, n] of asked) {
+      const it = items.find((x) => keyOf(x.n, x.s) === k);
+      if (!it) { await c.query("rollback"); return bad(res, "An item in this order is not in the shared stock."); }
+      const have = typeof it.qty === "number" ? it.qty : 0;
+      if (have < n) { await c.query("rollback"); return bad(res, "Only " + have + " left of " + it.n + " " + it.s + ".", 409); }
+      const price = (own ? own[k] : it.price) || 0;
+      lines.push({ k, id: it.id, n: it.n, s: it.s, qty: n, price }); total += n * price; it.qty = have - n;
+    }
+    total = Math.min(Math.round(total * 100) / 100, 99999999);
+    await c.query("update dose_inventory set data = $1::jsonb, updated = now() where id = 1", [JSON.stringify(items)]);
+    const { rows: [o] } = await c.query("insert into dose_orders(seller_id, customer_name, customer_contact, lines, total, status, order_no, source) values ($1,$2,'',$3::jsonb,$4,'paid',$5,'manual') returning id", [req.user.id, name, JSON.stringify(lines), total, orderNo]);
+    await c.query("commit");
+    res.json({ ok: true, id: o.id, total, stock: lines.map((l) => ({ k: l.k, id: l.id, qty: items.find((x) => x.id === l.id).qty })) });
+  } catch (e) { await c.query("rollback").catch(() => {}); throw e; } finally { c.release(); }
+}));
 app.get("/me/orders", auth, wrap(async (req, res) => {
   const isOwner = nameKey(req.user.name) === "owner";
-  const { rows } = await q(`select o.id, o.customer_name, o.customer_contact, o.lines, o.total, o.status, o.created, u.name seller from dose_orders o join dose_users u on u.id = o.seller_id
+  const { rows } = await q(`select o.id, o.order_no, o.source, o.customer_name, o.customer_contact, o.lines, o.total, o.status, o.created, u.name seller from dose_orders o join dose_users u on u.id = o.seller_id
     where ($2 or o.seller_id = $1) order by o.created desc limit 100`, [req.user.id, isOwner]);
-  res.json({ orders: rows.map((r) => ({ id: r.id, name: r.customer_name, contact: r.customer_contact, lines: r.lines, total: Number(r.total), status: r.status, created: r.created, seller: r.seller })) });
+  res.json({ orders: rows.map((r) => ({ id: r.id, orderNo: r.order_no, source: r.source, name: r.customer_name, contact: r.customer_contact, lines: r.lines, total: Number(r.total), status: r.status, created: r.created, seller: r.seller })) });
 }));
 app.post("/me/orders/:id", auth, wrap(async (req, res) => {
   const id = parseInt(req.params.id, 10), st = String(req.body?.status || "");
