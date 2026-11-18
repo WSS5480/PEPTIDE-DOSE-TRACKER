@@ -1692,7 +1692,7 @@ vialsEl.addEventListener("click",e=>{
   if(del){ const v=vials.find(x=>x.id===del.dataset.delvial); if(v){ v.log=v.log.filter(en=>en.id!==del.dataset.delentry); saveVials(); renderAll(); } return; }
   vialAction(e);
 });
-vialsEl.addEventListener("change",e=>{ if(e.target.id==="av-mode"||e.target.id==="av-start"){ const l=$("#av-lock",vialsEl); if(l&&e.target.id==="av-mode"&&e.target.value==="follow") delete l.dataset.t; updateAddCalc(); } if(e.target.id==="av-pid"){ const l=$("#av-lock",vialsEl); if(l) delete l.dataset.t; } if(e.target.id==="av-pid") fillAddDefaults(); if(e.target.id==="av-whosel"){ const n=$("#av-who",vialsEl); if(n){ n.hidden=e.target.value!=="__new"; if(!n.hidden) n.focus(); } } const k=e.target.dataset&&e.target.dataset.sel; if(k){ uiFlags.sel=uiFlags.sel||{}; uiFlags.sel[k]=e.target.checked; uiFlags.mgArm=false; const n=Object.keys(uiFlags.sel).filter(x=>uiFlags.sel[x]).length; const b=$("#mg-del",vialsEl); if(b) b.textContent="Delete selected ("+n+")"; } });
+vialsEl.addEventListener("change",e=>{ if(e.target.classList&&e.target.classList.contains("who-pick")){ const w=e.target.value; if(w==="__new"){ uiFlags.add=true; renderVials(); const ws=$("#av-whosel",vialsEl); if(ws){ ws.value="__new"; const n=$("#av-who",vialsEl); if(n){ n.hidden=false; n.focus(); } } return; } save("pdg:whoSel",w); renderVials(); return; } if(e.target.id==="av-mode"||e.target.id==="av-start"){ const l=$("#av-lock",vialsEl); if(l&&e.target.id==="av-mode"&&e.target.value==="follow") delete l.dataset.t; updateAddCalc(); } if(e.target.id==="av-pid"){ const l=$("#av-lock",vialsEl); if(l) delete l.dataset.t; } if(e.target.id==="av-pid") fillAddDefaults(); if(e.target.id==="av-whosel"){ const n=$("#av-who",vialsEl); if(n){ n.hidden=e.target.value!=="__new"; if(!n.hidden) n.focus(); } } const k=e.target.dataset&&e.target.dataset.sel; if(k){ uiFlags.sel=uiFlags.sel||{}; uiFlags.sel[k]=e.target.checked; uiFlags.mgArm=false; const n=Object.keys(uiFlags.sel).filter(x=>uiFlags.sel[x]).length; const b=$("#mg-del",vialsEl); if(b) b.textContent="Delete selected ("+n+")"; } });
 vialsEl.addEventListener("input",e=>{ if(e.target.id==="av-lock") e.target.dataset.t="1"; if(e.target.id&&e.target.id.indexOf("av-")===0) updateAddCalc(); if(e.target.id==="lf-amt"||e.target.id==="lf-date") liveLogAlerts(vialsEl); });
 detailEl.addEventListener("click",e=>{
   if(e.target.closest("#back")){ app.dataset.view="list"; return; }
@@ -2576,7 +2576,7 @@ app.dataset.view="list";
 
 /* Bottom line: version, build time, and when this copy was opened. Pull down at the top of the page to refresh. */
 (function(){
-  const VER="2026-11-18c", BUILT="Nov 18, 2026 3:30 PM CT";
+  const VER="2026-11-18d", BUILT="Nov 18, 2026 3:45 PM CT";
   const old=document.getElementById("appver"); if(old) old.remove();
   const t=new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
   const v=document.createElement("div"); v.className="verline"; v.id="appver"; v.textContent="Version "+VER+" · built "+BUILT+" · opened "+t; document.body.appendChild(v);

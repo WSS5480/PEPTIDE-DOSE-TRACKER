@@ -147,3 +147,6 @@ Update this file in the same commit as every change.
 
 ## 2026-11-18c — new vial goes to the selected person
 - Steve: "when i select a whose vial the vials do not go to theirs". Add vial form now pre-selects the person chosen in "Whose vials", and "Save this vial" on a peptide page also assigns to that person (was always Mine). sw pdg-v53, VER 2026-11-18c.
+
+## 2026-11-18d — "Whose vials" picker actually filters
+- Steve screenshot: picked David (1) and the full list stayed. The picker had NO change handler, so pdg:whoSel was never saved. Added one: choosing a person saves it and shows only their vials; "+ Add a person" opens the Add vial form on the new-person box. sw pdg-v54, VER 2026-11-18d.
