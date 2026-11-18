@@ -141,3 +141,6 @@ Update this file in the same commit as every change.
 - Server: POST /me/sale (order_no unique per seller, row-locks dose_inventory id=1, rejects oversell/unknown items, prices from seller's price list, inserts dose_orders status 'paid' source 'manual'); GET /me/customers; /me/orders now returns orderNo + source. dose_orders +order_no +source. Cancelling a posted sale from Orders restocks like any order.
 - Checked users: shared (Owner-copied) items go to the server; their own non-shared items just lower their local qty (not logged). Replaces the old "Sold: take out of my qty" button. sw cache pdg-v51, VER 2026-11-18a.
 - Tested: local Postgres + Playwright (/tmp/tt/t29.py).
+
+## 2026-11-18b — vials grouped by person
+- Steve: "in my vials, group my people". Vials page: "Mine" stay on top as before; below them every person gets a collapsed group (name + vial count) holding their schedule cards (peopleGroupsHtml, uses vGroup). The "Whose vials" picker still focuses on one person. sw pdg-v52, VER 2026-11-18b. Tested with Playwright (/tmp/tt/t30.py).
